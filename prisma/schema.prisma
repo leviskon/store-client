@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,25 +13,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Пользователи системы
 model User {
-  id              String    @id @default(cuid())
-  fullname        String
-  phoneNumber     String    @unique @map("phone_number")
-  password        String
-  role            UserRole  @default(SELLER)
-  createdAt       DateTime  @default(now()) @map("created_at")
-  deliveredOrders Order[]   @relation("CourierOrders")
+  id          String   @id @default(cuid())
+  fullname    String
+  phoneNumber String   @unique @map("phone_number")
+  password    String   // хеш пароля
+  role        UserRole @default(SELLER)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Связи
   products        Product[] @relation("SellerProducts")
+  deliveredOrders Order[]   @relation("CourierOrders")
 
   @@map("users")
 }
 
+// Категории товаров
 model Category {
-  id             String     @id @default(cuid())
-  name           String
-  description    String?
-  categoryId     String?    @map("category_id")
-  imageUrl       String?    @map("image_url")
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  categoryId  String? @map("category_id") // для подкатегорий
+  imageUrl    String? @map("image_url")
+
+  // Связи
   parentCategory Category?  @relation("CategoryHierarchy", fields: [categoryId], references: [id])
   subCategories  Category[] @relation("CategoryHierarchy")
   products       Product[]
@@ -33,66 +45,83 @@ model Category {
   @@map("categories")
 }
 
+// Товары
 model Product {
-  id            String         @id @default(cuid())
-  name          String
-  description   String?
-  imageUrl      Json?          @map("image_url")
-  price         Decimal        @db.Decimal(10, 2)
-  categoryId    String         @map("category_id")
-  sellerId      String         @map("seller_id")
-  attributes    Json?
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
-  orderItems    OrderItem[]
-  productColors ProductColor[]
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  imageUrl    Json?         @map("image_url") // массив URL изображений
+  price       Decimal       @db.Decimal(10, 2)
+  categoryId  String        @map("category_id")
+  sellerId    String        @map("seller_id")
+  status      ProductStatus @default(ACTIVE)
+  attributes  Json?         // дополнительные атрибуты товара
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  // Связи
+  category      Category        @relation(fields: [categoryId], references: [id])
+  seller        User            @relation("SellerProducts", fields: [sellerId], references: [id])
   productSizes  ProductSize[]
-  category      Category       @relation(fields: [categoryId], references: [id])
-  seller        User           @relation("SellerProducts", fields: [sellerId], references: [id])
+  productColors ProductColor[]
+  orderItems    OrderItem[]
   reviews       Review[]
 
   @@map("products")
 }
 
+// Размеры
 model Size {
-  id           String        @id @default(cuid())
-  name         String        @unique
+  id   String @id @default(cuid())
+  name String @unique
+
+  // Связи
   productSizes ProductSize[]
 
   @@map("sizes")
 }
 
+// Цвета
 model Color {
-  id            String         @id @default(cuid())
-  name          String         @unique
-  colorCode     String
+  id   String @id @default(cuid())
+  name String @unique
+  colorCode String
+
+  // Связи
   productColors ProductColor[]
 
   @@map("colors")
 }
 
+// Связь товар-размер
 model ProductSize {
-  id        String  @id @default(cuid())
-  productId String  @map("product_id")
-  sizeId    String  @map("size_id")
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  size      Size    @relation(fields: [sizeId], references: [id], onDelete: Cascade)
+  id        String @id @default(cuid())
+  productId String @map("product_id")
+  sizeId    String @map("size_id")
+
+  // Связи
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size    Size    @relation(fields: [sizeId], references: [id], onDelete: Cascade)
 
   @@unique([productId, sizeId])
   @@map("product_sizes")
 }
 
+// Связь товар-цвет
 model ProductColor {
-  id        String  @id @default(cuid())
-  productId String  @map("product_id")
-  colorId   String  @map("color_id")
-  color     Color   @relation(fields: [colorId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id        String @id @default(cuid())
+  productId String @map("product_id")
+  colorId   String @map("color_id")
+
+  // Связи
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color   Color   @relation(fields: [colorId], references: [id], onDelete: Cascade)
 
   @@unique([productId, colorId])
   @@map("product_colors")
 }
 
+// Заказы
 model Order {
   id              String      @id @default(cuid())
   customerName    String      @map("customer_name")
@@ -104,24 +133,30 @@ model Order {
   cancelComment   String?     @map("cancel_comment")
   createdAt       DateTime    @default(now()) @map("created_at")
   updatedAt       DateTime    @updatedAt @map("updated_at")
-  orderItems      OrderItem[]
-  courier         User?       @relation("CourierOrders", fields: [courierId], references: [id])
+
+  // Связи
+  courier    User?       @relation("CourierOrders", fields: [courierId], references: [id])
+  orderItems OrderItem[]
 
   @@map("orders")
 }
 
+// Позиции заказа
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   String  @map("order_id")
   productId String  @map("product_id")
   amount    Int
   price     Decimal @db.Decimal(10, 2)
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id])
+
+  // Связи
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
 
   @@map("order_items")
 }
 
+// Настройки системы
 model Setting {
   id        String   @id @default(cuid())
   key       String   @unique
@@ -132,28 +167,40 @@ model Setting {
   @@map("settings")
 }
 
+// Отзывы о товарах
 model Review {
-  id         String  @id @default(cuid())
-  productId  String  @map("product_id")
-  clientName String  @map("client_name")
+  id         String @id @default(cuid())
+  productId  String @map("product_id")
+  clientName String @map("client_name")
   text       String
-  rating     Int     @db.SmallInt
-  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating     Int    @db.SmallInt // 1-5
+
+  // Связи
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
 }
 
+// Enum для ролей пользователей
 enum UserRole {
   ADMIN
   COURIER
   SELLER
 }
 
+// Enum для статусов заказов
 enum OrderStatus {
-  CREATED        @map("created")
-  COURIER_WAIT   @map("courier_wait")
+  CREATED       @map("created")
+  COURIER_WAIT  @map("courier_wait")
   COURIER_PICKED @map("courier_picked")
-  ENROUTE        @map("enroute")
-  DELIVERED      @map("delivered")
-  CANCELED       @map("canceled")
+  ENROUTE       @map("enroute")
+  DELIVERED     @map("delivered")
+  CANCELED      @map("canceled")
+}
+
+// Enum для статусов товаров
+enum ProductStatus {
+  ACTIVE    @map("active")
+  INACTIVE  @map("inactive")
+  DELETED   @map("deleted")
 }

@@ -56,3 +56,36 @@ export function getFavoritesCookie(): any[] {
     return []
   }
 }
+
+// Специальные функции для работы с заказами
+export function setOrdersCookie(orders: any[]) {
+  try {
+    const ordersJson = JSON.stringify(orders)
+    setCookie('user_orders', ordersJson)
+  } catch (error) {
+    console.error('Error saving orders to cookies:', error)
+  }
+}
+
+export function getOrdersCookie(): any[] {
+  try {
+    const ordersJson = getCookie('user_orders')
+    if (ordersJson) {
+      return JSON.parse(ordersJson)
+    }
+    return []
+  } catch (error) {
+    console.error('Error reading orders from cookies:', error)
+    return []
+  }
+}
+
+export function addOrderToCookie(order: any) {
+  try {
+    const existingOrders = getOrdersCookie()
+    const updatedOrders = [order, ...existingOrders]
+    setOrdersCookie(updatedOrders)
+  } catch (error) {
+    console.error('Error adding order to cookies:', error)
+  }
+}

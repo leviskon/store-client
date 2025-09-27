@@ -1,7 +1,7 @@
 'use client'
 
 import { X, Check, Filter, ChevronDown, Star, DollarSign, User, Tag } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
 interface FilterModalProps {
@@ -29,12 +29,25 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
     rating: 0
   })
 
+  // Блокируем скролл при открытии модального окна
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
   const [expandedSections, setExpandedSections] = useState({
-    categories: true,
-    price: true,
+    categories: false,
+    price: false,
     seller: false,
-    rating: true,
-    sort: true
+    rating: false,
+    sort: false
   })
 
   const toggleSection = (section: keyof typeof expandedSections) => {
@@ -101,20 +114,20 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
   }) => (
     <button
       onClick={() => toggleSection(sectionKey)}
-      className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-orange-100/50 rounded-xl hover:from-orange-100 hover:to-orange-200/50 transition-all duration-200 group"
+      className="w-full flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-orange-50 to-orange-100/50 rounded-xl hover:from-orange-100 hover:to-orange-200/50 transition-all duration-200 group"
     >
-      <div className="flex items-center space-x-3">
-        <div className="p-2 bg-orange-500 rounded-lg text-white group-hover:bg-orange-600 transition-colors">
-          <Icon className="w-4 h-4" />
+      <div className="flex items-center space-x-2 md:space-x-3">
+        <div className="p-1.5 md:p-2 bg-orange-500 rounded-lg text-white group-hover:bg-orange-600 transition-colors">
+          <Icon className="w-3.5 h-3.5 md:w-4 md:h-4" />
         </div>
-        <span className="font-semibold text-gray-800">{title}</span>
+        <span className="font-semibold text-gray-800 text-sm md:text-base">{title}</span>
         {count !== undefined && (
-          <span className="px-2 py-1 bg-orange-200 text-orange-800 text-xs rounded-full font-medium">
+          <span className="px-1.5 md:px-2 py-0.5 md:py-1 bg-orange-200 text-orange-800 text-xs rounded-full font-medium">
             {count}
           </span>
         )}
       </div>
-      <ChevronDown className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
+      <ChevronDown className={`w-4 h-4 md:w-5 md:h-5 text-gray-600 transition-transform duration-200 ${
         expandedSections[sectionKey] ? 'rotate-180' : ''
       }`} />
     </button>
@@ -129,14 +142,14 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden border border-orange-200">
+      <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[85vh] md:max-h-[90vh] overflow-hidden border border-orange-200">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+        <div className="flex items-center justify-between p-4 md:p-6 bg-gradient-to-r from-orange-500 to-orange-600 text-white">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-white/20 rounded-lg">
               <Filter className="w-5 h-5" />
             </div>
-            <h3 className="text-xl font-bold">{t.filters}</h3>
+            <h3 className="text-lg md:text-xl font-bold">{t.filters}</h3>
           </div>
           <button 
             onClick={onClose} 
@@ -147,8 +160,8 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-180px)]">
-          <div className="p-6 space-y-4">
+        <div className="overflow-y-auto max-h-[calc(85vh-160px)] md:max-h-[calc(90vh-180px)]">
+          <div className="p-4 md:p-6 space-y-3 md:space-y-4">
             {/* Categories */}
             <div className="space-y-3">
               <SectionHeader 
@@ -332,16 +345,16 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
         </div>
 
         {/* Actions */}
-        <div className="flex space-x-4 p-6 bg-gray-50 border-t border-gray-200">
+        <div className="flex space-x-3 md:space-x-4 p-4 md:p-6 bg-gray-50 border-t border-gray-200">
           <button
             onClick={handleReset}
-            className="flex-1 px-6 py-3 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-100 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200"
+            className="flex-1 px-4 md:px-6 py-2.5 md:py-3 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-100 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200"
           >
             {t.reset}
           </button>
           <button
             onClick={handleApply}
-            className="flex-1 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 border-2 border-transparent rounded-xl hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="flex-1 px-4 md:px-6 py-2.5 md:py-3 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 border-2 border-transparent rounded-xl hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             {t.applyFilters}
           </button>

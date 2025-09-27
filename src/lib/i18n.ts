@@ -5,6 +5,7 @@ export interface Translations {
   home: string
   cart: string
   favorites: string
+  orders: string
   
   // Search and filters
   search: string
@@ -72,6 +73,69 @@ export interface Translations {
   startShopping: string
   all: string
   removeFromFavorites: string
+  
+  // Modal confirmations
+  confirm: string
+  cancel: string
+  confirmRemoveTitle: string
+  confirmRemoveMessage: string
+  remove: string
+  
+  // Cart page
+  myCart: string
+  emptyCartTitle: string
+  emptyCartSubtitle: string
+  subtotal: string
+  deliveryFee: string
+  discount: string
+  totalCost: string
+  proceedToCheckout: string
+  removeFromCart: string
+  confirmRemoveFromCartTitle: string
+  confirmRemoveFromCartMessage: string
+  yesRemove: string
+  size: string
+  color: string
+  price: string
+  
+  // Orders page
+  myOrders: string
+  active: string
+  completed: string
+  cancelled: string
+  trackOrder: string
+  noOrdersTitle: string
+  noOrdersSubtitle: string
+  orderStatus: string
+  orderDate: string
+  orderTotal: string
+  orderNumber: string
+  deliveryAddress: string
+  customerPhone: string
+  customerComment: string
+  cancelComment: string
+  courierInfo: string
+  orderCreated: string
+  orderInProgress: string
+  orderDelivered: string
+  orderCancelled: string
+  orderCourierWait: string
+  orderCourierPicked: string
+  orderEnroute: string
+  
+  // Track Order page
+  orderDetails: string
+  expectedDeliveryDate: string
+  trackingId: string
+  orderPlaced: string
+  inProgress: string
+  shipped: string
+  delivered: string
+  orderPlacedDate: string
+  inProgressDate: string
+  shippedDate: string
+  deliveredDate: string
+  expectedDate: string
 }
 
 export const translations: Record<Language, Translations> = {
@@ -80,6 +144,7 @@ export const translations: Record<Language, Translations> = {
     home: 'Башкы бет',
     cart: 'Себет',
     favorites: 'Тандалмалар',
+    orders: 'Заказдар',
     
     // Search and filters
     search: 'Издөө',
@@ -146,7 +211,70 @@ export const translations: Record<Language, Translations> = {
     noFavoritesSubtitle: 'Жакшы көргөн товарларыңызды сактоо үчүн жүрөк белгисин басыңыз',
     startShopping: 'Соода кылууну баштоо',
     all: 'Баары',
-    removeFromFavorites: 'Тандалмалардан чыгаруу'
+    removeFromFavorites: 'Тандалмалардан чыгаруу',
+    
+    // Modal confirmations
+    confirm: 'Ырастоо',
+    cancel: 'Жокко чыгаруу',
+    confirmRemoveTitle: 'Тандалмалардан чыгаруу',
+    confirmRemoveMessage: 'Бул товарды тандалмалардан чыгарууну каалайсызбы?',
+    remove: 'Чыгаруу',
+    
+    // Cart page
+    myCart: 'Менин себетим',
+    emptyCartTitle: 'Сиздин себетиңиз бош',
+    emptyCartSubtitle: 'Жакшы көргөн товарларыңызды кошуп баштаңыз',
+    subtotal: 'Жыйынтык',
+    deliveryFee: 'Жеткирүү акысы',
+    discount: 'Арзандатуу',
+    totalCost: 'Жалпы наркы',
+    proceedToCheckout: 'Төлөмгө өтүү',
+    removeFromCart: 'Себеттен чыгаруу',
+    confirmRemoveFromCartTitle: 'Себеттен чыгаруу',
+    confirmRemoveFromCartMessage: 'Бул товарды себеттен чыгарууну каалайсызбы?',
+    yesRemove: 'Ооба, чыгаруу',
+    size: 'Өлчөмү',
+    color: 'Түсү',
+    price: 'Баасы',
+    
+    // Orders page
+    myOrders: 'Менин заказдарым',
+    active: 'Активдүү',
+    completed: 'Аякталган',
+    cancelled: 'Жокко чыгарылган',
+    trackOrder: 'Заказды көзөмөлдөө',
+    noOrdersTitle: 'Сиздин заказдарыңыз жок',
+    noOrdersSubtitle: 'Биринчи заказды берүү үчүн товарларды сатып алыңыз',
+    orderStatus: 'Заказдын статусу',
+    orderDate: 'Заказдын датасы',
+    orderTotal: 'Жалпы сумма',
+    orderNumber: 'Заказдын номуру',
+    deliveryAddress: 'Жеткирүү дареги',
+    customerPhone: 'Телефон номуру',
+    customerComment: 'Клиенттин комментарийи',
+    cancelComment: 'Жокко чыгаруу себеби',
+    courierInfo: 'Курьер тууралуу маалымат',
+    orderCreated: 'Түзүлгөн',
+    orderInProgress: 'Ишке ашырылууда',
+    orderDelivered: 'Жеткирилген',
+    orderCancelled: 'Жокко чыгарылган',
+    orderCourierWait: 'Курьер күтүүдө',
+    orderCourierPicked: 'Курьер алып кеткен',
+    orderEnroute: 'Жолдо',
+    
+    // Track Order page
+    orderDetails: 'Заказдын маалыматтары',
+    expectedDeliveryDate: 'Күтүлгөн жеткирүү күнү',
+    trackingId: 'Көзөмөлдөө ID',
+    orderPlaced: 'Заказ берилген',
+    inProgress: 'Ишке ашырылууда',
+    shipped: 'Жөнөтүлгөн',
+    delivered: 'Жеткирилген',
+    orderPlacedDate: '23 Авг 2023, 04:25 PM',
+    inProgressDate: '23 Авг 2023, 03:54 PM',
+    shippedDate: 'Күтүлгөн 02 Сен 2023',
+    deliveredDate: '23 Авг 2023, 2023',
+    expectedDate: '03 Сен 2023'
   },
   
   ru: {
@@ -154,6 +282,7 @@ export const translations: Record<Language, Translations> = {
     home: 'Главная',
     cart: 'Корзина',
     favorites: 'Избранное',
+    orders: 'Заказы',
     
     // Search and filters
     search: 'Поиск',
@@ -220,7 +349,70 @@ export const translations: Record<Language, Translations> = {
     noFavoritesSubtitle: 'Нажмите на сердечко, чтобы сохранить понравившиеся товары',
     startShopping: 'Начать покупки',
     all: 'Все',
-    removeFromFavorites: 'Удалить из избранного'
+    removeFromFavorites: 'Удалить из избранного',
+    
+    // Modal confirmations
+    confirm: 'Подтвердить',
+    cancel: 'Отмена',
+    confirmRemoveTitle: 'Удалить из избранного',
+    confirmRemoveMessage: 'Вы уверены, что хотите удалить этот товар из избранного?',
+    remove: 'Удалить',
+    
+    // Cart page
+    myCart: 'Моя корзина',
+    emptyCartTitle: 'Ваша корзина пуста',
+    emptyCartSubtitle: 'Начните добавлять понравившиеся товары',
+    subtotal: 'Промежуточный итог',
+    deliveryFee: 'Стоимость доставки',
+    discount: 'Скидка',
+    totalCost: 'Общая стоимость',
+    proceedToCheckout: 'Перейти к оформлению',
+    removeFromCart: 'Удалить из корзины',
+    confirmRemoveFromCartTitle: 'Удалить из корзины',
+    confirmRemoveFromCartMessage: 'Вы уверены, что хотите удалить этот товар из корзины?',
+    yesRemove: 'Да, удалить',
+    size: 'Размер',
+    color: 'Цвет',
+    price: 'Цена',
+    
+    // Orders page
+    myOrders: 'Мои заказы',
+    active: 'Активные',
+    completed: 'Завершенные',
+    cancelled: 'Отмененные',
+    trackOrder: 'Отследить заказ',
+    noOrdersTitle: 'У вас нет заказов',
+    noOrdersSubtitle: 'Сделайте первую покупку, чтобы увидеть заказы здесь',
+    orderStatus: 'Статус заказа',
+    orderDate: 'Дата заказа',
+    orderTotal: 'Общая сумма',
+    orderNumber: 'Номер заказа',
+    deliveryAddress: 'Адрес доставки',
+    customerPhone: 'Номер телефона',
+    customerComment: 'Комментарий клиента',
+    cancelComment: 'Причина отмены',
+    courierInfo: 'Информация о курьере',
+    orderCreated: 'Создан',
+    orderInProgress: 'В обработке',
+    orderDelivered: 'Доставлен',
+    orderCancelled: 'Отменен',
+    orderCourierWait: 'Ожидает курьера',
+    orderCourierPicked: 'Курьер забрал',
+    orderEnroute: 'В пути',
+    
+    // Track Order page
+    orderDetails: 'Детали заказа',
+    expectedDeliveryDate: 'Ожидаемая дата доставки',
+    trackingId: 'ID отслеживания',
+    orderPlaced: 'Заказ размещен',
+    inProgress: 'В обработке',
+    shipped: 'Отправлен',
+    delivered: 'Доставлен',
+    orderPlacedDate: '23 Авг 2023, 04:25 PM',
+    inProgressDate: '23 Авг 2023, 03:54 PM',
+    shippedDate: 'Ожидается 02 Сен 2023',
+    deliveredDate: '23 Авг 2023, 2023',
+    expectedDate: '03 Сен 2023'
   }
 }
 

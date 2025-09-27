@@ -1,28 +1,44 @@
 import { db } from '@/lib/db'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
+    // Products API вызван
     
     // Получаем параметры фильтрации
     const categoryId = searchParams.get('categoryId')
+    const includeSubcategories = searchParams.get('includeSubcategories') === 'true'
     const categories = searchParams.getAll('categories')
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
     const sortBy = searchParams.get('sortBy') || 'newest'
     const minRating = searchParams.get('minRating')
     const seller = searchParams.get('seller')
+    const search = searchParams.get('search')
 
-            // Строим условия фильтрации
-            const where: {
-              categoryId?: string | { in: string[] }
-              price?: { gte?: number; lte?: number }
-              seller?: { fullname: { contains: string; mode: 'insensitive' } }
-            } = {}
+    // Строим условия фильтрации
+    const where: any = {
+      status: 'ACTIVE' // Показываем только активные товары
+    }
     
     if (categoryId) {
-      where.categoryId = categoryId
+      if (includeSubcategories) {
+        // Если нужно включить подкатегории, загружаем их
+        const categoryWithSubs = await db.category.findUnique({
+          where: { id: categoryId },
+          include: { subCategories: true }
+        })
+        
+        if (categoryWithSubs) {
+          const categoryIds = [categoryId, ...categoryWithSubs.subCategories.map(sub => sub.id)]
+          where.categoryId = { in: categoryIds }
+        } else {
+          where.categoryId = categoryId
+        }
+      } else {
+        where.categoryId = categoryId
+      }
     } else if (categories.length > 0) {
       where.categoryId = {
         in: categories
@@ -42,6 +58,23 @@ export async function GET(request: NextRequest) {
           mode: 'insensitive'
         }
       }
+    }
+
+    if (search) {
+      where.OR = [
+        {
+          name: {
+            contains: search,
+            mode: 'insensitive'
+          }
+        },
+        {
+          description: {
+            contains: search,
+            mode: 'insensitive'
+          }
+        }
+      ]
     }
 
             // Настраиваем сортировку
@@ -70,6 +103,7 @@ export async function GET(request: NextRequest) {
       include: {
         category: {
           select: {
+            id: true,
             name: true
           }
         },
@@ -103,8 +137,10 @@ export async function GET(request: NextRequest) {
       })
     }
 
+    // Товары найдены
     return NextResponse.json(products)
   } catch (error) {
+    // Ошибка загрузки товаров
     console.error('Ошибка загрузки товаров:', error)
     return NextResponse.json(
       { error: 'Ошибка загрузки товаров' },

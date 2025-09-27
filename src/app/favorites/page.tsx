@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Heart, Star, ShoppingBag, X } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useFavorites } from '@/context/FavoritesContext'
+import ConfirmModal from '@/components/ConfirmModal'
+import AppLayout from '@/components/AppLayout'
 import Link from 'next/link'
 
 export default function FavoritesPage() {
@@ -12,24 +14,48 @@ export default function FavoritesPage() {
   const { t } = useLanguage()
   const { favorites, removeFromFavorites } = useFavorites()
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
+  const [productToRemove, setProductToRemove] = useState<string | null>(null)
 
   const formatPrice = (price: number) => `${price.toFixed(0)} сом`
 
+  const handleRemoveClick = (productId: string) => {
+    setProductToRemove(productId)
+    setIsConfirmModalOpen(true)
+  }
+
+  const handleConfirmRemove = () => {
+    if (productToRemove) {
+      removeFromFavorites(productToRemove)
+      setProductToRemove(null)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setIsConfirmModalOpen(false)
+    setProductToRemove(null)
+  }
+
   // Получаем уникальные категории из избранных товаров
   const categories = useMemo(() => {
-    // Используем Map для гарантии уникальности по ID
-    const uniqueCategoriesMap = new Map<string, { id: string; name: string }>()
+    // Используем Set для хранения уникальных ID категорий
+    const uniqueCategoryIds = new Set<string>()
+    const uniqueCategories: { id: string; name: string }[] = []
     
     favorites.forEach(item => {
-      if (!uniqueCategoriesMap.has(item.category.id)) {
-        uniqueCategoriesMap.set(item.category.id, {
+      // Проверяем, что у товара есть категория и все нужные поля
+      if (item?.category?.id && item?.category?.name && !uniqueCategoryIds.has(item.category.id)) {
+        uniqueCategoryIds.add(item.category.id)
+        uniqueCategories.push({
           id: item.category.id,
           name: item.category.name
         })
       }
     })
 
-    const uniqueCategories = Array.from(uniqueCategoriesMap.values())
+    // Сортируем категории по имени для консистентности
+    uniqueCategories.sort((a, b) => a.name.localeCompare(b.name))
+    
     return [{ id: 'all', name: t.all }, ...uniqueCategories]
   }, [favorites, t.all])
 
@@ -38,22 +64,22 @@ export default function FavoritesPage() {
     if (selectedCategory === 'all') {
       return favorites
     }
-    return favorites.filter(item => item.category.id === selectedCategory)
+    return favorites.filter(item => item?.category?.id === selectedCategory)
   }, [favorites, selectedCategory])
 
   if (favorites.length === 0) {
     return (
-      <div className="min-h-screen bg-white">
+      <AppLayout showHeader={false} showBottomNav={true}>
         {/* Header */}
-        <div className="sticky top-0 bg-white z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between border-b border-gray-100">
+        <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
           <button
-            onClick={() => router.back()}
-            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+            onClick={() => router.push('/')}
+            className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 text-gray-700" />
           </button>
           
-          <h1 className="text-lg font-medium text-gray-900">{t.myWishlist}</h1>
+          <h1 className="text-lg font-medium text-white">{t.myWishlist}</h1>
           
           <div className="w-10 h-10"></div>
         </div>
@@ -76,25 +102,25 @@ export default function FavoritesPage() {
             {t.startShopping}
           </button>
         </div>
-      </div>
+      </AppLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <AppLayout showHeader={false} showBottomNav={true}>
       {/* Header */}
-      <div className="sticky top-0 bg-white z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between border-b border-gray-100">
+      <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
         <button
-          onClick={() => router.back()}
-          className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+          onClick={() => router.push('/')}
+          className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors"
         >
           <ArrowLeft className="w-5 h-5 text-gray-700" />
         </button>
         
-        <h1 className="text-lg font-medium text-gray-900">{t.myWishlist}</h1>
+        <h1 className="text-lg font-medium text-white">{t.myWishlist}</h1>
         
         <div className="w-10 h-10 flex items-center justify-center">
-          <span className="text-sm font-medium text-orange-500">
+          <span className="text-sm font-medium text-white">
             {favorites.length}
           </span>
         </div>
@@ -104,13 +130,13 @@ export default function FavoritesPage() {
         {/* Category Filter */}
         <div className="mb-6">
           <div className="flex items-center gap-3 overflow-x-auto pb-2 px-1">
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <button
-                key={`category-${category.id}-${index}`}
+                key={`category-${category.id}`}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`relative flex-shrink-0 px-5 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 transform ${
+                className={`relative flex-shrink-0 px-5 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${
                   selectedCategory === category.id
-                    ? 'bg-orange-500 text-white scale-105 z-10'
+                    ? 'bg-orange-500 text-white'
                     : 'bg-white text-gray-700 hover:bg-orange-50 hover:text-orange-600 border border-gray-200 hover:border-orange-300'
                 }`}
                 style={{
@@ -125,7 +151,7 @@ export default function FavoritesPage() {
                         ? 'bg-white/25 text-white'
                         : 'bg-orange-100 text-orange-600'
                     }`}>
-                      {favorites.filter(item => item.category.id === category.id).length}
+                      {favorites.filter(item => item?.category?.id === category.id).length}
                     </span>
                   )}
                 </span>
@@ -157,7 +183,7 @@ export default function FavoritesPage() {
                       <button
                         onClick={(e) => {
                           e.preventDefault()
-                          removeFromFavorites(product.id)
+                          handleRemoveClick(product.id)
                         }}
                         className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-200 group"
                       >
@@ -218,6 +244,18 @@ export default function FavoritesPage() {
 
       {/* Bottom spacing for mobile navigation */}
       <div className="h-20 md:h-0"></div>
-    </div>
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmRemove}
+        title={t.confirmRemoveTitle}
+        message={t.confirmRemoveMessage}
+        confirmText={t.remove}
+        cancelText={t.cancel}
+        isDestructive={true}
+      />
+    </AppLayout>
   )
 }

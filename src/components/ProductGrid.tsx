@@ -4,6 +4,7 @@ import { Heart, Star } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useFavorites } from '@/context/FavoritesContext'
+import { useNotification } from '@/context/NotificationContext'
 
 interface Product {
   id: string
@@ -30,6 +31,8 @@ interface ProductWithLike extends Product {
 
 interface ProductGridProps {
   selectedCategory: string | null
+  includeSubcategories?: boolean
+  searchQuery?: string
   filters?: {
     categories: string[]
     priceRange: { min: number; max: number }
@@ -39,10 +42,11 @@ interface ProductGridProps {
   }
 }
 
-export default function ProductGrid({ selectedCategory, filters }: ProductGridProps) {
+export default function ProductGrid({ selectedCategory, includeSubcategories, searchQuery, filters }: ProductGridProps) {
   const [products, setProducts] = useState<ProductWithLike[]>([])
   const [loading, setLoading] = useState(true)
   const { toggleFavorite, isFavorite } = useFavorites()
+  const { showNotification } = useNotification()
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -50,8 +54,13 @@ export default function ProductGrid({ selectedCategory, filters }: ProductGridPr
         let url = '/api/products'
         const params = new URLSearchParams()
         
+        // ProductGrid fetchProducts вызван
+        
         if (selectedCategory) {
           params.append('categoryId', selectedCategory)
+          if (includeSubcategories === true) {
+            params.append('includeSubcategories', 'true')
+          }
         }
         
         if (filters?.categories && filters.categories.length > 0) {
@@ -74,11 +83,16 @@ export default function ProductGrid({ selectedCategory, filters }: ProductGridPr
         if (filters?.seller && filters.seller.trim()) {
           params.append('seller', filters.seller.trim())
         }
+
+        if (searchQuery && searchQuery.trim()) {
+          params.append('search', searchQuery.trim())
+        }
         
         if (params.toString()) {
           url += '?' + params.toString()
         }
 
+        // Загружаем товары
         const response = await fetch(url)
         if (response.ok) {
           const data: Product[] = await response.json()
@@ -89,9 +103,11 @@ export default function ProductGrid({ selectedCategory, filters }: ProductGridPr
               : 0
           }))
           setProducts(productsWithLikes)
+        } else {
+          // Ошибка загрузки товаров
         }
-      } catch (error) {
-        console.error('Ошибка загрузки товаров:', error)
+      } catch (_error) {
+        // Ошибка загрузки товаров
       } finally {
         setLoading(false)
       }
@@ -99,22 +115,56 @@ export default function ProductGrid({ selectedCategory, filters }: ProductGridPr
 
     setLoading(true)
     fetchProducts()
-  }, [selectedCategory, filters])
+  }, [selectedCategory, includeSubcategories, searchQuery, filters])
 
-  const handleToggleFavorite = (product: ProductWithLike) => {
-    const favoriteItem = {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      category: product.category,
-      seller: product.seller,
-      reviews: product.reviews,
-      _count: product._count,
-      averageRating: product.averageRating
+  const handleToggleFavorite = async (product: ProductWithLike) => {
+    try {
+      // Валидируем структуру товара перед добавлением в избранное
+      if (!product || !product.id || !product.category?.id || !product.category?.name) {
+        // Неверные данные товара
+        showNotification({
+          type: 'error',
+          message: 'Ошибка: недостаточно данных о товаре',
+          duration: 2000
+        })
+        return
+      }
+
+      const favoriteItem = {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        category: product.category,
+        seller: product.seller,
+        reviews: product.reviews,
+        _count: product._count,
+        averageRating: product.averageRating
+      }
+      
+      const wasInFavorites = isFavorite(product.id)
+      
+      // Вызываем toggleFavorite без await для мгновенного отклика
+      toggleFavorite(favoriteItem)
+      
+      // Показываем уведомление только при добавлении
+      if (!wasInFavorites) {
+        showNotification({
+          type: 'favorites',
+          message: 'Добавлено в избранное',
+          duration: 2000
+        })
+      }
+    } catch (_error) {
+      // Ошибка переключения избранного
+      showNotification({
+        type: 'error',
+        message: 'Ошибка при добавлении в избранное',
+        duration: 2000
+      })
     }
-    toggleFavorite(favoriteItem)
   }
+
 
   const formatPrice = (price: number) => `${price.toFixed(0)} сом`
 
@@ -137,7 +187,7 @@ export default function ProductGrid({ selectedCategory, filters }: ProductGridPr
 
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-      {products.map((product) => (
+      {products.filter(product => product && product.id && product.category?.id).map((product) => (
         <Link key={product.id} href={`/product/${product.id}`}>
           <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-orange-200 transition-all duration-300 transform hover:scale-105 group cursor-pointer">
           {/* Product Image */}

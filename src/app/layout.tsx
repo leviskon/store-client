@@ -3,6 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { FavoritesProvider } from "@/context/FavoritesContext";
+import { CartProvider } from "@/context/CartContext";
+import { OrdersProvider } from "@/context/OrdersContext";
+import { NotificationProvider } from "@/context/NotificationContext";
+import NotificationContainer from "@/components/NotificationContainer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,9 +34,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <LanguageProvider>
-          <FavoritesProvider>
-            {children}
-          </FavoritesProvider>
+          <NotificationProvider>
+            <FavoritesProvider>
+              <CartProvider>
+                <OrdersProvider>
+                  {children}
+                  <NotificationContainer />
+                </OrdersProvider>
+              </CartProvider>
+            </FavoritesProvider>
+          </NotificationProvider>
         </LanguageProvider>
       </body>
     </html>

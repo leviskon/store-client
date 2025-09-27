@@ -2,9 +2,15 @@
 
 import { Mail, Phone, MapPin, Instagram, Facebook, Twitter } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
+import { useRouter } from 'next/navigation'
 
 export default function Footer() {
   const { t } = useLanguage()
+  const router = useRouter()
+
+  const handleNavigation = (path: string) => {
+    router.push(path)
+  }
   
   return (
     <footer className="bg-gray-900 text-white mt-16">
@@ -39,24 +45,20 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors text-sm">
+                <button 
+                  onClick={() => handleNavigation('/about')}
+                  className="text-gray-300 hover:text-orange-400 transition-colors text-sm text-left"
+                >
                   {t.language === 'kg' ? 'Биз жөнүндө' : 'О нас'}
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors text-sm">
-                  {t.categories}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors text-sm">
-                  {t.language === 'kg' ? 'Жаңы келгендер' : 'Новинки'}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors text-sm">
+                <button 
+                  onClick={() => handleNavigation('/discounts')}
+                  className="text-gray-300 hover:text-orange-400 transition-colors text-sm text-left"
+                >
                   {t.language === 'kg' ? 'Арзандатуулар' : 'Скидки'}
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -68,24 +70,20 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors text-sm">
-                  {t.language === 'kg' ? 'Көмөк' : 'Помощь'}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors text-sm">
+                <button 
+                  onClick={() => handleNavigation('/returns')}
+                  className="text-gray-300 hover:text-orange-400 transition-colors text-sm text-left"
+                >
                   {t.language === 'kg' ? 'Кайтаруу' : 'Возвраты'}
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors text-sm">
-                  {t.language === 'kg' ? 'Жеткирүү' : 'Доставка'}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-orange-400 transition-colors text-sm">
+                <button 
+                  onClick={() => handleNavigation('/privacy')}
+                  className="text-gray-300 hover:text-orange-400 transition-colors text-sm text-left"
+                >
                   {t.language === 'kg' ? 'Жеке маалыматтын коопсуздугу' : 'Конфиденциальность'}
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -123,12 +121,18 @@ export default function Footer() {
             © 2024 Store Client. {t.language === 'kg' ? 'Бардык укуктар корголгон.' : 'Все права защищены.'}
           </div>
           <div className="flex space-x-6 text-sm">
-            <a href="#" className="text-gray-400 hover:text-orange-400 transition-colors">
+            <button 
+              onClick={() => handleNavigation('/terms')}
+              className="text-gray-400 hover:text-orange-400 transition-colors"
+            >
               {t.language === 'kg' ? 'Колдонуу шарттары' : 'Условия использования'}
-            </a>
-            <a href="#" className="text-gray-400 hover:text-orange-400 transition-colors">
+            </button>
+            <button 
+              onClick={() => handleNavigation('/privacy')}
+              className="text-gray-400 hover:text-orange-400 transition-colors"
+            >
               {t.language === 'kg' ? 'Жеке маалыматтын коопсуздугу' : 'Конфиденциальность'}
-            </a>
+            </button>
           </div>
         </div>
       </div>

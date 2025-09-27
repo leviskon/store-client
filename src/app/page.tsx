@@ -20,6 +20,7 @@ interface FilterState {
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [includeSubcategories, setIncludeSubcategories] = useState<boolean>(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [filters, setFilters] = useState<FilterState>({
     categories: [],
@@ -29,16 +30,27 @@ export default function Home() {
     rating: 0
   })
   const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([])
+  const [searchQuery, setSearchQuery] = useState('')
   const { t } = useLanguage()
 
   useEffect(() => {
-    // Загружаем категории для фильтра
+    // Загружаем категории для фильтра (плоский список для фильтра)
     const fetchCategories = async () => {
       try {
         const response = await fetch('/api/categories')
         if (response.ok) {
           const data = await response.json()
-          setCategories(data)
+          // Преобразуем иерархическую структуру в плоский список для фильтра
+          const flatCategories: Array<{ id: string; name: string }> = []
+          data.forEach((parent: any) => {
+            flatCategories.push({ id: parent.id, name: parent.name })
+            if (parent.subCategories) {
+              parent.subCategories.forEach((sub: any) => {
+                flatCategories.push({ id: sub.id, name: sub.name })
+              })
+            }
+          })
+          setCategories(flatCategories)
         }
       } catch (error) {
         console.error('Ошибка загрузки категорий:', error)
@@ -48,18 +60,17 @@ export default function Home() {
     fetchCategories()
   }, [])
 
-  const handleCategoryClick = (categoryId: string | null) => {
+  const handleCategoryClick = (categoryId: string | null, includeSubcategoriesParam: boolean = false) => {
     setSelectedCategory(categoryId)
+    setIncludeSubcategories(includeSubcategoriesParam)
     // Сбрасываем фильтры при выборе категории
-    if (categoryId !== null) {
-      setFilters({
-        categories: [],
-        priceRange: { min: 0, max: 10000 },
-        sortBy: 'newest',
-        seller: '',
-        rating: 0
-      })
-    }
+    setFilters({
+      categories: [],
+      priceRange: { min: 0, max: 10000 },
+      sortBy: 'newest',
+      seller: '',
+      rating: 0
+    })
   }
 
   const handleFilterClick = () => {
@@ -74,10 +85,21 @@ export default function Home() {
     }
   }
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+    // Сбрасываем выбранную категорию при поиске
+    setSelectedCategory(null)
+  }
+
   const getProductsTitle = () => {
+    if (searchQuery) {
+      return `Результаты поиска: "${searchQuery}"`
+    }
     if (selectedCategory && categories.length > 0) {
       const category = categories.find(cat => cat.id === selectedCategory)
-      return category ? `${category.name} ${t.categoryProducts}` : t.featuredProducts
+      if (category) {
+        return `${category.name} ${t.categoryProducts}`
+      }
     }
     if (filters.categories.length > 0) {
       return t.filteredProducts
@@ -88,7 +110,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <Header onFilterClick={handleFilterClick} />
+      <Header onFilterClick={handleFilterClick} onSearch={handleSearch} />
       
       {/* Hero Section - Carousel */}
       <HeroSection />
@@ -107,6 +129,8 @@ export default function Home() {
           </h2>
           <ProductGrid 
             selectedCategory={selectedCategory}
+            includeSubcategories={includeSubcategories}
+            searchQuery={searchQuery}
             filters={filters}
           />
         </div>

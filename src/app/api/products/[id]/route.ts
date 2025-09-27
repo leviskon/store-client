@@ -8,9 +8,10 @@ export async function GET(
   try {
     const { id } = await params
 
-    const product = await db.product.findUnique({
+    const product = await db.product.findFirst({
       where: {
-        id: id
+        id: id,
+        status: 'ACTIVE' // Показываем только активные товары
       },
       include: {
         category: {
