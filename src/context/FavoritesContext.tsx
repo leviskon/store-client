@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
-import { setFavoritesCookie, getFavoritesCookie } from '@/lib/cookies'
+import { validateFavoritesCookie, addFavoriteToCookie, removeFavoriteFromCookie, clearFavoritesCookie } from '@/lib/cookies'
 
 interface FavoriteItem {
   id: string
@@ -40,28 +40,48 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  // Функция для проверки активности товаров
-  const checkProductsStatus = async (items: FavoriteItem[]) => {
+  // Функция для загрузки полных данных товаров из БД по ID
+  const loadFavoritesFromDatabase = async (favoriteIds: string[]) => {
+    if (favoriteIds.length === 0) {
+      setFavorites([])
+      setIsLoading(false)
+      return
+    }
+
     try {
-      const activeItems: FavoriteItem[] = []
-      
-      for (const item of items) {
-        const response = await fetch(`/api/products/${item.id}`)
-        if (response.ok) {
-          const product = await response.json()
-          // Если товар активен, добавляем его в список
-          if (product && product.status === 'ACTIVE') {
-            activeItems.push(item)
-          }
-        }
-        // Если товар не найден или неактивен, просто не добавляем его
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids: favoriteIds }),
+      })
+
+      if (response.ok) {
+        const products = await response.json()
+        
+        const fullFavorites: FavoriteItem[] = products.map((product: any) => ({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          imageUrl: product.imageUrl,
+          category: product.category,
+          seller: product.seller,
+          reviews: product.reviews,
+          _count: product._count,
+          averageRating: product.averageRating
+        }))
+
+        setFavorites(fullFavorites)
+      } else {
+        console.error('Ошибка загрузки товаров из БД', response.status)
+        setFavorites([])
       }
-      
-      setFavorites(activeItems)
-    } catch (_error) {
-      // Ошибка проверки статуса товаров
-      // В случае ошибки оставляем все товары
-      setFavorites(items)
+    } catch (error) {
+      console.error('Ошибка при загрузке товаров избранных:', error)
+      setFavorites([])
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -71,24 +91,12 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       try {
         setIsLoading(true)
         
-        // Сначала пытаемся загрузить из куков
-        const savedFavorites = getFavoritesCookie()
-        if (savedFavorites && savedFavorites.length > 0) {
-          // Валидируем загруженные данные
-          const validFavorites = savedFavorites.filter(item => 
-            item && item.id && item.category?.id && item.category?.name
-          )
-          
-          // Сначала загружаем все товары сразу для быстрого отображения
-          setFavorites(validFavorites)
-          
-          // Затем асинхронно проверяем активность товаров в фоне
-          // Это не должно блокировать отображение
-          setTimeout(() => {
-            checkProductsStatus(validFavorites)
-          }, 1000)
-          
-          setIsLoading(false)
+        // Получаем ID избранных из куков
+        const favoriteIds = validateFavoritesCookie()
+        
+        // Если в куках есть ID, загружаем полные данные из БД
+        if (favoriteIds.length > 0) {
+          await loadFavoritesFromDatabase(favoriteIds)
           return
         }
 
@@ -99,12 +107,22 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
             try {
               const parsedFavorites = JSON.parse(localStorageFavorites)
               if (parsedFavorites && parsedFavorites.length > 0) {
-                setFavorites(parsedFavorites)
-                // Сохраняем в куки и удаляем из localStorage
-                setFavoritesCookie(parsedFavorites)
-                localStorage.removeItem('favorites')
+                // Мигрируем старые данные - извлекаем только ID
+                const favoriteIds = parsedFavorites
+                  .filter((item: any) => item && item.id)
+                  .map((item: any) => item.id)
+                
+                if (favoriteIds.length > 0) {
+                  // Сохраняем ID в новые куки
+                  favoriteIds.forEach((id: string) => addFavoriteToCookie(id))
+                  // Удаляем старые данные из localStorage
+                  localStorage.removeItem('favorites')
+                  // Загружаем полные данные
+                  await loadFavoritesFromDatabase(favoriteIds)
+                  return
+                }
               }
-            } catch (_error) {
+            } catch {
               // Ошибка миграции избранного из localStorage
             }
           }
@@ -119,13 +137,6 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
     loadFavorites()
   }, [])
-
-  // Сохраняем избранные в куки при изменении
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setFavoritesCookie(favorites)
-    }
-  }, [favorites])
 
   const addToFavorites = async (product: FavoriteItem) => {
     // Валидируем структуру товара перед добавлением
@@ -149,6 +160,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       return [...prev, product]
     })
 
+    // Добавляем ID в куки
+    addFavoriteToCookie(product.id)
+
     // Затем асинхронно проверяем активность товара
     try {
       const response = await fetch(`/api/products/${product.id}`)
@@ -156,6 +170,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         // Товар не найден или неактивен
         // Удаляем товар из избранного если он неактивен
         setFavorites(prev => prev.filter(item => item.id !== product.id))
+        removeFavoriteFromCookie(product.id)
         return
       }
       
@@ -164,9 +179,10 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         // Товар неактивен
         // Удаляем товар из избранного если он неактивен
         setFavorites(prev => prev.filter(item => item.id !== product.id))
+        removeFavoriteFromCookie(product.id)
         return
       }
-    } catch (_error) {
+    } catch {
       // Ошибка проверки статуса товара
       // В случае ошибки сети оставляем товар в избранном
     }
@@ -174,6 +190,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   const removeFromFavorites = (productId: string, _productName?: string) => {
     setFavorites(prev => prev.filter(item => item.id !== productId))
+    
+    // Удаляем ID из куки
+    removeFavoriteFromCookie(productId)
     
     // Показываем уведомление об удалении
     if (typeof window !== 'undefined') {
@@ -193,20 +212,16 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   }
 
   const toggleFavorite = async (product: FavoriteItem) => {
-    try {
-      if (isFavorite(product.id)) {
-        removeFromFavorites(product.id)
-      } else {
-        await addToFavorites(product)
-      }
-    } catch (error) {
-      // Ошибка переключения избранного
-      throw error // Пробрасываем ошибку для обработки в компоненте
+    if (isFavorite(product.id)) {
+      removeFromFavorites(product.id)
+    } else {
+      await addToFavorites(product)
     }
   }
 
   const clearFavorites = () => {
     setFavorites([])
+    clearFavoritesCookie()
   }
 
   return (
