@@ -1,7 +1,8 @@
 'use client'
 
-import { Search, Filter, Home, ShoppingCart, Heart, X, Package } from 'lucide-react'
+import { Search, Filter, Home, ShoppingCart, Heart, X, Package, Grid3X3 } from 'lucide-react'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
 import { useFavorites } from '@/context/FavoritesContext'
@@ -16,7 +17,7 @@ interface HeaderProps {
 
 export default function Header({ onFilterClick, onSearch }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [activeNavItem, setActiveNavItem] = useState('home')
+  const pathname = usePathname()
   const { t } = useLanguage()
   const { favorites } = useFavorites()
   const { getTotalItems } = useCart()
@@ -24,18 +25,28 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
 
   const navItems = [
     { id: 'home', icon: Home, label: t.home },
+    { id: 'categories', icon: Grid3X3, label: t.categories || 'Категории' },
     { id: 'cart', icon: ShoppingCart, label: t.cart },
     { id: 'favorites', icon: Heart, label: t.favorites },
     { id: 'orders', icon: Package, label: t.myOrders || 'Мои заказы' }
   ]
 
+  const [hasSearched, setHasSearched] = useState(false)
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
+    const newValue = e.target.value
+    setSearchQuery(newValue)
+    
+    // Если пользователь изменил текст после поиска, сбрасываем флаг поиска
+    if (hasSearched && newValue !== searchQuery) {
+      setHasSearched(false)
+    }
   }
 
   const handleSearchSubmit = () => {
     if (onSearch) {
       onSearch(searchQuery)
+      setHasSearched(true)
     }
     // Закрываем клавиатуру на мобильных устройствах
     if (document.activeElement instanceof HTMLElement) {
@@ -51,6 +62,7 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
 
   const handleClearSearch = () => {
     setSearchQuery('')
+    setHasSearched(false)
     if (onSearch) {
       onSearch('')
     }
@@ -65,11 +77,17 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
             <div className="flex items-center justify-center flex-1">
               {navItems.map((item) => {
                 const IconComponent = item.icon
-                const isActive = activeNavItem === item.id
+                const isActive = (() => {
+                  if (item.id === 'home') return pathname === '/'
+                  if (item.id === 'categories') return pathname.startsWith('/categories') || pathname.startsWith('/category')
+                  if (item.id === 'cart') return pathname.startsWith('/cart')
+                  if (item.id === 'favorites') return pathname.startsWith('/favorites')
+                  if (item.id === 'orders') return pathname.startsWith('/orders')
+                  return false
+                })()
                 
                 const NavButton = ({ children }: { children: React.ReactNode }) => (
-                  <button
-                    onClick={() => setActiveNavItem(item.id)}
+                  <div
                     className={`relative flex items-center space-x-2 px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive 
                         ? 'bg-orange-500 text-white shadow-sm' 
@@ -77,7 +95,7 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
                     }`}
                   >
                     {children}
-                  </button>
+                  </div>
                 )
                 
                 if (item.id === 'cart') {
@@ -110,6 +128,17 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
                             </span>
                           )}
                         </div>
+                        <span>{item.label}</span>
+                      </NavButton>
+                    </Link>
+                  )
+                }
+
+                if (item.id === 'categories') {
+                  return (
+                    <Link key={item.id} href="/categories">
+                      <NavButton>
+                        <IconComponent className="w-4 h-4" />
                         <span>{item.label}</span>
                       </NavButton>
                     </Link>
@@ -153,7 +182,7 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
 
       {/* Search Section */}
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
           {/* Search Bar */}
           <div className="relative flex-1 flex">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -167,19 +196,11 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
               onKeyPress={handleKeyPress}
               className="block w-full pl-11 pr-10 py-3 text-sm text-gray-900 border border-orange-200 rounded-l-xl bg-orange-50 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset focus:border-orange-500 focus:bg-white transition-all duration-200"
             />
-            {searchQuery && (
-              <button
-                onClick={handleClearSearch}
-                className="absolute right-12 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-200 rounded-full transition-colors"
-              >
-                <X className="w-4 h-4 text-gray-500" />
-              </button>
-            )}
             <button
-              onClick={handleSearchSubmit}
+              onClick={hasSearched ? handleClearSearch : handleSearchSubmit}
               className="px-4 py-3 bg-orange-500 text-white rounded-r-xl hover:bg-orange-600 transition-colors duration-200 border border-orange-500"
             >
-              <Search className="w-4 h-4" />
+              {hasSearched ? <X className="w-4 h-4" /> : <Search className="w-4 h-4" />}
             </button>
           </div>
           
@@ -191,9 +212,9 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
           {/* Filter Button */}
           <button
             onClick={onFilterClick}
-            className="px-4 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors duration-200 shadow-sm hover:shadow-md"
+            className="w-10 h-10 hover:bg-gray-100 rounded-full transition-colors duration-200 flex items-center justify-center border border-gray-200 hover:border-gray-300"
           >
-            <Filter className="w-4 h-4" />
+            <Filter className="w-4 h-4 text-gray-600" />
           </button>
         </div>
       </div>

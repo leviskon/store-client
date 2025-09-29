@@ -38,19 +38,57 @@ export async function GET() {
   }
 }
 
-// Создание нового заказа
+// Создание нового заказа или получение заказов по ID
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+    
+    // Если передан массив ids, возвращаем заказы по этим ID
+    if (body.ids && Array.isArray(body.ids)) {
+      const orders = await db.order.findMany({
+        where: {
+          id: { in: body.ids }
+        },
+        include: {
+          orderItems: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  imageUrl: true,
+                  category: {
+                    select: {
+                      name: true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      })
+
+      // Сортируем заказы в том же порядке, что и переданные ID
+      const sortedOrders = body.ids.map((id: string) => 
+        orders.find(order => order.id === id)
+      ).filter(Boolean)
+
+      return NextResponse.json(sortedOrders)
+    }
     
     const {
       customerName,
       customerPhone,
       deliveryAddress,
+      customerComment,
       cartItems
     } = body
 
-    // Валидация данных
+    // Валидация данных для создания заказа
     if (!customerName || !customerPhone || !deliveryAddress) {
       return NextResponse.json(
         { error: 'Все поля обязательны для заполнения' },
@@ -89,6 +127,7 @@ export async function POST(request: NextRequest) {
           customerName,
           customerPhone,
           deliveryAddress,
+          customerComment: customerComment || null,
           status: 'CREATED'
         }
       })

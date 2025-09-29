@@ -25,7 +25,7 @@ export default function Home() {
   const [filters, setFilters] = useState<FilterState>({
     categories: [],
     priceRange: { min: 0, max: 10000 },
-    sortBy: 'newest',
+    sortBy: 'rating',
     seller: '',
     rating: 0
   })
@@ -67,7 +67,7 @@ export default function Home() {
     setFilters({
       categories: [],
       priceRange: { min: 0, max: 10000 },
-      sortBy: 'newest',
+      sortBy: 'rating',
       seller: '',
       rating: 0
     })

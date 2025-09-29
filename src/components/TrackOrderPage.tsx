@@ -51,36 +51,31 @@ export default function TrackOrderPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Загрузка данных заказа
+  // Загрузка данных заказа из API по ID
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         setIsLoading(true)
         setError(null)
 
-        // Сначала проверяем куки
-        const cookieOrders = getOrdersCookie()
-        const cookieOrder = cookieOrders.find(o => o.id === orderId)
+        // Проверяем, есть ли ID заказа в куках (для проверки доступности)
+        const orderIds = getOrdersCookie()
+        if (!orderIds.includes(orderId)) {
+          setError('Заказ не найден')
+          setIsLoading(false)
+          return
+        }
 
-        // Пытаемся получить из API
-        try {
-          const response = await fetch(`/api/orders/${orderId}`)
-          if (response.ok) {
-            const apiOrder = await response.json()
-            setOrder(apiOrder)
-          } else if (cookieOrder) {
-            // Если API не работает, используем данные из куков
-            setOrder(cookieOrder as Order)
-          } else {
-            setError('Заказ не найден')
-          }
-        } catch {
-          console.warn('API недоступно, используем данные из куков')
-          if (cookieOrder) {
-            setOrder(cookieOrder as Order)
-          } else {
-            setError('Заказ не найден')
-          }
+        // Загружаем полные данные заказа из API
+        const response = await fetch(`/api/orders/${orderId}`)
+        
+        if (response.ok) {
+          const orderData = await response.json()
+          setOrder(orderData)
+        } else if (response.status === 404) {
+          setError('Заказ не найден')
+        } else {
+          setError('Ошибка загрузки заказа')
         }
       } catch (err) {
         console.error('Ошибка загрузки заказа:', err)

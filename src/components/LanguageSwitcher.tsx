@@ -32,9 +32,9 @@ export default function LanguageSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="px-4 py-3 bg-white border border-orange-200 rounded-xl hover:bg-orange-50 transition-colors duration-200 shadow-sm hover:shadow-md flex items-center justify-center"
+        className="w-10 h-10 hover:bg-gray-100 rounded-full transition-colors duration-200 flex items-center justify-center border border-gray-200 hover:border-gray-300"
       >
-        <Globe className="w-4 h-4 text-orange-500" />
+        <Globe className="w-4 h-4 text-gray-600" />
       </button>
 
       {isOpen && (

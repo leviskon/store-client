@@ -3,7 +3,7 @@ import AppLayout from '@/components/AppLayout'
 
 export default function Categories() {
   return (
-    <AppLayout>
+    <AppLayout showHeader={false} showBottomNav={true}>
       <CategoriesPage />
     </AppLayout>
   )

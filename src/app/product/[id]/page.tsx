@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Heart, Star, ShoppingBag, Plus, Minus, X } from 'lucide-react'
+import { ArrowLeft, Heart, Star, ShoppingBag, Plus, Minus, X, MessageCircle } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useCart } from '@/context/CartContext'
 import { useNotification } from '@/context/NotificationContext'
 import AppLayout from '@/components/AppLayout'
+import ReviewModal, { ReviewFormData } from '@/components/ReviewModal'
+import RelatedProducts from '@/components/RelatedProducts'
 
 interface Product {
   id: string
@@ -59,6 +61,9 @@ export default function ProductPage() {
   const [selectedColor, setSelectedColor] = useState<string>('')
   const [quantity, setQuantity] = useState(0)
   const [isInCart, setIsInCart] = useState(false)
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false)
+  const [resetReviewForm, setResetReviewForm] = useState(false)
   const { toggleFavorite, isFavorite } = useFavorites()
   const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart()
   const { showNotification } = useNotification()
@@ -91,14 +96,10 @@ export default function ProductPage() {
   // Проверяем, есть ли товар в корзине
   useEffect(() => {
     if (product) {
-      // Находим названия размеров и цветов по их ID
-      const sizeName = product.sizes.find(size => size.id === selectedSize)?.name || selectedSize
-      const colorName = product.colors.find(color => color.id === selectedColor)?.name || selectedColor
-      
       const cartItem = cartItems.find(item => 
         item.id === product.id && 
-        item.selectedSize === sizeName && 
-        item.selectedColor === colorName
+        item.selectedSizeId === selectedSize && 
+        item.selectedColorId === selectedColor
       )
       if (cartItem) {
         setIsInCart(true)
@@ -158,6 +159,8 @@ export default function ProductPage() {
       imageUrl: product.imageUrl,
       selectedSize: sizeName,
       selectedColor: colorName,
+      selectedSizeId: selectedSize,
+      selectedColorId: selectedColor,
       category: product.category,
       seller: product.seller
     }
@@ -180,20 +183,89 @@ export default function ProductPage() {
 
     const newQuantity = quantity + delta
     
-    // Находим названия размеров и цветов по их ID
-    const sizeName = product.sizes.find(size => size.id === selectedSize)?.name || selectedSize
-    const colorName = product.colors.find(color => color.id === selectedColor)?.name || selectedColor
-    
     if (newQuantity <= 0) {
       // Удаляем товар из корзины
-      removeFromCart(product.id, sizeName, colorName)
+      removeFromCart(product.id, selectedSize, selectedColor)
       setIsInCart(false)
       setQuantity(0)
     } else {
       // Обновляем количество в корзине
-      updateQuantity(product.id, newQuantity, sizeName, colorName)
+      updateQuantity(product.id, newQuantity, selectedSize, selectedColor)
       setQuantity(newQuantity)
     }
+  }
+
+  const handleReviewSubmit = async (reviewData: ReviewFormData) => {
+    if (!product) return
+
+    setIsSubmittingReview(true)
+    
+    try {
+      const response = await fetch(`/api/products/${product.id}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reviewData),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        // Обновляем товар, чтобы показать новый отзыв
+        const updatedResponse = await fetch(`/api/products/${product.id}`)
+        if (updatedResponse.ok) {
+          const updatedProduct = await updatedResponse.json()
+          setProduct(updatedProduct)
+        }
+
+        showNotification({
+          type: 'cart',
+          message: 'Отзыв успешно добавлен!',
+          duration: 3000
+        })
+        
+        handleReviewFormReset()
+        setIsReviewModalOpen(false)
+      } else {
+        showNotification({
+          type: 'cart',
+          message: result.error || 'Ошибка при добавлении отзыва',
+          duration: 3000
+        })
+      }
+    } catch (error) {
+      console.error('Ошибка при отправке отзыва:', error)
+      showNotification({
+        type: 'cart',
+        message: 'Произошла ошибка. Попробуйте снова.',
+        duration: 3000
+      })
+    } finally {
+      setIsSubmittingReview(false)
+    }
+  }
+
+  const handleReviewFormReset = () => {
+    setResetReviewForm(true)
+    setTimeout(() => setResetReviewForm(false), 100)
+  }
+
+  const renderStars = (rating: number, size: string = 'w-4 h-4') => {
+    return (
+      <div className="flex">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            className={`${size} ${
+              star <= rating
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'text-gray-300'
+            }`}
+          />
+        ))}
+      </div>
+    )
   }
 
   if (loading) {
@@ -464,11 +536,7 @@ export default function ProductPage() {
                     {/* Кнопка удаления */}
                     <button
                       onClick={() => {
-                        // Находим названия размеров и цветов по их ID
-                        const sizeName = product.sizes.find(size => size.id === selectedSize)?.name || selectedSize
-                        const colorName = product.colors.find(color => color.id === selectedColor)?.name || selectedColor
-                        
-                        removeFromCart(product.id, sizeName, colorName)
+                        removeFromCart(product.id, selectedSize, selectedColor)
                         setIsInCart(false)
                         setQuantity(0)
                       }}
@@ -479,10 +547,105 @@ export default function ProductPage() {
                   </div>
                 )}
               </div>
+              
+              {/* Review Button */}
+              <button
+                onClick={() => setIsReviewModalOpen(true)}
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors border border-gray-200 hover:border-gray-300"
+              >
+                <MessageCircle className="w-5 h-5" />
+                <span>Оставить отзыв</span>
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Reviews Section */}
+        <div className="mt-12 border-t border-gray-200 pt-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Отзывы {product.reviews.length > 0 && `(${product.reviews.length})`}
+            </h2>
+            {product.averageRating > 0 && (
+              <div className="flex items-center space-x-2">
+                {renderStars(product.averageRating)}
+                <span className="text-sm font-medium text-gray-600">
+                  {product.averageRating.toFixed(1)} из 5
+                </span>
+              </div>
+            )}
+          </div>
+
+          {product.reviews.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-xl">
+              <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Отзывов пока нет
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Будьте первым, кто оставит отзыв о этом товаре
+              </p>
+              <button
+                onClick={() => setIsReviewModalOpen(true)}
+                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+              >
+                Написать отзыв
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {product.reviews.slice(0, 3).map((review) => (
+                <div key={review.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold text-gray-900 text-base">
+                        {review.clientName}
+                      </h4>
+                      {renderStars(review.rating, 'w-4 h-4')}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {review.rating} из 5
+                    </div>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed">
+                    {review.text}
+                  </p>
+                </div>
+              ))}
+              
+              {/* Show All Reviews Button */}
+              {product.reviews.length > 3 && (
+                <div className="text-center pt-4">
+                  <button
+                    onClick={() => router.push(`/product/${product.id}/reviews`)}
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-medium transition-colors inline-flex items-center space-x-2"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    <span>Показать все отзывы ({product.reviews.length})</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Related Products */}
+        <RelatedProducts 
+          categoryId={product.category.id}
+          currentProductId={product.id}
+          limit={6}
+        />
       </div>
+
+      {/* Review Modal */}
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        onSubmit={handleReviewSubmit}
+        productName={product.name}
+        isLoading={isSubmittingReview}
+        key={resetReviewForm ? 'reset' : 'normal'}
+      />
     </AppLayout>
   )
 }

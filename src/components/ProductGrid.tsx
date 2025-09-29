@@ -74,6 +74,8 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
         
         if (filters?.sortBy && filters.sortBy !== 'newest') {
           params.append('sortBy', filters.sortBy)
+        } else if (filters?.sortBy === 'rating') {
+          params.append('sortBy', 'rating')
         }
 
         if (filters?.rating && filters.rating > 0) {
@@ -106,7 +108,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
         } else {
           // Ошибка загрузки товаров
         }
-      } catch (_error) {
+      } catch {
         // Ошибка загрузки товаров
       } finally {
         setLoading(false)
@@ -155,7 +157,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
           duration: 2000
         })
       }
-    } catch (_error) {
+    } catch {
       // Ошибка переключения избранного
       showNotification({
         type: 'error',

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ArrowLeft, Package } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
-import { getOrdersCookie } from '@/lib/cookies'
+import { validateOrdersCookie } from '@/lib/cookies'
 import Link from 'next/link'
 
 // Типы для заказов (обновленные для соответствия БД)
@@ -44,47 +44,45 @@ export default function OrdersPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Загрузка заказов из API и куков
+  // Загрузка заказов из API по ID из cookies
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setIsLoading(true)
         setError(null)
         
-        // Получаем заказы из куков (локальные заказы)
-        const cookieOrders = getOrdersCookie()
+        // Получаем ID заказов из куков
+        const orderIds = validateOrdersCookie()
+        console.log('OrdersPage: Loaded order IDs from cookies:', orderIds.length)
         
-        // Пытаемся получить заказы из API
-        try {
-          const response = await fetch('/api/orders')
-          if (response.ok) {
-            const apiOrders = await response.json()
-            
-            // Объединяем заказы из API и куков, убираем дубликаты
-            const allOrders = [...apiOrders]
-            
-            // Добавляем заказы из куков, которых нет в API
-            cookieOrders.forEach(cookieOrder => {
-              if (!apiOrders.find((apiOrder: Order) => apiOrder.id === cookieOrder.id)) {
-                allOrders.push(cookieOrder)
-              }
-            })
-            
-            setOrders(allOrders)
-          } else {
-            // Если API недоступно, используем только заказы из куков
-            setOrders(cookieOrders)
-          }
-        } catch (apiError) {
-          console.warn('API недоступно, используем заказы из куков:', apiError)
-          setOrders(cookieOrders)
+        if (orderIds.length === 0) {
+          setOrders([])
+          setIsLoading(false)
+          return
+        }
+
+        // Загружаем полные данные заказов из API
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ids: orderIds }),
+        })
+
+        if (response.ok) {
+          const ordersData = await response.json()
+          console.log('OrdersPage: Loaded orders from API:', ordersData.length)
+          setOrders(ordersData)
+        } else {
+          console.error('Ошибка загрузки заказов из API', response.status)
+          setError('Не удалось загрузить заказы')
+          setOrders([])
         }
       } catch (err) {
         console.error('Ошибка загрузки заказов:', err)
         setError('Не удалось загрузить заказы')
-        // В случае ошибки все равно пытаемся показать заказы из куков
-        const cookieOrders = getOrdersCookie()
-        setOrders(cookieOrders)
+        setOrders([])
       } finally {
         setIsLoading(false)
       }
@@ -112,19 +110,28 @@ export default function OrdersPage() {
     }
   }
 
-  const getFilteredOrders = () => {
+  const getFilteredOrders = (): Order[] => {
+    console.log('OrdersPage: Filtering orders. Total orders:', orders.length, 'Active tab:', activeTab)
+    
+    let filtered: Order[] = []
     switch (activeTab) {
       case 'active':
-        return orders.filter(order => 
+        filtered = orders.filter(order => 
           ['CREATED', 'COURIER_WAIT', 'COURIER_PICKED', 'ENROUTE'].includes(order.status)
         )
+        break
       case 'completed':
-        return orders.filter(order => order.status === 'DELIVERED')
+        filtered = orders.filter(order => order.status === 'DELIVERED')
+        break
       case 'cancelled':
-        return orders.filter(order => order.status === 'CANCELED')
+        filtered = orders.filter(order => order.status === 'CANCELED')
+        break
       default:
-        return []
+        filtered = []
     }
+    
+    console.log('OrdersPage: Filtered orders count:', filtered.length)
+    return filtered
   }
 
   const formatDate = (dateString: string) => {

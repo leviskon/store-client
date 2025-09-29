@@ -1,22 +1,26 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Minus, Plus, Trash2 } from 'lucide-react'
+import { Minus, Plus, Trash2, Palette, Ruler } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { CartItem } from '@/context/CartContext'
+import CartItemOptionsModal from './CartItemOptionsModal'
 
 interface SwipeableCartItemProps {
   item: CartItem
-  onQuantityChange: (itemId: string, quantity: number, selectedSize?: string, selectedColor?: string) => void
+  onQuantityChange: (itemId: string, quantity: number, selectedSizeId?: string, selectedColorId?: string) => void
   onRemove: (itemId: string) => void
+  onOptionsChange?: (itemId: string, currentSizeId?: string, currentColorId?: string, newSizeId?: string, newColorId?: string, newSize?: string, newColor?: string) => void
 }
 
-export default function SwipeableCartItem({ item, onQuantityChange, onRemove }: SwipeableCartItemProps) {
+export default function SwipeableCartItem({ item, onQuantityChange, onRemove, onOptionsChange }: SwipeableCartItemProps) {
   const { t } = useLanguage()
   const [isSwipeActive, setIsSwipeActive] = useState(false)
   const [translateX, setTranslateX] = useState(0)
   const [startX, setStartX] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [isColorModalOpen, setIsColorModalOpen] = useState(false)
+  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false)
   const itemRef = useRef<HTMLDivElement>(null)
 
   const formatPrice = (price: number) => `${price.toFixed(0)} сом`
@@ -143,53 +147,100 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove }: 
           {/* Product Info */}
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{item.name}</h3>
-            <div className="text-xs text-gray-500 mb-2 space-y-1">
+            <div className="text-sm font-bold text-gray-900 mb-2">{formatPrice(Number(item.price))}</div>
+            
+            {/* Size and Color Option Buttons */}
+            <div className="flex flex-col gap-2 mt-2">
               {item.selectedSize && (
-                <div className="flex items-center">
-                  <span className="text-gray-400">{t.size}:</span>
-                  <span className="ml-1 font-medium text-gray-600">{item.selectedSize}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsSizeModalOpen(true)}
+                    className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-xs text-gray-600 border border-gray-200"
+                  >
+                    <Ruler className="w-3 h-3" />
+                    <span>Размер</span>
+                  </button>
+                  <span className="text-xs font-medium text-gray-700">{item.selectedSize}</span>
                 </div>
               )}
               {item.selectedColor && (
-                <div className="flex items-center">
-                  <span className="text-gray-400">{t.color}:</span>
-                  <span className="ml-1 font-medium text-gray-600">{item.selectedColor}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsColorModalOpen(true)}
+                    className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-xs text-gray-600 border border-gray-200"
+                  >
+                    <Palette className="w-3 h-3" />
+                    <span>Цвет</span>
+                  </button>
+                  <span className="text-xs font-medium text-gray-700">{item.selectedColor}</span>
                 </div>
               )}
             </div>
-            <div className="text-sm font-bold text-gray-900">{formatPrice(Number(item.price))}</div>
+          </div>
+
+          {/* Quantity Controls - Moved to right */}
+          <div className="flex flex-col items-end justify-center gap-2">
+            <div className="flex items-center border border-gray-200 rounded-lg">
+              <button
+                onClick={() => onQuantityChange(item.id, item.quantity - 1, item.selectedSizeId, item.selectedColorId)}
+                className="p-1.5 hover:bg-gray-50 transition-colors disabled:opacity-30"
+                disabled={item.quantity <= 1}
+              >
+                <Minus className="w-3 h-3 text-gray-600" />
+              </button>
+              <div className="px-3 py-1.5 text-sm font-medium text-gray-900 min-w-[2rem] text-center">
+                {item.quantity}
+              </div>
+              <button
+                onClick={() => onQuantityChange(item.id, item.quantity + 1, item.selectedSizeId, item.selectedColorId)}
+                className="p-1.5 hover:bg-gray-50 transition-colors"
+              >
+                <Plus className="w-3 h-3 text-gray-600" />
+              </button>
+            </div>
+            
+            {/* Hint text when swiped */}
+            {isSwipeActive && (
+              <div className="text-xs text-gray-500">
+                ← {t.removeFromCart}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Quantity Controls */}
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center border border-gray-200 rounded-lg">
-            <button
-              onClick={() => onQuantityChange(item.id, item.quantity - 1, item.selectedSize, item.selectedColor)}
-              className="p-2 hover:bg-gray-50 transition-colors disabled:opacity-30"
-              disabled={item.quantity <= 1}
-            >
-              <Minus className="w-4 h-4 text-gray-600" />
-            </button>
-            <div className="px-4 py-2 text-sm font-medium text-gray-900 min-w-[3rem] text-center">
-              {item.quantity}
-            </div>
-            <button
-              onClick={() => onQuantityChange(item.id, item.quantity + 1, item.selectedSize, item.selectedColor)}
-              className="p-2 hover:bg-gray-50 transition-colors"
-            >
-              <Plus className="w-4 h-4 text-gray-600" />
-            </button>
-          </div>
-          
-          {/* Hint text when swiped */}
-          {isSwipeActive && (
-            <div className="text-xs text-gray-500">
-              ← {t.removeFromCart}
-            </div>
-          )}
-        </div>
       </div>
+
+      {/* Color Modal */}
+      <CartItemOptionsModal
+        isOpen={isColorModalOpen}
+        onClose={() => setIsColorModalOpen(false)}
+        onSave={(_sizeId, colorId, _sizeName, colorName) => {
+          if (onOptionsChange && (colorId || colorName)) {
+            onOptionsChange(item.id, item.selectedSizeId, item.selectedColorId, item.selectedSizeId, colorId, item.selectedSize, colorName)
+          }
+        }}
+        currentSize={item.selectedSize}
+        currentColor={item.selectedColor}
+        productId={item.id}
+        productName={item.name}
+        optionType="color"
+      />
+
+      {/* Size Modal */}
+      <CartItemOptionsModal
+        isOpen={isSizeModalOpen}
+        onClose={() => setIsSizeModalOpen(false)}
+        onSave={(sizeId, _colorId, sizeName, _colorName) => {
+          if (onOptionsChange && (sizeId || sizeName)) {
+            onOptionsChange(item.id, item.selectedSizeId, item.selectedColorId, sizeId, item.selectedColorId, sizeName, item.selectedColor)
+          }
+        }}
+        currentSize={item.selectedSize}
+        currentColor={item.selectedColor}
+        productId={item.id}
+        productName={item.name}
+        optionType="size"
+      />
     </div>
   )
 }

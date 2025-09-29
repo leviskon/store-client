@@ -31,12 +31,14 @@ interface FavoritesContextType {
   isFavorite: (productId: string) => boolean
   toggleFavorite: (product: FavoriteItem) => Promise<void>
   clearFavorites: () => void
+  isLoading: boolean
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined)
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   // Функция для проверки активности товаров
   const checkProductsStatus = async (items: FavoriteItem[]) => {
@@ -65,43 +67,57 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   // Загружаем избранные из куков при инициализации
   useEffect(() => {
-    // Сначала пытаемся загрузить из куков
-    const savedFavorites = getFavoritesCookie()
-    if (savedFavorites && savedFavorites.length > 0) {
-      // Валидируем загруженные данные
-      const validFavorites = savedFavorites.filter(item => 
-        item && item.id && item.category?.id && item.category?.name
-      )
-      
-      // Сначала загружаем все товары сразу для быстрого отображения
-      setFavorites(validFavorites)
-      
-      // Затем асинхронно проверяем активность товаров в фоне
-      // Это не должно блокировать отображение
-      setTimeout(() => {
-        checkProductsStatus(validFavorites)
-      }, 1000)
-      
-      return
-    }
-
-    // Если в куках нет, проверяем localStorage для миграции
-    if (typeof window !== 'undefined') {
-      const localStorageFavorites = localStorage.getItem('favorites')
-      if (localStorageFavorites) {
-        try {
-          const parsedFavorites = JSON.parse(localStorageFavorites)
-          if (parsedFavorites && parsedFavorites.length > 0) {
-            setFavorites(parsedFavorites)
-            // Сохраняем в куки и удаляем из localStorage
-            setFavoritesCookie(parsedFavorites)
-            localStorage.removeItem('favorites')
-          }
-        } catch (_error) {
-          // Ошибка миграции избранного из localStorage
+    const loadFavorites = async () => {
+      try {
+        setIsLoading(true)
+        
+        // Сначала пытаемся загрузить из куков
+        const savedFavorites = getFavoritesCookie()
+        if (savedFavorites && savedFavorites.length > 0) {
+          // Валидируем загруженные данные
+          const validFavorites = savedFavorites.filter(item => 
+            item && item.id && item.category?.id && item.category?.name
+          )
+          
+          // Сначала загружаем все товары сразу для быстрого отображения
+          setFavorites(validFavorites)
+          
+          // Затем асинхронно проверяем активность товаров в фоне
+          // Это не должно блокировать отображение
+          setTimeout(() => {
+            checkProductsStatus(validFavorites)
+          }, 1000)
+          
+          setIsLoading(false)
+          return
         }
+
+        // Если в куках нет, проверяем localStorage для миграции
+        if (typeof window !== 'undefined') {
+          const localStorageFavorites = localStorage.getItem('favorites')
+          if (localStorageFavorites) {
+            try {
+              const parsedFavorites = JSON.parse(localStorageFavorites)
+              if (parsedFavorites && parsedFavorites.length > 0) {
+                setFavorites(parsedFavorites)
+                // Сохраняем в куки и удаляем из localStorage
+                setFavoritesCookie(parsedFavorites)
+                localStorage.removeItem('favorites')
+              }
+            } catch (_error) {
+              // Ошибка миграции избранного из localStorage
+            }
+          }
+        }
+        
+        setIsLoading(false)
+      } catch (error) {
+        console.error('Ошибка загрузки избранных:', error)
+        setIsLoading(false)
       }
     }
+
+    loadFavorites()
   }, [])
 
   // Сохраняем избранные в куки при изменении
@@ -200,7 +216,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       removeFromFavorites,
       isFavorite,
       toggleFavorite,
-      clearFavorites
+      clearFavorites,
+      isLoading
     }}>
       {children}
     </FavoritesContext.Provider>

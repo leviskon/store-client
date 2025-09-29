@@ -177,7 +177,7 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
             {t.seeAll}
           </button>
         </div>
-        <div className="overflow-x-auto pb-2">
+        <div className="overflow-x-auto pb-2 scrollbar-hide">
           <div className="flex gap-4 min-w-max">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="flex-shrink-0 flex flex-col items-center space-y-3">
@@ -228,7 +228,7 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
       </div>
 
       {/* Горизонтальный скролл категорий (заменяется подкатегориями) */}
-      <div className="overflow-x-auto pb-2">
+      <div className="overflow-x-auto pb-2 scrollbar-hide">
         <div className="flex gap-4 min-w-max">
             {/* Кнопка "Все товары" - всегда видима */}
             <div className="flex-shrink-0">

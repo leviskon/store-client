@@ -12,7 +12,7 @@ import Link from 'next/link'
 export default function FavoritesPage() {
   const router = useRouter()
   const { t } = useLanguage()
-  const { favorites, removeFromFavorites } = useFavorites()
+  const { favorites, removeFromFavorites, isLoading } = useFavorites()
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const [productToRemove, setProductToRemove] = useState<string | null>(null)
@@ -66,6 +66,33 @@ export default function FavoritesPage() {
     }
     return favorites.filter(item => item?.category?.id === selectedCategory)
   }, [favorites, selectedCategory])
+
+  // Показываем индикатор загрузки пока данные загружаются
+  if (isLoading) {
+    return (
+      <AppLayout showHeader={false} showBottomNav={true}>
+        {/* Header */}
+        <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <button
+            onClick={() => router.push('/')}
+            className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
+          </button>
+          
+          <h1 className="text-lg font-medium text-white">{t.myWishlist}</h1>
+          
+          <div className="w-10 h-10"></div>
+        </div>
+
+        {/* Loading State */}
+        <div className="flex flex-col items-center justify-center py-16">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4"></div>
+          <p className="text-gray-500">Загрузка избранных...</p>
+        </div>
+      </AppLayout>
+    )
+  }
 
   if (favorites.length === 0) {
     return (
@@ -129,7 +156,7 @@ export default function FavoritesPage() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6">
         {/* Category Filter */}
         <div className="mb-6">
-          <div className="flex items-center gap-3 overflow-x-auto pb-2 px-1">
+          <div className="flex items-center gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide">
             {categories.map((category) => (
               <button
                 key={`category-${category.id}`}

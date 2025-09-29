@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { getOrdersCookie } from '@/lib/cookies'
+import { validateOrdersCookie } from '@/lib/cookies'
 
 interface Order {
   id: string
@@ -27,52 +27,51 @@ const OrdersContext = createContext<OrdersContextType | undefined>(undefined)
 export function OrdersProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([])
 
+  // Функция для загрузки полных данных заказов из API по ID
+  const loadOrdersFromAPI = async (orderIds: string[]) => {
+    if (orderIds.length === 0) {
+      setOrders([])
+      return
+    }
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids: orderIds }),
+      })
+
+      if (response.ok) {
+        const ordersData = await response.json()
+        setOrders(ordersData)
+      } else {
+        console.error('Ошибка загрузки заказов из API', response.status)
+        setOrders([])
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке заказов:', error)
+      setOrders([])
+    }
+  }
+
   const refreshOrders = async () => {
     try {
-      // Получаем заказы из куков (локальные заказы)
-      const cookieOrders = getOrdersCookie()
-      
-      // Пытаемся получить заказы из API
-      try {
-        const response = await fetch('/api/orders')
-        if (response.ok) {
-          const apiOrders = await response.json()
-          
-          // Объединяем заказы из API и куков, убираем дубликаты
-          const allOrders = [...apiOrders]
-          
-          // Добавляем заказы из куков, которых нет в API
-          cookieOrders.forEach(cookieOrder => {
-            if (!apiOrders.find((apiOrder: Order) => apiOrder.id === cookieOrder.id)) {
-              allOrders.push(cookieOrder)
-            }
-          })
-          
-          setOrders(allOrders)
-        } else {
-          // Если API недоступно, используем только заказы из куков
-          setOrders(cookieOrders as Order[])
-        }
-      } catch (apiError) {
-        console.warn('API недоступно, используем заказы из куков:', apiError)
-        setOrders(cookieOrders as Order[])
-      }
+      // Получаем ID заказов из куков
+      const orderIds = validateOrdersCookie()
+      await loadOrdersFromAPI(orderIds)
     } catch (err) {
       console.error('Ошибка загрузки заказов:', err)
-      // В случае ошибки все равно пытаемся показать заказы из куков
-      const cookieOrders = getOrdersCookie()
-      setOrders(cookieOrders as Order[])
+      setOrders([])
     }
   }
 
   // Загружаем заказы при инициализации
   useEffect(() => {
-    // Сначала загружаем из куков для мгновенного отображения счетчика
-    const cookieOrders = getOrdersCookie()
-    setOrders(cookieOrders as Order[])
-    
-    // Затем обновляем из API
-    refreshOrders()
+    // Загружаем ID из куков и получаем полные данные из API
+    const orderIds = validateOrdersCookie()
+    loadOrdersFromAPI(orderIds)
   }, [])
 
   const getTotalOrders = () => {

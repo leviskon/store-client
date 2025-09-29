@@ -12,10 +12,11 @@ export async function GET(request: Request) {
     const categories = searchParams.getAll('categories')
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
-    const sortBy = searchParams.get('sortBy') || 'newest'
+    const sortBy = searchParams.get('sortBy') || 'rating'
     const minRating = searchParams.get('minRating')
     const seller = searchParams.get('seller')
     const search = searchParams.get('search')
+    const limit = searchParams.get('limit')
 
     // Строим условия фильтрации
     const where: any = {
@@ -90,11 +91,16 @@ export async function GET(request: Request) {
       case 'price_high':
         orderBy = { price: 'desc' }
         break
+      case 'newest':
+        orderBy = { createdAt: 'desc' }
+        break
       case 'rating':
-        // Для сортировки по рейтингу нужно будет использовать raw SQL или агрегацию
+        // Для сортировки по рейтингу используем сортировку по дате создания как fallback
+        // Реальная сортировка по рейтингу будет выполнена после загрузки данных
         orderBy = { createdAt: 'desc' }
         break
       default:
+        // По умолчанию сортируем по рейтингу
         orderBy = { createdAt: 'desc' }
     }
 
@@ -124,24 +130,146 @@ export async function GET(request: Request) {
         }
       },
       orderBy,
-      take: 50 // Увеличиваем лимит для фильтрации
+      take: limit ? parseInt(limit) : 50 // Используем переданный лимит или 50 по умолчанию
     })
 
-    // Фильтрация по минимальному рейтингу (делаем на клиенте, так как в Prisma сложно)
+    // Вычисляем средний рейтинг для каждого товара
+    const productsWithRating = products.map(product => {
+      const avgRating = product.reviews.length > 0
+        ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
+        : 0
+      
+      return {
+        ...product,
+        averageRating: avgRating
+      }
+    })
+
+    // Фильтрация по минимальному рейтингу
+    let filteredProducts = productsWithRating
     if (minRating) {
       const minRatingValue = parseFloat(minRating)
-      products = products.filter(product => {
-        if (product.reviews.length === 0) return minRatingValue === 0
-        const avgRating = product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
-        return avgRating >= minRatingValue
+      filteredProducts = productsWithRating.filter(product => {
+        return product.averageRating >= minRatingValue
+      })
+    }
+
+    // Сортировка по рейтингу (по умолчанию или если выбрана)
+    if (sortBy === 'rating') {
+      filteredProducts.sort((a, b) => {
+        // Сначала товары с рейтингом, потом без рейтинга
+        if (a.averageRating === 0 && b.averageRating === 0) return 0
+        if (a.averageRating === 0) return 1
+        if (b.averageRating === 0) return -1
+        return b.averageRating - a.averageRating
       })
     }
 
     // Товары найдены
-    return NextResponse.json(products)
+    return NextResponse.json(filteredProducts)
   } catch (error) {
     // Ошибка загрузки товаров
     console.error('Ошибка загрузки товаров:', error)
+    return NextResponse.json(
+      { error: 'Ошибка загрузки товаров' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const { ids } = body
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json(
+        { error: 'Необходим массив ID товаров' },
+        { status: 400 }
+      )
+    }
+
+    const products = await db.product.findMany({
+      where: {
+        id: { in: ids },
+        status: 'ACTIVE'
+      },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
+        seller: {
+          select: {
+            id: true,
+            fullname: true
+          }
+        },
+        productSizes: {
+          include: {
+            size: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
+        },
+        productColors: {
+          include: {
+            color: {
+              select: {
+                id: true,
+                name: true,
+                colorCode: true
+              }
+            }
+          }
+        },
+        reviews: {
+          select: {
+            rating: true
+          }
+        },
+        _count: {
+          select: {
+            reviews: true
+          }
+        }
+      }
+    })
+
+    // Добавляем средний рейтинг и приводим к ожидаемому формату
+    const productsWithRating = products.map(product => {
+      const avgRating = product.reviews.length > 0
+        ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
+        : 0
+      
+      // Преобразуем productSizes и productColors в нужный формат
+      const sizes = product.productSizes.map(ps => ({
+        id: ps.size.id,
+        name: ps.size.name
+      }))
+      
+      const colors = product.productColors.map(pc => ({
+        id: pc.color.id,
+        name: pc.color.name,
+        colorCode: pc.color.colorCode
+      }))
+      
+      return {
+        ...product,
+        sizes,
+        colors,
+        averageRating: avgRating
+      }
+    })
+
+    return NextResponse.json(productsWithRating)
+  } catch (error) {
+    console.error('Ошибка загрузки товаров по ID:', error)
     return NextResponse.json(
       { error: 'Ошибка загрузки товаров' },
       { status: 500 }

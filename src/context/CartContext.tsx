@@ -11,6 +11,8 @@ export interface CartItem {
   quantity: number
   selectedSize?: string
   selectedColor?: string
+  selectedSizeId?: string
+  selectedColorId?: string
   category: {
     id: string
     name: string
@@ -23,62 +25,131 @@ export interface CartItem {
 interface CartContextType {
   cartItems: CartItem[]
   addToCart: (product: Omit<CartItem, 'quantity'>, quantity?: number) => Promise<boolean>
-  removeFromCart: (productId: string, selectedSize?: string, selectedColor?: string) => void
-  updateQuantity: (productId: string, quantity: number, selectedSize?: string, selectedColor?: string) => void
+  removeFromCart: (productId: string, selectedSizeId?: string, selectedColorId?: string) => void
+  updateQuantity: (productId: string, quantity: number, selectedSizeId?: string, selectedColorId?: string) => void
+  updateItemOptions: (productId: string, currentSizeId?: string, currentColorId?: string, newSizeId?: string, newColorId?: string, newSize?: string, newColor?: string) => void
   clearCart: () => void
   getTotalPrice: () => number
   getTotalItems: () => number
   isInCart: (productId: string) => boolean
+  isLoading: boolean
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
-// Функции для работы с куками корзины
+// Функции для работы с куками корзины в компактном формате
+// Формат: {id}:{size_id}:{color_id}:{quantity};{id}:{size_id}:{color_id}:{quantity}
 export function setCartCookie(cartItems: CartItem[]) {
-  const cartJson = JSON.stringify(cartItems)
-  setCookie('cart', cartJson)
+  const cartString = cartItems.map(item => 
+    `${item.id}:${item.selectedSizeId || ''}:${item.selectedColorId || ''}:${item.quantity}`
+  ).join(';')
+  setCookie('cart', cartString)
 }
 
-export function getCartCookie(): CartItem[] {
+export function getCartCookie(): string {
   try {
-    const cartJson = getCookie('cart')
-    if (cartJson) {
-      return JSON.parse(cartJson)
-    }
+    const cartString = getCookie('cart')
+    return cartString || ''
   } catch {
     // Игнорируем ошибки парсинга
   }
-  return []
+  return ''
+}
+
+// Функция для парсинга компактного формата корзины
+export function parseCartCookie(cartString: string): Array<{id: string, sizeId: string, colorId: string, quantity: number}> {
+  if (!cartString) return []
+  
+  try {
+    return cartString.split(';').filter(item => item.trim()).map(item => {
+      const [id, sizeId, colorId, quantity] = item.split(':')
+      return {
+        id: id || '',
+        sizeId: sizeId || '',
+        colorId: colorId || '',
+        quantity: parseInt(quantity) || 1
+      }
+    }).filter(item => item.id) // Фильтруем пустые ID
+  } catch (error) {
+    console.error('Ошибка парсинга корзины:', error)
+    return []
+  }
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Функция для валидации товаров в корзине
-  const validateCartItems = (items: CartItem[]) => {
-    // Просто валидируем структуру данных без проверки статуса
-    const validItems = items.filter(item => 
-      item && item.id && item.category?.id && item.category?.name && item.quantity > 0
-    )
-    
-    setCartItems(validItems)
+  // Функция для загрузки полных данных товаров из БД по ID
+  const loadCartItemsFromDatabase = async (cartData: Array<{id: string, sizeId: string, colorId: string, quantity: number}>) => {
+    if (cartData.length === 0) {
+      setCartItems([])
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      const productIds = [...new Set(cartData.map(item => item.id))]
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids: productIds }),
+      })
+
+      if (response.ok) {
+        const products = await response.json()
+        
+        const fullCartItems: CartItem[] = cartData.map(cartItem => {
+          const product = products.find((p: any) => p.id === cartItem.id)
+          if (!product) return null
+
+          // Находим размер и цвет по ID
+          const size = product.sizes?.find((s: any) => s.id === cartItem.sizeId)
+          const color = product.colors?.find((c: any) => c.id === cartItem.colorId)
+
+          return {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: product.imageUrl,
+            quantity: cartItem.quantity,
+            selectedSize: size?.name || '',
+            selectedColor: color?.name || '',
+            selectedSizeId: cartItem.sizeId,
+            selectedColorId: cartItem.colorId,
+            category: product.category,
+            seller: product.seller
+          }
+        }).filter(Boolean) as CartItem[]
+
+        setCartItems(fullCartItems)
+      } else {
+        console.error('Ошибка загрузки товаров из БД', response.status)
+        setCartItems([])
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке товаров корзины:', error)
+      setCartItems([])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   // Загружаем корзину из куков при инициализации
   useEffect(() => {
-    const savedCart = getCartCookie()
-    if (savedCart && savedCart.length > 0) {
-      // Валидируем загруженные данные
-      validateCartItems(savedCart)
-    }
+    const cartString = getCartCookie()
+    const cartData = parseCartCookie(cartString)
+    loadCartItemsFromDatabase(cartData)
   }, [])
 
   // Сохраняем корзину в куки при изменении
   useEffect(() => {
-    if (cartItems.length >= 0) {
+    if (!isLoading) {
       setCartCookie(cartItems)
     }
-  }, [cartItems])
+  }, [cartItems, isLoading])
 
   const addToCart = async (product: Omit<CartItem, 'quantity'>, quantity: number = 1): Promise<boolean> => {
     // Валидируем структуру товара перед добавлением
@@ -90,8 +161,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Проверяем, есть ли уже такой товар в корзине
       const existingItemIndex = prev.findIndex(item => 
         item.id === product.id && 
-        item.selectedSize === product.selectedSize && 
-        item.selectedColor === product.selectedColor
+        item.selectedSizeId === product.selectedSizeId && 
+        item.selectedColorId === product.selectedColorId
       )
 
       if (existingItemIndex >= 0) {
@@ -108,21 +179,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return true
   }
 
-  const removeFromCart = (productId: string, selectedSize?: string, selectedColor?: string) => {
+  const removeFromCart = (productId: string, selectedSizeId?: string, selectedColorId?: string) => {
     setCartItems(prev => prev.filter(item => 
       !(item.id === productId && 
-        item.selectedSize === selectedSize && 
-        item.selectedColor === selectedColor)
+        item.selectedSizeId === selectedSizeId && 
+        item.selectedColorId === selectedColorId)
     ))
   }
 
-  const updateQuantity = (productId: string, quantity: number, selectedSize?: string, selectedColor?: string) => {
+  const updateQuantity = (productId: string, quantity: number, selectedSizeId?: string, selectedColorId?: string) => {
     if (quantity <= 0) {
       // Если нужно удалить товар, ищем по ID, размеру и цвету
       setCartItems(prev => prev.filter(item => 
         !(item.id === productId && 
-          item.selectedSize === selectedSize && 
-          item.selectedColor === selectedColor)
+          item.selectedSizeId === selectedSizeId && 
+          item.selectedColorId === selectedColorId)
       ))
       return
     }
@@ -131,13 +202,63 @@ export function CartProvider({ children }: { children: ReactNode }) {
       prev.map(item => {
         // Обновляем только если совпадают ID, размер и цвет
         if (item.id === productId && 
-            item.selectedSize === selectedSize && 
-            item.selectedColor === selectedColor) {
+            item.selectedSizeId === selectedSizeId && 
+            item.selectedColorId === selectedColorId) {
           return { ...item, quantity }
         }
         return item
       })
     )
+  }
+
+  const updateItemOptions = (productId: string, currentSizeId?: string, currentColorId?: string, newSizeId?: string, newColorId?: string, newSize?: string, newColor?: string) => {
+    setCartItems(prev => {
+      // Находим текущий товар
+      const currentItemIndex = prev.findIndex(item => 
+        item.id === productId && 
+        (item.selectedSizeId || '') === (currentSizeId || '') && 
+        (item.selectedColorId || '') === (currentColorId || '')
+      )
+      
+      if (currentItemIndex === -1) {
+        return prev // Товар не найден
+      }
+      
+      const currentItem = prev[currentItemIndex]
+      const finalSizeId = newSizeId || currentItem.selectedSizeId
+      const finalColorId = newColorId || currentItem.selectedColorId
+      const finalSize = newSize || currentItem.selectedSize
+      const finalColor = newColor || currentItem.selectedColor
+      
+      // Проверяем, есть ли уже товар с новыми опциями
+      const existingItemIndex = prev.findIndex(item => 
+        item.id === productId && 
+        (item.selectedSizeId || '') === (finalSizeId || '') && 
+        (item.selectedColorId || '') === (finalColorId || '')
+      )
+      
+      if (existingItemIndex !== -1 && existingItemIndex !== currentItemIndex) {
+        // Если товар с новыми опциями уже существует, объединяем количества
+        const newItems = [...prev]
+        newItems[existingItemIndex].quantity += currentItem.quantity
+        newItems.splice(currentItemIndex, 1) // Удаляем текущий товар
+        return newItems
+      } else {
+        // Если товара с новыми опциями нет, просто обновляем опции
+        return prev.map((item, index) => {
+          if (index === currentItemIndex) {
+            return { 
+              ...item, 
+              selectedSize: finalSize,
+              selectedColor: finalColor,
+              selectedSizeId: finalSizeId,
+              selectedColorId: finalColorId
+            }
+          }
+          return item
+        })
+      }
+    })
   }
 
   const clearCart = () => {
@@ -162,10 +283,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       addToCart,
       removeFromCart,
       updateQuantity,
+      updateItemOptions,
       clearCart,
       getTotalPrice,
       getTotalItems,
-      isInCart
+      isInCart,
+      isLoading
     }}>
       {children}
     </CartContext.Provider>
