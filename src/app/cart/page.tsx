@@ -27,7 +27,7 @@ export default function CartPage() {
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false)
   const [selectedItemForOptions, setSelectedItemForOptions] = useState<any>(null)
 
-  const formatPrice = (price: number) => `${price.toFixed(0)} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
 
   const handleRemoveItem = (itemId: string) => {
     setRemoveItemId(itemId)

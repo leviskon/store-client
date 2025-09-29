@@ -264,7 +264,7 @@ export default function ProductReviewsPage() {
         ) : (
           <div className="space-y-6">
             {reviews.map((review) => (
-              <div key={review.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+              <div key={review.id} className="bg-white p-6 rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h4 className="font-semibold text-gray-900 text-base">

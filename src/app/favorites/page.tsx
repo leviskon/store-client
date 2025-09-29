@@ -17,7 +17,7 @@ export default function FavoritesPage() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const [productToRemove, setProductToRemove] = useState<string | null>(null)
 
-  const formatPrice = (price: number) => `${price.toFixed(0)} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
 
   const handleRemoveClick = (productId: string) => {
     setProductToRemove(productId)

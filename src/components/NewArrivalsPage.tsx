@@ -7,6 +7,8 @@ import { useState } from 'react'
 
 export default function NewArrivalsPage() {
   const { t } = useLanguage()
+  
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('newest')
@@ -295,10 +297,10 @@ export default function NewArrivalsPage() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-2">
                     <span className="text-xl font-bold text-gray-900">
-                      {product.price} {t.language === 'kg' ? 'сом' : 'сом'}
+                      {formatPrice(product.price)}
                     </span>
                     <span className="text-sm text-gray-500 line-through">
-                      {product.originalPrice} {t.language === 'kg' ? 'сом' : 'сом'}
+                      {formatPrice(product.originalPrice)}
                     </span>
                   </div>
                 </div>

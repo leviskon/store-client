@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Package } from 'lucide-react'
+import { ArrowLeft, Package, Clock, User, Truck, CheckCircle, XCircle, AlertCircle, ShoppingCart, Phone, MapPin } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { validateOrdersCookie } from '@/lib/cookies'
 import Link from 'next/link'
@@ -91,23 +91,70 @@ export default function OrdersPage() {
     fetchOrders()
   }, [])
 
-  const getStatusText = (status: Order['status']) => {
+  const getStatusInfo = (status: Order['status']) => {
     switch (status) {
       case 'CREATED':
-        return 'Создан'
+        return {
+          text: 'Создан',
+          icon: AlertCircle,
+          color: 'bg-blue-100 text-blue-800 border-blue-200',
+          iconColor: 'text-blue-600'
+        }
       case 'COURIER_WAIT':
-        return 'Ожидает курьера'
+        return {
+          text: 'Ожидает курьера',
+          icon: Clock,
+          color: 'bg-orange-100 text-orange-800 border-orange-200',
+          iconColor: 'text-orange-600'
+        }
       case 'COURIER_PICKED':
-        return 'Забрал курьер'
+        return {
+          text: 'Забрал курьер',
+          icon: User,
+          color: 'bg-purple-100 text-purple-800 border-purple-200',
+          iconColor: 'text-purple-600'
+        }
       case 'ENROUTE':
-        return 'В пути'
+        return {
+          text: 'В пути',
+          icon: Truck,
+          color: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+          iconColor: 'text-indigo-600'
+        }
       case 'DELIVERED':
-        return 'Доставлен'
+        return {
+          text: 'Доставлен',
+          icon: CheckCircle,
+          color: 'bg-green-100 text-green-800 border-green-200',
+          iconColor: 'text-green-600'
+        }
       case 'CANCELED':
-        return 'Отменен'
+        return {
+          text: 'Отменен',
+          icon: XCircle,
+          color: 'bg-red-100 text-red-800 border-red-200',
+          iconColor: 'text-red-600'
+        }
       default:
-        return status
+        return {
+          text: status,
+          icon: AlertCircle,
+          color: 'bg-gray-100 text-gray-800 border-gray-200',
+          iconColor: 'text-gray-600'
+        }
     }
+  }
+
+  const StatusBadge = ({ status }: { status: Order['status'] }) => {
+    const statusInfo = getStatusInfo(status)
+    const IconComponent = statusInfo.icon
+    
+    return (
+      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${statusInfo.color}`}>
+        <IconComponent className={`w-3 h-3 ${statusInfo.iconColor}`} />
+        <span>{statusInfo.text}</span>
+      </div>
+    )
   }
 
   const getFilteredOrders = (): Order[] => {
@@ -145,7 +192,7 @@ export default function OrdersPage() {
     })
   }
 
-  const formatPrice = (price: number) => `${price.toFixed(0)} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
   
   const calculateOrderTotal = (orderItems: OrderItem[]) => {
     return orderItems.reduce((total, item) => total + (Number(item.price) * item.amount), 0)
@@ -192,7 +239,7 @@ export default function OrdersPage() {
       </div>
 
       {/* Orders List */}
-      <div className="px-4 md:px-6 lg:px-8 pb-6">
+      <div className="px-4 md:px-6 lg:px-8 pt-6 pb-6">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4"></div>
@@ -225,144 +272,106 @@ export default function OrdersPage() {
         ) : (
           <div className="space-y-4">
             {filteredOrders.map((order) => {
-              const firstItem = order.orderItems[0]
               const totalAmount = calculateOrderTotal(order.orderItems)
-              const productImage = firstItem?.product.imageUrl && Array.isArray(firstItem.product.imageUrl) && firstItem.product.imageUrl.length > 0 
-                ? firstItem.product.imageUrl[0] 
-                : null
 
               return (
-                <div key={order.id} className="bg-white rounded-2xl p-3 md:p-4 shadow-sm border border-orange-100 hover:border-orange-200 transition-colors">
+                <Link key={order.id} href={`/orders/${order.id}/track`} className="block">
+                  <div className="bg-white rounded-2xl p-3 md:p-4 border border-gray-100 hover:border-orange-200 hover:shadow-xl transition-all duration-300 cursor-pointer">
                   {/* Mobile Layout */}
                   <div className="md:hidden">
-                    <div className="flex items-start space-x-3">
-                      {/* Product Image */}
-                      <div className="w-16 h-16 bg-gray-200 rounded-xl flex-shrink-0 overflow-hidden">
-                        {productImage ? (
-                          <img 
-                            src={productImage} 
-                            alt={firstItem?.product.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-200 to-orange-300">
-                            <Package className="w-6 h-6 text-orange-600" />
-                          </div>
-                        )}
+                    {/* Order Header */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <ShoppingCart className="w-4 h-4 text-orange-500" />
+                        <span className="font-semibold text-gray-900 text-sm">Заказ от {formatDate(order.createdAt).split(',')[0]}</span>
                       </div>
+                      <span className="font-bold text-orange-600 text-base">
+                        {formatPrice(totalAmount)}
+                      </span>
+                    </div>
 
-                      {/* Order Content */}
-                      <div className="flex-1 min-w-0">
-                        {/* Header Row */}
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900 text-sm leading-tight mb-1 truncate">
-                              {firstItem?.product.name || 'Товар'}
-                              {order.orderItems.length > 1 && (
-                                <span className="text-gray-500 text-xs ml-1">
-                                  +{order.orderItems.length - 1}
-                                </span>
-                              )}
-                            </h3>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                                order.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
-                                order.status === 'CANCELED' ? 'bg-red-100 text-red-800' :
-                                'bg-orange-100 text-orange-800'
-                              }`}>
-                                {getStatusText(order.status)}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {formatDate(order.createdAt).split(',')[0]}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          {/* Price and Button */}
-                          <div className="flex flex-col items-end gap-1">
-                            <p className="font-bold text-orange-600 text-sm whitespace-nowrap">
-                              {formatPrice(totalAmount)}
-                            </p>
-                            <Link href={`/orders/${order.id}/track`}>
-                              <button className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1 rounded-lg font-medium transition-colors">
-                                Детали
-                              </button>
-                            </Link>
-                          </div>
+                    {/* Status */}
+                    <div className="flex items-center gap-2 mb-3">
+                      <Package className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-600 text-sm">Статус:</span>
+                      <StatusBadge status={order.status} />
+                    </div>
+
+                    {/* Divider */}
+                    <div className="border-t border-gray-200 mb-3"></div>
+
+                    {/* Contact Info and Details Button */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 space-y-1.5">
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Phone className="w-3 h-3" />
+                          <span className="text-sm">{order.customerPhone}</span>
                         </div>
-                        
-                        {/* Contact Info */}
-                        <div className="text-xs text-gray-400 space-y-0.5">
-                          <p className="truncate">📞 {order.customerPhone}</p>
-                          <p className="truncate">📍 {order.deliveryAddress.length > 35 ? order.deliveryAddress.substring(0, 35) + '...' : order.deliveryAddress}</p>
+                        <div className="flex items-start gap-2 text-gray-600">
+                          <MapPin className="w-3 h-3 mt-0.5" />
+                          <span className="text-sm">{order.deliveryAddress.length > 25 ? order.deliveryAddress.substring(0, 25) + '...' : order.deliveryAddress}</span>
                         </div>
+                      </div>
+                      
+                      {/* Details Button */}
+                      <div className="ml-3 flex-shrink-0">
+                        <Link href={`/orders/${order.id}/track`} onClick={(e) => e.stopPropagation()}>
+                          <button className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition-colors">
+                            Детали
+                          </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
 
                   {/* Desktop Layout */}
-                  <div className="hidden md:flex items-start space-x-4">
-                    {/* Product Image */}
-                    <div className="w-20 h-20 bg-gray-200 rounded-xl flex-shrink-0 overflow-hidden">
-                      {productImage ? (
-                        <img 
-                          src={productImage} 
-                          alt={firstItem?.product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-200 to-orange-300">
-                          <Package className="w-8 h-8 text-orange-600" />
-                        </div>
-                      )}
+                  <div className="hidden md:block">
+                    {/* Order Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <ShoppingCart className="w-4 h-4 text-orange-500" />
+                        <span className="font-semibold text-gray-900 text-sm">Заказ от {formatDate(order.createdAt).split(',')[0]}</span>
+                      </div>
+                      <span className="font-bold text-orange-600 text-base">
+                        {formatPrice(totalAmount)}
+                      </span>
                     </div>
 
-                    {/* Order Details */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 text-sm mb-1">
-                            {firstItem?.product.name || 'Товар'}
-                            {order.orderItems.length > 1 && (
-                              <span className="text-gray-500 ml-1">
-                                +{order.orderItems.length - 1} товар(ов)
-                              </span>
-                            )}
-                          </h3>
-                          <div className="flex items-center mb-1">
-                            <span className="text-xs text-gray-500">Статус:</span>
-                            <span className={`ml-2 text-xs font-medium px-2 py-1 rounded-full ${
-                              order.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
-                              order.status === 'CANCELED' ? 'bg-red-100 text-red-800' :
-                              'bg-orange-100 text-orange-800'
-                            }`}>
-                              {getStatusText(order.status)}
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-500 mb-1">
-                            Заказ от {formatDate(order.createdAt)}
-                          </p>
-                          <p className="font-bold text-orange-600 text-base">
-                            {formatPrice(totalAmount)}
-                          </p>
-                        </div>
+                    {/* Status */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <Package className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-600 text-sm">Статус:</span>
+                      <StatusBadge status={order.status} />
+                    </div>
 
-                        {/* Track Order Button */}
-                        <Link href={`/orders/${order.id}/track`}>
-                          <button className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-4 py-2 rounded-xl font-medium transition-colors">
-                            {t.trackOrder || 'Подробнее'}
+                    {/* Divider */}
+                    <div className="border-t border-gray-200 mb-4"></div>
+
+                    {/* Contact Info and Details Button */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 space-y-1.5">
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Phone className="w-3 h-3" />
+                          <span className="text-sm">{order.customerPhone}</span>
+                        </div>
+                        <div className="flex items-start gap-2 text-gray-600">
+                          <MapPin className="w-3 h-3 mt-0.5" />
+                          <span className="text-sm">{order.deliveryAddress.length > 25 ? order.deliveryAddress.substring(0, 25) + '...' : order.deliveryAddress}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Details Button */}
+                      <div className="ml-3 flex-shrink-0">
+                        <Link href={`/orders/${order.id}/track`} onClick={(e) => e.stopPropagation()}>
+                          <button className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition-colors">
+                            Детали
                           </button>
                         </Link>
                       </div>
-                      
-                      {/* Order Info */}
-                      <div className="text-xs text-gray-400 space-y-1 pt-2 border-t border-gray-100">
-                        <p>📞 {order.customerPhone}</p>
-                        <p>📍 {order.deliveryAddress.length > 50 ? order.deliveryAddress.substring(0, 50) + '...' : order.deliveryAddress}</p>
-                      </div>
                     </div>
                   </div>
-                </div>
+                  </div>
+                </Link>
               )
             })}
           </div>

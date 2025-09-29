@@ -145,7 +145,7 @@ export default function TrackOrderPage() {
     })
   }
 
-  const formatPrice = (price: number) => `${price.toFixed(0)} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
 
   const calculateOrderTotal = (orderItems: OrderItem[]) => {
     return orderItems.reduce((total, item) => total + (Number(item.price) * item.amount), 0)

@@ -23,7 +23,7 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false)
   const itemRef = useRef<HTMLDivElement>(null)
 
-  const formatPrice = (price: number) => `${price.toFixed(0)} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartX(e.touches[0].clientX)
@@ -107,7 +107,7 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
   }, [])
 
   return (
-    <div ref={itemRef} className="relative bg-white rounded-2xl shadow-sm overflow-hidden">
+    <div ref={itemRef} className="relative bg-white rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-xl transition-all duration-300 overflow-hidden">
       {/* Delete Button (показывается при свайпе) */}
       <div className="absolute right-0 top-0 h-full w-20 bg-red-500 flex items-center justify-center">
         <button

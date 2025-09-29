@@ -7,6 +7,8 @@ import { useState } from 'react'
 
 export default function DiscountsPage() {
   const { t } = useLanguage()
+  
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('discount-high')
@@ -382,10 +384,10 @@ export default function DiscountsPage() {
                 <div className="flex items-center justify-between mb-2 sm:mb-3">
                   <div className="flex items-center space-x-1 sm:space-x-2">
                     <span className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
-                      {product.price} {t.language === 'kg' ? 'сом' : 'сом'}
+                      {formatPrice(product.price)}
                     </span>
                     <span className="text-xs sm:text-sm text-gray-500 line-through">
-                      {product.originalPrice} {t.language === 'kg' ? 'сом' : 'сом'}
+                      {formatPrice(product.originalPrice)}
                     </span>
                   </div>
                   <div className="text-right">
@@ -393,7 +395,7 @@ export default function DiscountsPage() {
                       {t.language === 'kg' ? 'Экономия:' : 'Экономия:'}
                     </div>
                     <div className="text-sm text-green-600 font-bold">
-                      {product.originalPrice - product.price} {t.language === 'kg' ? 'сом' : 'сом'}
+                      {formatPrice(product.originalPrice - product.price)}
                     </div>
                   </div>
                 </div>

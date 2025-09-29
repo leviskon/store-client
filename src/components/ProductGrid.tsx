@@ -168,7 +168,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
   }
 
 
-  const formatPrice = (price: number) => `${price.toFixed(0)} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
 
   if (loading) {
     return (

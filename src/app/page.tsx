@@ -14,7 +14,6 @@ interface FilterState {
   categories: string[]
   priceRange: { min: number; max: number }
   sortBy: string
-  seller?: string
   rating?: number
 }
 
@@ -26,7 +25,6 @@ export default function Home() {
     categories: [],
     priceRange: { min: 0, max: 10000 },
     sortBy: 'rating',
-    seller: '',
     rating: 0
   })
   const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([])
@@ -68,7 +66,6 @@ export default function Home() {
       categories: [],
       priceRange: { min: 0, max: 10000 },
       sortBy: 'rating',
-      seller: '',
       rating: 0
     })
   }

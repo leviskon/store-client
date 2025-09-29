@@ -141,7 +141,7 @@ export default function ProductPage() {
     }
   }
 
-  const formatPrice = (price: number) => `${price.toFixed(0)} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
 
 
 
@@ -551,9 +551,9 @@ export default function ProductPage() {
               {/* Review Button */}
               <button
                 onClick={() => setIsReviewModalOpen(true)}
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors border border-gray-200 hover:border-gray-300"
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 md:px-6 py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors border border-gray-200 hover:border-gray-300 text-sm md:text-base"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
                 <span>Оставить отзыв</span>
               </button>
             </div>
@@ -577,17 +577,17 @@ export default function ProductPage() {
           </div>
 
           {product.reviews.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-xl">
-              <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <div className="text-center py-6 md:py-12 bg-gray-50 rounded-xl">
+              <MessageCircle className="w-8 h-8 md:w-12 md:h-12 text-gray-300 mx-auto mb-3 md:mb-4" />
+              <h3 className="text-base md:text-lg font-medium text-gray-900 mb-1 md:mb-2">
                 Отзывов пока нет
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4 px-4">
                 Будьте первым, кто оставит отзыв о этом товаре
               </p>
               <button
                 onClick={() => setIsReviewModalOpen(true)}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-4 md:px-6 py-2 md:py-2 rounded-lg font-medium transition-colors text-sm md:text-base"
               >
                 Написать отзыв
               </button>
@@ -595,7 +595,7 @@ export default function ProductPage() {
           ) : (
             <div className="space-y-6">
               {product.reviews.slice(0, 3).map((review) => (
-                <div key={review.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div key={review.id} className="bg-white p-6 rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-xl transition-all duration-300">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h4 className="font-semibold text-gray-900 text-base">
@@ -618,9 +618,9 @@ export default function ProductPage() {
                 <div className="text-center pt-4">
                   <button
                     onClick={() => router.push(`/product/${product.id}/reviews`)}
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-medium transition-colors inline-flex items-center space-x-2"
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-medium transition-colors inline-flex items-center space-x-2 text-sm md:text-base"
                   >
-                    <MessageCircle className="w-5 h-5" />
+                    <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
                     <span>Показать все отзывы ({product.reviews.length})</span>
                   </button>
                 </div>

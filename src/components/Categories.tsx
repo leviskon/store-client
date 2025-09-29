@@ -236,10 +236,10 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
                 className="flex flex-col items-center space-y-3 cursor-pointer group"
                 onClick={() => handleBreadcrumbClick(null)}
               >
-                <div className={`w-16 h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center transition-all duration-300 overflow-hidden ${
+                <div className={`w-16 h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center transition-all duration-300 overflow-hidden border border-gray-100 hover:border-orange-200 ${
                   selectedCategory === null && breadcrumbPath.length === 0
-                    ? 'bg-orange-500 text-white' 
-                    : 'bg-orange-50 hover:bg-orange-100 text-orange-600 group-hover:scale-105 group-hover:shadow-md'
+                    ? 'bg-orange-500 text-white border-orange-500' 
+                    : 'bg-orange-50 hover:bg-orange-100 text-orange-600 group-hover:scale-105 group-hover:shadow-xl'
                 }`}>
                   <svg className={`w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 ${selectedCategory === null && breadcrumbPath.length === 0 ? 'text-white' : 'text-orange-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -264,10 +264,10 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
                     className="flex flex-col items-center space-y-3 cursor-pointer group"
                     onClick={() => handleCategoryClick(category.id)}
                   >
-                    <div className={`w-16 h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center transition-all duration-300 relative overflow-hidden ${
+                    <div className={`w-16 h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center transition-all duration-300 relative overflow-hidden border border-gray-100 hover:border-orange-200 ${
                       isSelected 
-                        ? 'bg-orange-500 text-white' 
-                        : 'bg-orange-50 hover:bg-orange-100 text-orange-600 group-hover:scale-105 group-hover:shadow-md'
+                        ? 'bg-orange-500 text-white border-orange-500' 
+                        : 'bg-orange-50 hover:bg-orange-100 text-orange-600 group-hover:scale-105 group-hover:shadow-xl'
                     }`}>
                       {category.imageUrl ? (
                         <img

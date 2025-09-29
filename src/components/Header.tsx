@@ -1,7 +1,7 @@
 'use client'
 
 import { Search, Filter, Home, ShoppingCart, Heart, X, Package, Grid3X3 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
@@ -17,6 +17,9 @@ interface HeaderProps {
 
 export default function Header({ onFilterClick, onSearch }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('')
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false)
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const pathname = usePathname()
   const { t } = useLanguage()
   const { favorites } = useFavorites()
@@ -32,6 +35,53 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
   ]
 
   const [hasSearched, setHasSearched] = useState(false)
+
+  // Определяем появление клавиатуры на мобильных устройствах
+  useEffect(() => {
+    let initialHeight = window.visualViewport?.height || window.innerHeight
+
+    const handleResize = () => {
+      if (window.innerWidth < 768) { // только для мобильных
+        const currentHeight = window.visualViewport?.height || window.innerHeight
+        const heightDifference = initialHeight - currentHeight
+        
+        // Если высота уменьшилась более чем на 150px, считаем что клавиатура открыта
+        const keyboardOpen = heightDifference > 150
+        setIsKeyboardVisible(keyboardOpen)
+        
+        // Если клавиатура закрылась, обновляем начальную высоту
+        if (!keyboardOpen) {
+          initialHeight = currentHeight
+        }
+      }
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize)
+    } else {
+      window.addEventListener('resize', handleResize)
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize)
+      } else {
+        window.removeEventListener('resize', handleResize)
+      }
+    }
+  }, [])
+
+  // Управляем состоянием расширения поиска
+  useEffect(() => {
+    if (window.innerWidth < 768) { // только для мобильных
+      if (isKeyboardVisible) {
+        setIsSearchExpanded(true)
+      } else if (!isKeyboardVisible) {
+        // Возвращаем в исходное состояние при закрытии клавиатуры
+        setIsSearchExpanded(false)
+      }
+    }
+  }, [isKeyboardVisible])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
@@ -52,6 +102,10 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
     }
+    // Возвращаем поиск в исходное состояние после поиска
+    if (window.innerWidth < 768) {
+      setIsSearchExpanded(false)
+    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -66,14 +120,73 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
     if (onSearch) {
       onSearch('')
     }
+    // Возвращаем поиск в исходное состояние после очистки
+    if (window.innerWidth < 768) {
+      setIsSearchExpanded(false)
+    }
   }
+
+  const handleSearchFocus = () => {
+    if (window.innerWidth < 768) {
+      setIsSearchExpanded(true)
+    }
+  }
+
+  // Дополнительная проверка для сворачивания поиска
+  useEffect(() => {
+    const handleTouchStart = () => {
+      // При касании экрана проверяем, нужно ли свернуть поиск
+      if (window.innerWidth < 768 && isSearchExpanded && !isKeyboardVisible && !searchQuery) {
+        setIsSearchExpanded(false)
+      }
+    }
+
+    if (window.innerWidth < 768) {
+      document.addEventListener('touchstart', handleTouchStart)
+      return () => {
+        document.removeEventListener('touchstart', handleTouchStart)
+      }
+    }
+  }, [isSearchExpanded, isKeyboardVisible, searchQuery])
+
+  const handleSearchBlur = () => {
+    // Добавляем небольшую задержку для проверки, действительно ли клавиатура закрылась
+    setTimeout(() => {
+      if (window.innerWidth < 768 && !isKeyboardVisible) {
+        setIsSearchExpanded(false)
+      }
+    }, 100)
+  }
+
+  // Обработка клика вне поля поиска
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (window.innerWidth < 768 && isSearchExpanded) {
+        const target = event.target as HTMLElement
+        const searchContainer = searchInputRef.current?.closest('.relative')
+        
+        if (searchContainer && !searchContainer.contains(target)) {
+          // Если клик был вне поля поиска, сворачиваем его
+          setIsSearchExpanded(false)
+          if (searchInputRef.current) {
+            searchInputRef.current.blur()
+          }
+        }
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isSearchExpanded])
 
   return (
     <div className="bg-white border-b border-orange-100 sticky top-0 z-50 shadow-sm">
       {/* Desktop Navigation */}
       <div className="hidden md:block border-b border-orange-50">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          <nav className="flex items-center justify-between py-3">
+          <nav className="flex items-center justify-center py-3">
             <div className="flex items-center justify-center flex-1">
               {navItems.map((item) => {
                 const IconComponent = item.icon
@@ -173,9 +286,6 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
                 )
               })}
             </div>
-            
-            {/* Language Switcher */}
-            <LanguageSwitcher />
           </nav>
         </div>
       </div>
@@ -184,16 +294,21 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
         <div className="flex gap-3 items-center">
           {/* Search Bar */}
-          <div className="relative flex-1 flex">
+          <div className={`relative flex transition-all duration-300 ${
+            isSearchExpanded ? 'flex-1' : 'flex-1'
+          }`}>
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Search className="h-4 w-4 text-gray-400" />
             </div>
             <input
+              ref={searchInputRef}
               type="text"
               placeholder={t.searchProducts}
               value={searchQuery}
               onChange={handleSearchChange}
               onKeyPress={handleKeyPress}
+              onFocus={handleSearchFocus}
+              onBlur={handleSearchBlur}
               className="block w-full pl-11 pr-10 py-3 text-sm text-gray-900 border border-orange-200 rounded-l-xl bg-orange-50 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset focus:border-orange-500 focus:bg-white transition-all duration-200"
             />
             <button
@@ -204,15 +319,24 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
             </button>
           </div>
           
-          {/* Language Switcher - только для мобильных */}
-          <div className="md:hidden">
+          {/* Language Switcher - скрывается при расширении поиска на мобильных */}
+          <div className={`md:hidden transition-all duration-300 ${
+            isSearchExpanded ? 'opacity-0 pointer-events-none w-0 overflow-hidden' : 'opacity-100'
+          }`}>
             <LanguageSwitcher />
           </div>
           
-          {/* Filter Button */}
+          {/* Language Switcher for Desktop */}
+          <div className="hidden md:block">
+            <LanguageSwitcher />
+          </div>
+          
+          {/* Filter Button - скрывается при расширении поиска на мобильных */}
           <button
             onClick={onFilterClick}
-            className="w-10 h-10 hover:bg-gray-100 rounded-full transition-colors duration-200 flex items-center justify-center border border-gray-200 hover:border-gray-300"
+            className={`w-10 h-10 hover:bg-gray-100 rounded-full transition-all duration-300 flex items-center justify-center border border-gray-200 hover:border-gray-300 ${
+              isSearchExpanded ? 'md:flex hidden' : 'flex'
+            }`}
           >
             <Filter className="w-4 h-4 text-gray-600" />
           </button>
