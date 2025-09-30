@@ -114,10 +114,10 @@ export default function ProductPage() {
             }
           }
         } else {
-          console.error('Товар не найден')
+          console.error(t.productNotFound)
         }
       } catch (error) {
-        console.error('Ошибка загрузки товара:', error)
+        console.error(t.errorLoadingProduct, error)
       } finally {
         setLoading(false)
       }
@@ -167,7 +167,7 @@ export default function ProductPage() {
       if (!wasInFavorites) {
         showNotification({
           type: 'favorites',
-          message: 'Добавлено в избранное',
+          message: t.addedToFavorites,
           duration: 2000
         })
       }
@@ -219,7 +219,7 @@ export default function ProductPage() {
     if (success) {
       showNotification({
         type: 'cart',
-        message: 'Добавлено в корзину',
+        message: t.addedToCart,
         duration: 2000
       })
       setIsInCart(true)
@@ -251,7 +251,7 @@ export default function ProductPage() {
     if (!userReviewId && !canUserReviewProduct(product.id)) {
       showNotification({
         type: 'cart',
-        message: 'Вы уже оставили отзыв для этого товара',
+        message: t.alreadyReviewed,
         duration: 3000
       })
       return
@@ -307,7 +307,7 @@ export default function ProductPage() {
 
         showNotification({
           type: 'cart',
-          message: userReviewId ? 'Отзыв успешно обновлен!' : 'Отзыв успешно добавлен!',
+          message: userReviewId ? t.reviewUpdated : t.reviewAdded,
           duration: 3000
         })
         
@@ -316,15 +316,15 @@ export default function ProductPage() {
       } else {
         showNotification({
           type: 'cart',
-          message: result.error || `Ошибка при ${userReviewId ? 'обновлении' : 'добавлении'} отзыва`,
+          message: result.error || (userReviewId ? t.errorUpdatingReview : t.errorAddingReview),
           duration: 3000
         })
       }
     } catch (error) {
-      console.error('Ошибка при отправке отзыва:', error)
+      console.error(t.errorLoadingProduct, error)
       showNotification({
         type: 'cart',
-        message: 'Произошла ошибка. Попробуйте снова.',
+        message: t.errorOccurred,
         duration: 3000
       })
     } finally {
@@ -421,7 +421,7 @@ export default function ProductPage() {
           onClick={handleToggleFavorite}
           className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
         >
-          <Heart className={`w-5 h-5 ${product && isFavorite(product.id) ? 'fill-black text-black' : 'text-gray-700'}`} />
+          <Heart className={`w-5 h-5 ${product && isFavorite(product.id) ? 'fill-orange-500 text-orange-500' : 'text-orange-500'}`} />
         </button>
       </div>
 
@@ -497,7 +497,7 @@ export default function ProductPage() {
                 {t.productDetails}
               </h3>
               <p className="text-sm text-gray-600 leading-relaxed">
-                {product.description || 'Высококачественный товар с отличными характеристиками. Идеально подходит для повседневного использования и отличается надежностью и долговечностью.'}
+                {product.description || t.highQualityProduct}
                 {product.description && product.description.length > 80 && (
                   <button className="text-orange-500 font-medium ml-1 hover:text-orange-600 text-sm transition-colors">
                     {t.readMore}
@@ -581,7 +581,7 @@ export default function ProductPage() {
                       </span>
                       <span className="text-xs font-semibold text-gray-900">
                         {typeof value === 'boolean' 
-                          ? (value ? (t.language === 'kg' ? 'Ооба' : 'Да') : (t.language === 'kg' ? 'Жок' : 'Нет'))
+                          ? (value ? t.yes : t.no)
                           : String(value)
                         }
                       </span>
@@ -647,7 +647,7 @@ export default function ProductPage() {
                   className="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 md:px-6 py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors border border-blue-200 hover:border-blue-300 text-sm md:text-base"
                 >
                   <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-                  <span>Редактировать отзыв</span>
+                  <span>{t.editReview}</span>
                 </button>
               ) : (
                 <button
@@ -655,7 +655,7 @@ export default function ProductPage() {
                   className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 md:px-6 py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors border border-gray-200 hover:border-gray-300 text-sm md:text-base"
                 >
                   <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-                  <span>Оставить отзыв</span>
+                  <span>{t.leaveReview}</span>
                 </button>
               )}
             </div>
@@ -666,13 +666,13 @@ export default function ProductPage() {
         <div className="mt-12 border-t border-gray-200 pt-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">
-              Отзывы {product.reviews.length > 0 && `(${product.reviews.length})`}
+              {t.reviews} {product.reviews.length > 0 && `(${product.reviews.length})`}
             </h2>
             {product.averageRating > 0 && (
               <div className="flex items-center space-x-2">
                 {renderStars(product.averageRating)}
                 <span className="text-sm font-medium text-gray-600">
-                  {product.averageRating.toFixed(1)} из 5
+                  {product.averageRating.toFixed(1)} {t.outOf5}
                 </span>
               </div>
             )}
@@ -682,16 +682,16 @@ export default function ProductPage() {
             <div className="text-center py-6 md:py-12 bg-gray-50 rounded-xl">
               <MessageCircle className="w-8 h-8 md:w-12 md:h-12 text-gray-300 mx-auto mb-3 md:mb-4" />
               <h3 className="text-base md:text-lg font-medium text-gray-900 mb-1 md:mb-2">
-                Отзывов пока нет
+                {t.noReviewsYet}
               </h3>
               <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4 px-4">
-                Будьте первым, кто оставит отзыв о этом товаре
+                {t.beFirstToReview}
               </p>
               <button
                 onClick={() => setIsReviewModalOpen(true)}
                 className="bg-orange-500 hover:bg-orange-600 text-white px-4 md:px-6 py-2 md:py-2 rounded-lg font-medium transition-colors text-sm md:text-base"
               >
-                Написать отзыв
+                {t.writeReview}
               </button>
             </div>
           ) : (
@@ -706,7 +706,7 @@ export default function ProductPage() {
                       {renderStars(review.rating, 'w-4 h-4')}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {review.rating} из 5
+                      {review.rating} {t.outOf5}
                     </div>
                   </div>
                   <p className="text-gray-700 leading-relaxed">
@@ -723,7 +723,7 @@ export default function ProductPage() {
                     className="bg-orange-500 hover:bg-orange-600 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-medium transition-colors inline-flex items-center space-x-2 text-sm md:text-base"
                   >
                     <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-                    <span>Показать все отзывы ({product.reviews.length})</span>
+                    <span>{t.showAllReviews} ({product.reviews.length})</span>
                   </button>
                 </div>
               )}

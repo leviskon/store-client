@@ -97,42 +97,42 @@ export default function OrdersPage() {
     switch (status) {
       case 'CREATED':
         return {
-          text: 'Создан',
+          text: t.created,
           icon: AlertCircle,
           color: 'bg-blue-100 text-blue-800 border-blue-200',
           iconColor: 'text-blue-600'
         }
       case 'COURIER_WAIT':
         return {
-          text: 'Ожидает курьера',
+          text: t.courierWait,
           icon: Clock,
           color: 'bg-orange-100 text-orange-800 border-orange-200',
           iconColor: 'text-orange-600'
         }
       case 'COURIER_PICKED':
         return {
-          text: 'Забрал курьер',
+          text: t.courierPicked,
           icon: User,
           color: 'bg-purple-100 text-purple-800 border-purple-200',
           iconColor: 'text-purple-600'
         }
       case 'ENROUTE':
         return {
-          text: 'В пути',
+          text: t.enroute,
           icon: Truck,
           color: 'bg-indigo-100 text-indigo-800 border-indigo-200',
           iconColor: 'text-indigo-600'
         }
       case 'DELIVERED':
         return {
-          text: 'Доставлен',
+          text: t.delivered,
           icon: CheckCircle,
           color: 'bg-green-100 text-green-800 border-green-200',
           iconColor: 'text-green-600'
         }
       case 'CANCELED':
         return {
-          text: 'Отменен',
+          text: t.canceled,
           icon: XCircle,
           color: 'bg-red-100 text-red-800 border-red-200',
           iconColor: 'text-red-600'
@@ -210,7 +210,7 @@ export default function OrdersPage() {
           <ArrowLeft className="w-5 h-5 text-gray-700" />
         </Link>
         
-        <h1 className="text-lg font-medium text-white">{t.myOrders || 'Мои заказы'}</h1>
+        <h1 className="text-lg font-medium text-white">{t.myOrders}</h1>
         
         <div className="w-10 h-10"></div>
       </div>
@@ -220,9 +220,9 @@ export default function OrdersPage() {
         <div className="flex justify-center w-full">
           <div className="flex w-full max-w-md justify-between">
             {[
-              { key: 'active', label: t.active || 'Активные' },
-              { key: 'completed', label: t.completed || 'Завершенные' },
-              { key: 'cancelled', label: t.cancelled || 'Отмененные' }
+              { key: 'active', label: t.active },
+              { key: 'completed', label: t.completed },
+              { key: 'cancelled', label: t.cancelled }
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -245,7 +245,7 @@ export default function OrdersPage() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4"></div>
-            <p className="text-gray-500">Загрузка заказов...</p>
+            <p className="text-gray-500">{t.loadingOrders}</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-16">
@@ -253,7 +253,7 @@ export default function OrdersPage() {
               <Package className="w-16 h-16 md:w-20 md:h-20 text-orange-300" />
             </div>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 text-center">
-              Ошибка загрузки
+              {t.errorLoading}
             </h3>
             <p className="text-gray-600 text-center text-sm max-w-md leading-relaxed">
               {error}
@@ -265,10 +265,10 @@ export default function OrdersPage() {
               <Package className="w-16 h-16 md:w-20 md:h-20 text-orange-300" />
             </div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 text-center">
-              {t.noOrdersTitle || 'Нет заказов'}
+              {t.noOrdersTitle}
             </h2>
             <p className="text-gray-600 text-center text-sm max-w-md leading-relaxed">
-              {t.noOrdersSubtitle || 'У вас пока нет заказов в этой категории'}
+              {t.noOrdersSubtitle}
             </p>
           </div>
         ) : (
@@ -295,7 +295,7 @@ export default function OrdersPage() {
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <ShoppingCart className="w-4 h-4 text-orange-500" />
-                        <span className="font-semibold text-gray-900 text-sm">Заказ от {formatDate(order.createdAt).split(',')[0]}</span>
+                        <span className="font-semibold text-gray-900 text-sm">{t.orderFrom} {formatDate(order.createdAt).split(',')[0]}</span>
                       </div>
                       <span className="font-bold text-orange-600 text-base">
                         {formatPrice(totalAmount)}
@@ -305,7 +305,7 @@ export default function OrdersPage() {
                     {/* Status */}
                     <div className="flex items-center gap-2 mb-3">
                       <Package className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-600 text-sm">Статус:</span>
+                      <span className="text-gray-600 text-sm">{t.status}:</span>
                       <StatusBadge status={order.status} />
                     </div>
 
@@ -332,7 +332,7 @@ export default function OrdersPage() {
                             className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            Детали
+                            {t.details}
                           </button>
                         </Link>
                       </div>
@@ -345,7 +345,7 @@ export default function OrdersPage() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
                         <ShoppingCart className="w-4 h-4 text-orange-500" />
-                        <span className="font-semibold text-gray-900 text-sm">Заказ от {formatDate(order.createdAt).split(',')[0]}</span>
+                        <span className="font-semibold text-gray-900 text-sm">{t.orderFrom} {formatDate(order.createdAt).split(',')[0]}</span>
                       </div>
                       <span className="font-bold text-orange-600 text-base">
                         {formatPrice(totalAmount)}
@@ -355,7 +355,7 @@ export default function OrdersPage() {
                     {/* Status */}
                     <div className="flex items-center gap-2 mb-4">
                       <Package className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-600 text-sm">Статус:</span>
+                      <span className="text-gray-600 text-sm">{t.status}:</span>
                       <StatusBadge status={order.status} />
                     </div>
 
@@ -382,7 +382,7 @@ export default function OrdersPage() {
                             className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            Детали
+                            {t.details}
                           </button>
                         </Link>
                       </div>

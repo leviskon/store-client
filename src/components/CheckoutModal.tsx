@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { X } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
 interface CheckoutModalProps {
   isOpen: boolean
@@ -32,6 +33,7 @@ export default function CheckoutModal({
     customerComment: ''
   })
   const [errors, setErrors] = useState<Partial<OrderFormData>>({})
+  const { t, language } = useLanguage()
 
   const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
 
@@ -39,17 +41,17 @@ export default function CheckoutModal({
     const newErrors: Partial<OrderFormData> = {}
 
     if (!formData.customerName.trim()) {
-      newErrors.customerName = 'Введите ваше имя'
+      newErrors.customerName = t.enterName
     }
 
     if (!formData.customerPhone.trim()) {
-      newErrors.customerPhone = 'Введите номер телефона'
+      newErrors.customerPhone = t.enterPhone
     } else if (!/^\+?996\s?\d{3}\s?\d{3}\s?\d{3}$/.test(formData.customerPhone.replace(/\s/g, ''))) {
-      newErrors.customerPhone = 'Введите корректный номер телефона (+996 XXX XXX XXX)'
+      newErrors.customerPhone = t.phoneValidation
     }
 
     if (!formData.deliveryAddress.trim()) {
-      newErrors.deliveryAddress = 'Введите адрес доставки'
+      newErrors.deliveryAddress = t.enterAddress
     }
 
     setErrors(newErrors)
@@ -126,7 +128,7 @@ export default function CheckoutModal({
       <div className="relative w-full max-w-sm sm:max-w-md mx-2 sm:mx-4 bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 max-h-[95vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Оформление заказа</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">{t.orderCheckout}</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -139,7 +141,7 @@ export default function CheckoutModal({
         {/* Order Summary */}
         <div className="bg-orange-50 rounded-lg sm:rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
           <div className="flex justify-between items-center">
-            <span className="text-sm sm:text-base text-gray-700 font-medium">Итого к оплате:</span>
+            <span className="text-sm sm:text-base text-gray-700 font-medium">{t.orderTotal}:</span>
             <span className="text-lg sm:text-xl font-bold text-orange-600">
               {formatPrice(totalAmount)}
             </span>
@@ -151,7 +153,7 @@ export default function CheckoutModal({
           {/* Customer Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ваше имя *
+              {t.customerName} *
             </label>
             <input
               type="text"
@@ -160,7 +162,7 @@ export default function CheckoutModal({
               className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base ${
                 errors.customerName ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Введите ваше имя"
+              placeholder={t.enterName}
               disabled={isLoading}
             />
             {errors.customerName && (
@@ -171,7 +173,7 @@ export default function CheckoutModal({
           {/* Customer Phone */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Номер телефона *
+              {t.customerPhone} *
             </label>
             <input
               type="tel"
@@ -191,7 +193,7 @@ export default function CheckoutModal({
           {/* Delivery Address */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Адрес доставки *
+              {t.deliveryAddress} *
             </label>
             <textarea
               value={formData.deliveryAddress}
@@ -200,7 +202,7 @@ export default function CheckoutModal({
               className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base ${
                 errors.deliveryAddress ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Введите полный адрес доставки (город, улица, дом, квартира)"
+              placeholder={language === 'kg' ? 'Толук даректи киргизиңиз (шаар, көчө, үй, батир)' : 'Введите полный адрес доставки (город, улица, дом, квартира)'}
               disabled={isLoading}
             />
             {errors.deliveryAddress && (
@@ -211,14 +213,14 @@ export default function CheckoutModal({
           {/* Customer Comment */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Комментарий к заказу
+              {t.customerComment}
             </label>
             <textarea
               value={formData.customerComment || ''}
               onChange={(e) => handleInputChange('customerComment', e.target.value)}
               rows={2}
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base"
-              placeholder="Дополнительная информация к заказу (необязательно)"
+              placeholder={t.optionalComment}
               disabled={isLoading}
             />
           </div>
@@ -231,14 +233,16 @@ export default function CheckoutModal({
               className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 text-gray-700 rounded-lg sm:rounded-xl font-medium hover:bg-gray-50 transition-colors text-sm sm:text-base"
               disabled={isLoading}
             >
-              Отмена
+              {t.cancel}
             </button>
             <button
               type="submit"
               className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 bg-orange-500 text-white rounded-lg sm:rounded-xl font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
               disabled={isLoading}
             >
-              {isLoading ? 'Оформление...' : 'Подтвердить'}
+              {isLoading 
+                ? (language === 'kg' ? 'Берилүүдө...' : 'Оформление...') 
+                : t.placeOrder}
             </button>
           </div>
         </form>
@@ -246,7 +250,9 @@ export default function CheckoutModal({
         {/* Info */}
         <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-gray-50 rounded-lg sm:rounded-xl">
           <p className="text-xs text-gray-600 text-center">
-            После подтверждения с вами свяжется менеджер для уточнения деталей доставки
+{language === 'kg' 
+              ? 'Ырастагандан кийин менеджер сиз менен жеткирүүнүн деталдарын так билүү үчүн байланышат'
+              : 'После подтверждения с вами свяжется менеджер для уточнения деталей доставки'}
           </p>
         </div>
       </div>

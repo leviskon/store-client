@@ -17,7 +17,7 @@ export default function DiscountsPage() {
   const discountedProducts = [
     {
       id: 1,
-      name: t.language === 'kg' ? 'Классикалык футболка' : 'Классическая футболка',
+      name: t.classicTshirt,
       nameKg: 'Классикалык футболка',
       nameRu: 'Классическая футболка',
       price: 1200,
@@ -26,7 +26,7 @@ export default function DiscountsPage() {
       image: '/api/placeholder/300/400',
       rating: 4.7,
       reviews: 32,
-      category: t.language === 'kg' ? 'Эркектер' : 'Мужчины',
+      category: t.men,
       colors: ['Кара', 'Ак', 'Кызыл'],
       sizes: ['S', 'M', 'L', 'XL'],
       timeLeft: '2 күн 15 саат',
@@ -34,7 +34,7 @@ export default function DiscountsPage() {
     },
     {
       id: 2,
-      name: t.language === 'kg' ? 'Элеганттуу көйнөк' : 'Элегантное платье',
+      name: t.elegantDress,
       nameKg: 'Элеганттуу көйнөк',
       nameRu: 'Элегантное платье',
       price: 2800,
@@ -43,7 +43,7 @@ export default function DiscountsPage() {
       image: '/api/placeholder/300/400',
       rating: 4.9,
       reviews: 28,
-      category: t.language === 'kg' ? 'Аялдар' : 'Женщины',
+      category: t.women,
       colors: ['Кара', 'Көк', 'Жашыл'],
       sizes: ['XS', 'S', 'M', 'L'],
       timeLeft: '5 күн 8 саат',
@@ -51,7 +51,7 @@ export default function DiscountsPage() {
     },
     {
       id: 3,
-      name: t.language === 'kg' ? 'Спорттуу куртка' : 'Спортивная куртка',
+      name: t.sportJacket,
       nameKg: 'Спорттуу куртка',
       nameRu: 'Спортивная куртка',
       price: 3600,
@@ -60,7 +60,7 @@ export default function DiscountsPage() {
       image: '/api/placeholder/300/400',
       rating: 4.6,
       reviews: 45,
-      category: t.language === 'kg' ? 'Спорт' : 'Спорт',
+      category: t.sport,
       colors: ['Кара', 'Ак', 'Кызыл'],
       sizes: ['S', 'M', 'L', 'XL', 'XXL'],
       timeLeft: '1 күн 12 саат',
@@ -68,7 +68,7 @@ export default function DiscountsPage() {
     },
     {
       id: 4,
-      name: t.language === 'kg' ? 'Джинс шым' : 'Джинсы',
+      name: t.classicPants,
       nameKg: 'Джинс шым',
       nameRu: 'Джинсы',
       price: 2200,
@@ -77,7 +77,7 @@ export default function DiscountsPage() {
       image: '/api/placeholder/300/400',
       rating: 4.8,
       reviews: 67,
-      category: t.language === 'kg' ? 'Эркектер' : 'Мужчины',
+      category: t.men,
       colors: ['Көк', 'Кара', 'Ак'],
       sizes: ['28', '30', '32', '34', '36'],
       timeLeft: '3 күн 6 саат',
@@ -85,7 +85,7 @@ export default function DiscountsPage() {
     },
     {
       id: 5,
-      name: t.language === 'kg' ? 'Жайкы көйнөк' : 'Летнее платье',
+      name: t.summerDress,
       nameKg: 'Жайкы көйнөк',
       nameRu: 'Летнее платье',
       price: 1800,
@@ -94,7 +94,7 @@ export default function DiscountsPage() {
       image: '/api/placeholder/300/400',
       rating: 4.7,
       reviews: 41,
-      category: t.language === 'kg' ? 'Аялдар' : 'Женщины',
+      category: t.women,
       colors: ['Ак', 'Кызыл', 'Сары'],
       sizes: ['XS', 'S', 'M', 'L'],
       timeLeft: '4 күн 20 саат',
@@ -102,7 +102,7 @@ export default function DiscountsPage() {
     },
     {
       id: 6,
-      name: t.language === 'kg' ? 'Балалардын кийими' : 'Детская одежда',
+      name: t.childrenClothing,
       nameKg: 'Балалардын кийими',
       nameRu: 'Детская одежда',
       price: 900,
@@ -111,7 +111,7 @@ export default function DiscountsPage() {
       image: '/api/placeholder/300/400',
       rating: 4.9,
       reviews: 23,
-      category: t.language === 'kg' ? 'Балдар' : 'Дети',
+      category: t.children,
       colors: ['Кызыл', 'Көк', 'Жашыл'],
       sizes: ['2-3', '4-5', '6-7', '8-9'],
       timeLeft: '6 күн 14 саат',
@@ -119,7 +119,7 @@ export default function DiscountsPage() {
     },
     {
       id: 7,
-      name: t.language === 'kg' ? 'Кроссовкалар' : 'Кроссовки',
+      name: t.sneakers,
       nameKg: 'Кроссовкалар',
       nameRu: 'Кроссовки',
       price: 3200,
@@ -128,7 +128,7 @@ export default function DiscountsPage() {
       image: '/api/placeholder/300/400',
       rating: 4.8,
       reviews: 89,
-      category: t.language === 'kg' ? 'Аяк кийимдери' : 'Обувь',
+      category: t.shoes,
       colors: ['Ак', 'Кара', 'Кызыл'],
       sizes: ['38', '39', '40', '41', '42', '43'],
       timeLeft: '1 күн 3 саат',
@@ -136,7 +136,7 @@ export default function DiscountsPage() {
     },
     {
       id: 8,
-      name: t.language === 'kg' ? 'Сумка' : 'Сумка',
+      name: t.bag,
       nameKg: 'Сумка',
       nameRu: 'Сумка',
       price: 1500,
@@ -145,7 +145,7 @@ export default function DiscountsPage() {
       image: '/api/placeholder/300/400',
       rating: 4.5,
       reviews: 34,
-      category: t.language === 'kg' ? 'Аксессуарлар' : 'Аксессуары',
+      category: t.accessories,
       colors: ['Кара', 'Коричневый', 'Көк'],
       sizes: ['Орто'],
       timeLeft: '7 күн 10 саат',
@@ -188,25 +188,18 @@ export default function DiscountsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            <button
-              onClick={() => router.back()}
-              className="flex items-center space-x-1 sm:space-x-2 text-gray-600 hover:text-orange-500 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-xs sm:text-sm font-medium">
-                {t.language === 'kg' ? 'Артка' : 'Назад'}
-              </span>
-            </button>
-            <h1 className="text-lg sm:text-xl font-bold text-gray-900">
-              {t.language === 'kg' ? 'Арзандатуулар' : 'Скидки'}
-            </h1>
-            <div className="w-16 sm:w-20"></div>
-          </div>
-        </div>
+      {/* Header как на странице Возвратов */}
+      <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <button
+          onClick={() => router.back()}
+          className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5 text-gray-700" />
+        </button>
+        
+        <h1 className="text-lg font-medium text-white">{t.discounts}</h1>
+        
+        <div className="w-10 h-10"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
@@ -215,24 +208,21 @@ export default function DiscountsPage() {
           <div className="flex items-center space-x-3 sm:space-x-4 mb-3 sm:mb-4">
             <Tag className="w-6 h-6 sm:w-8 sm:h-8" />
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">
-              {t.language === 'kg' ? 'Улуу арзандатуулар!' : 'Большие скидки!'}
+              {t.bigDiscounts}
             </h2>
           </div>
           <p className="text-red-100 text-sm sm:text-base lg:text-lg mb-4 sm:mb-6">
-            {t.language === 'kg' 
-              ? 'Эң жогору арзандатуулар менен сатып алыңыз. Убактылуу акциялар!'
-              : 'Покупайте со скидками до 50%. Временные акции!'
-            }
+            {t.maxDiscountInfo}
           </p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-full">
               <span className="text-xs sm:text-sm font-medium">
-                {t.language === 'kg' ? 'Арзандатуулар: 50+' : 'Скидки: 50+'}
+                {t.discountsCount}
               </span>
             </div>
             <div className="bg-white bg-opacity-20 px-3 sm:px-4 py-2 rounded-full">
               <span className="text-xs sm:text-sm font-medium">
-                {t.language === 'kg' ? 'Эң жогору: 50%' : 'Максимум: 50%'}
+                {t.maxDiscount}
               </span>
             </div>
           </div>
@@ -323,7 +313,7 @@ export default function DiscountsPage() {
                   </span>
                   {product.isHot && (
                     <span className="bg-orange-500 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium">
-                      {t.language === 'kg' ? 'Ысык' : 'ХИТ'}
+                      {t.hot}
                     </span>
                   )}
                 </div>
@@ -339,11 +329,11 @@ export default function DiscountsPage() {
                   <div className="flex space-x-2">
                     <button className="flex-1 bg-white text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
                       <Eye className="w-4 h-4 inline mr-1" />
-                      {t.language === 'kg' ? 'Көрүү' : 'Смотреть'}
+                      {t.view}
                     </button>
                     <button className="flex-1 bg-orange-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors">
                       <ShoppingCart className="w-4 h-4 inline mr-1" />
-                      {t.language === 'kg' ? 'Сатып алуу' : 'Купить'}
+                      {t.buy}
                     </button>
                   </div>
                 </div>
@@ -392,7 +382,7 @@ export default function DiscountsPage() {
                   </div>
                   <div className="text-right">
                     <div className="text-xs sm:text-sm text-green-600 font-medium">
-                      {t.language === 'kg' ? 'Экономия:' : 'Экономия:'}
+                      {t.economy}
                     </div>
                     <div className="text-sm text-green-600 font-bold">
                       {formatPrice(product.originalPrice - product.price)}
@@ -403,7 +393,7 @@ export default function DiscountsPage() {
                 <div className="space-y-1 sm:space-y-2">
                   <div>
                     <span className="text-xs text-gray-600">
-                      {t.language === 'kg' ? 'Түстөр:' : 'Цвета:'}
+                      {t.colors}
                     </span>
                     <div className="flex space-x-1 mt-1">
                       {product.colors.slice(0, 3).map((color, index) => (
@@ -421,7 +411,7 @@ export default function DiscountsPage() {
                   
                   <div>
                     <span className="text-xs text-gray-600">
-                      {t.language === 'kg' ? 'Өлчөмдөр:' : 'Размеры:'}
+                      {t.sizes}
                     </span>
                     <div className="flex space-x-1 mt-1">
                       {product.sizes.slice(0, 3).map((size, index) => (
@@ -474,6 +464,9 @@ export default function DiscountsPage() {
           </button>
         </div>
       </div>
+
+      {/* Bottom spacing */}
+      <div className="h-20"></div>
     </div>
   )
 }

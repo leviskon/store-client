@@ -3,7 +3,7 @@ import AppLayout from '@/components/AppLayout'
 
 export default function Discounts() {
   return (
-    <AppLayout>
+    <AppLayout showHeader={false} showBottomNav={true}>
       <DiscountsPage />
     </AppLayout>
   )

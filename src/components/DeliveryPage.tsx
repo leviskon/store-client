@@ -321,7 +321,7 @@ export default function DeliveryPage() {
                 <h4 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h4>
                 <p className="text-gray-600 text-sm">{feature.description}</p>
                 <div className={`mt-4 inline-block px-3 py-1 rounded-full text-sm font-medium ${feature.color}`}>
-                  {t.language === 'kg' ? 'Жеткиликтүү' : 'Доступно'}
+                  {t.available}
                 </div>
               </div>
             ))}

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useNotification } from '@/context/NotificationContext'
 import { useCart } from '@/context/CartContext'
+import { useLanguage } from '@/context/LanguageContext'
 
 interface Product {
   id: string
@@ -62,6 +63,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
   const { toggleFavorite, isFavorite } = useFavorites()
   const { showNotification } = useNotification()
   const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart()
+  const { t } = useLanguage()
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -158,7 +160,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
 
     setLoading(true)
     fetchProducts()
-  }, [selectedCategory, includeSubcategories, searchQuery, filters])
+  }, [selectedCategory, includeSubcategories, searchQuery, filters, cartItems])
 
   // Обновляем количества при изменении корзины
   useEffect(() => {
@@ -181,7 +183,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
         // Неверные данные товара
         showNotification({
           type: 'error',
-          message: 'Ошибка: недостаточно данных о товаре',
+          message: t.errorInsufficientData,
           duration: 2000
         })
         return
@@ -208,7 +210,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
       if (!wasInFavorites) {
         showNotification({
           type: 'favorites',
-          message: 'Добавлено в избранное',
+          message: t.addedToFavorites,
           duration: 2000
         })
       }
@@ -216,7 +218,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
       // Ошибка переключения избранного
       showNotification({
         type: 'error',
-        message: 'Ошибка при добавлении в избранное',
+        message: t.errorAddingToFavorites,
         duration: 2000
       })
     }
@@ -273,7 +275,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
     if (success) {
       showNotification({
         type: 'cart',
-        message: 'Добавлено в корзину',
+        message: t.addedToCart,
         duration: 2000
       })
       setQuantities(prev => ({ ...prev, [product.id]: 1 }))
@@ -408,7 +410,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
             {/* Size Selection */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="space-y-1">
-                <h4 className="text-xs font-medium text-gray-700">Размер:</h4>
+                <h4 className="text-xs font-medium text-gray-700">{t.sizeLabel}</h4>
                 <div className="flex flex-wrap gap-1">
                   {product.sizes.slice(0, 3).map((size) => (
                     <button
@@ -448,7 +450,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 font-medium transition-all text-sm"
                 >
                   <ShoppingBag className="w-4 h-4" />
-                  <span>В корзину</span>
+                  <span>{t.addToCartButton}</span>
                 </button>
               ) : (
                 <div className="w-full bg-orange-500 text-white px-3 py-2 rounded-lg flex items-center justify-between font-medium">

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { ArrowLeft, Package, ClipboardList, Truck, CheckCircle, Clock, User } from 'lucide-react'
 import { getOrdersCookie } from '@/lib/cookies'
+import { useLanguage } from '@/context/LanguageContext'
 import Link from 'next/link'
 
 // Типы для отслеживания заказа
@@ -46,6 +47,7 @@ interface StatusStep {
 export default function TrackOrderPage() {
   const params = useParams()
   const orderId = params?.id as string
+  const { t } = useLanguage()
   
   const [order, setOrder] = useState<Order | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -61,7 +63,7 @@ export default function TrackOrderPage() {
         // Проверяем, есть ли ID заказа в куках (для проверки доступности)
         const orderIds = getOrdersCookie()
         if (!orderIds.includes(orderId)) {
-          setError('Заказ не найден')
+          setError(t.orderNotFound)
           setIsLoading(false)
           return
         }
@@ -73,13 +75,13 @@ export default function TrackOrderPage() {
           const orderData = await response.json()
           setOrder(orderData)
         } else if (response.status === 404) {
-          setError('Заказ не найден')
+          setError(t.orderNotFound)
         } else {
-          setError('Ошибка загрузки заказа')
+          setError(t.failedToLoad)
         }
       } catch (err) {
         console.error('Ошибка загрузки заказа:', err)
-        setError('Ошибка загрузки заказа')
+        setError(t.failedToLoad)
       } finally {
         setIsLoading(false)
       }
@@ -98,35 +100,35 @@ export default function TrackOrderPage() {
     return [
       {
         key: 'CREATED',
-        label: 'Заказ размещен',
+        label: t.orderPlaced,
         icon: ClipboardList,
         completed: currentIndex >= 0,
         current: currentStatus === 'CREATED'
       },
       {
         key: 'COURIER_WAIT',
-        label: 'Ожидает курьера',
+        label: t.waitingCourier,
         icon: Clock,
         completed: currentIndex >= 1,
         current: currentStatus === 'COURIER_WAIT'
       },
       {
         key: 'COURIER_PICKED',
-        label: 'Забрал курьер',
+        label: t.courierTook,
         icon: User,
         completed: currentIndex >= 2,
         current: currentStatus === 'COURIER_PICKED'
       },
       {
         key: 'ENROUTE',
-        label: 'В пути',
+        label: t.inTransit,
         icon: Truck,
         completed: currentIndex >= 3,
         current: currentStatus === 'ENROUTE'
       },
       {
         key: 'DELIVERED',
-        label: 'Доставлен',
+        label: t.deliveredStatus,
         icon: CheckCircle,
         completed: currentStatus === 'DELIVERED',
         current: currentStatus === 'DELIVERED'
@@ -156,7 +158,7 @@ export default function TrackOrderPage() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4 mx-auto"></div>
-          <p className="text-gray-500">Загрузка заказа...</p>
+          <p className="text-gray-500">{t.loadingOrder}</p>
         </div>
       </div>
     )
@@ -170,14 +172,14 @@ export default function TrackOrderPage() {
             <Link href="/orders" className="p-2 -ml-2">
               <ArrowLeft className="w-6 h-6 text-gray-600" />
             </Link>
-            <h1 className="text-lg font-semibold text-gray-900">Заказ</h1>
+            <h1 className="text-lg font-semibold text-gray-900">{t.order}</h1>
             <div className="w-10" />
           </div>
         </div>
         <div className="flex flex-col items-center justify-center py-16 px-4">
           <Package className="w-16 h-16 text-gray-300 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Заказ не найден</h3>
-          <p className="text-gray-500 text-center">{error || 'Заказ с таким ID не существует'}</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t.orderNotFound}</h3>
+          <p className="text-gray-500 text-center">{error || t.orderNotFoundDesc}</p>
         </div>
       </div>
     )
@@ -194,7 +196,7 @@ export default function TrackOrderPage() {
           <Link href="/orders" className="p-2 -ml-2">
             <ArrowLeft className="w-6 h-6 text-gray-600" />
           </Link>
-          <h1 className="text-lg font-semibold text-gray-900">Детали заказа</h1>
+          <h1 className="text-lg font-semibold text-gray-900">{t.orderDetails}</h1>
           <div className="w-10" />
         </div>
       </div>
@@ -202,7 +204,7 @@ export default function TrackOrderPage() {
       <div className="px-4 py-6">
         {/* Product Information */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Товары в заказе</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t.itemsInOrder}</h3>
           <div className="space-y-4">
             {order.orderItems.map((item) => {
               const productImage = item.product.imageUrl && Array.isArray(item.product.imageUrl) && item.product.imageUrl.length > 0 
@@ -232,10 +234,10 @@ export default function TrackOrderPage() {
                       {item.product.name}
                     </h4>
                     <p className="text-sm text-gray-600 mb-1">
-                      Категория: {item.product.category.name}
+                      {t.category}: {item.product.category.name}
                     </p>
                     <p className="text-sm text-gray-600 mb-2">
-                      Количество: {item.amount} шт
+                      {t.quantity}: {item.amount} {t.pieces}
                     </p>
                     <p className="text-lg font-semibold text-gray-900">
                       {formatPrice(Number(item.price))}
@@ -250,34 +252,34 @@ export default function TrackOrderPage() {
         {/* Order Details */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Детали заказа
+            {t.orderDetails}
           </h3>
           
           <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Имя клиента</span>
+              <span className="text-sm text-gray-600">{t.customerName}</span>
               <span className="text-sm font-medium text-gray-900">{order.customerName}</span>
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Телефон</span>
+              <span className="text-sm text-gray-600">{t.phone}</span>
               <span className="text-sm font-medium text-gray-900">{order.customerPhone}</span>
             </div>
             
             <div className="flex justify-between items-start">
-              <span className="text-sm text-gray-600">Адрес доставки</span>
+              <span className="text-sm text-gray-600">{t.deliveryAddress}</span>
               <span className="text-sm font-medium text-gray-900 text-right max-w-xs">
                 {order.deliveryAddress}
               </span>
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Дата создания</span>
+              <span className="text-sm text-gray-600">{t.createdDate}</span>
               <span className="text-sm font-medium text-gray-900">{formatDate(order.createdAt)}</span>
             </div>
             
             <div className="flex justify-between items-center border-t border-gray-200 pt-3">
-              <span className="text-base font-semibold text-gray-900">Итого</span>
+              <span className="text-base font-semibold text-gray-900">{t.total}</span>
               <span className="text-lg font-bold text-orange-600">{formatPrice(totalAmount)}</span>
             </div>
           </div>
@@ -286,7 +288,7 @@ export default function TrackOrderPage() {
         {/* Order Status Timeline */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Статус доставки
+            {t.deliveryStatus}
           </h3>
           
           <div className="relative">
@@ -327,12 +329,12 @@ export default function TrackOrderPage() {
                       </h4>
                       {step.current && (
                         <p className="text-xs text-orange-600 font-medium">
-                          Текущий статус
+                          {t.currentStatus}
                         </p>
                       )}
                       {step.completed && !step.current && (
                         <p className="text-xs text-gray-500">
-                          Выполнено
+                          {t.completed}
                         </p>
                       )}
                     </div>
@@ -347,7 +349,7 @@ export default function TrackOrderPage() {
         {order.status === 'CANCELED' && order.cancelComment && (
           <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <h4 className="text-sm font-medium text-red-800 mb-2">
-              Причина отмены
+              {t.cancelReason}
             </h4>
             <p className="text-sm text-red-700">
               {order.cancelComment}
@@ -359,7 +361,7 @@ export default function TrackOrderPage() {
         {order.customerComment && (
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <h4 className="text-sm font-medium text-blue-800 mb-2">
-              Комментарий к заказу
+              {t.orderComment}
             </h4>
             <p className="text-sm text-blue-700">
               {order.customerComment}

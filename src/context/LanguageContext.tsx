@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { Language, useTranslation } from '@/lib/i18n'
 
 interface LanguageContextType {
@@ -15,8 +15,22 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>('ru')
   const t = useTranslation(language)
 
+  // Загружаем язык из localStorage при инициализации
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language') as Language
+    if (savedLanguage && (savedLanguage === 'kg' || savedLanguage === 'ru')) {
+      setLanguage(savedLanguage)
+    }
+  }, [])
+
+  // Сохраняем язык в localStorage при изменении
+  const handleSetLanguage = (lang: Language) => {
+    setLanguage(lang)
+    localStorage.setItem('language', lang)
+  }
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   )

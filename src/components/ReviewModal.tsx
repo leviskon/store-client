@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { X, Star, Loader2 } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 
 interface ReviewModalProps {
   isOpen: boolean
@@ -30,6 +31,7 @@ export default function ReviewModal({
   editMode = false,
   initialData
 }: ReviewModalProps) {
+  const { t } = useLanguage()
   const [formData, setFormData] = useState<ReviewFormData>({
     clientName: '',
     text: '',
@@ -42,17 +44,17 @@ export default function ReviewModal({
     const newErrors: Partial<ReviewFormData> = {}
 
     if (!formData.clientName.trim()) {
-      newErrors.clientName = 'Введите ваше имя'
+      newErrors.clientName = t.enterNameError
     }
 
     if (!formData.text.trim()) {
-      newErrors.text = 'Напишите отзыв'
+      newErrors.text = t.writeReviewError
     } else if (formData.text.trim().length < 10) {
-      newErrors.text = 'Отзыв должен содержать минимум 10 символов'
+      newErrors.text = t.minimumLengthError
     }
 
     if (formData.rating === 0) {
-      newErrors.rating = 'Поставьте оценку'
+      newErrors.rating = t.setRatingError
     }
 
     setErrors(newErrors)
@@ -144,7 +146,7 @@ export default function ReviewModal({
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div>
             <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-              {editMode ? 'Редактировать отзыв' : 'Оставить отзыв'}
+              {editMode ? t.editReview : t.leaveReview}
             </h2>
             <p className="text-xs sm:text-sm text-gray-600 mt-1">{productName}</p>
           </div>
@@ -162,7 +164,7 @@ export default function ReviewModal({
           {/* Rating */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ваша оценка *
+              {t.yourRating}
             </label>
             <div className="flex items-center space-x-1">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -185,7 +187,7 @@ export default function ReviewModal({
                 </button>
               ))}
               <span className="ml-3 text-sm text-gray-600">
-                {formData.rating > 0 ? `${formData.rating} из 5` : 'Не выбрано'}
+                {formData.rating > 0 ? `${formData.rating} ${t.outOf5}` : t.notSelected}
               </span>
             </div>
             {errors.rating && (
@@ -196,7 +198,7 @@ export default function ReviewModal({
           {/* Client Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ваше имя *
+              {t.yourName}
             </label>
             <input
               type="text"
@@ -205,7 +207,7 @@ export default function ReviewModal({
               className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 bg-white placeholder-gray-500 ${
                 errors.clientName ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Введите ваше имя"
+              placeholder={t.enterYourName}
               disabled={isLoading}
             />
             {errors.clientName && (
@@ -216,7 +218,7 @@ export default function ReviewModal({
           {/* Review Text */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ваш отзыв *
+              {t.yourReview}
             </label>
             <textarea
               value={formData.text}
@@ -225,14 +227,14 @@ export default function ReviewModal({
               className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none text-gray-900 bg-white placeholder-gray-500 ${
                 errors.text ? 'border-red-500' : 'border-gray-300'
               }`}
-              placeholder="Поделитесь своими впечатлениями о товаре..."
+              placeholder={t.shareImpressions}
               disabled={isLoading}
             />
             <div className="flex justify-between items-center mt-1">
               {errors.text ? (
                 <p className="text-sm text-red-600">{errors.text}</p>
               ) : (
-                <p className="text-xs text-gray-500">Минимум 10 символов</p>
+                <p className="text-xs text-gray-500">{t.minimumCharacters}</p>
               )}
               <p className="text-xs text-gray-400">
                 {formData.text.length}/500
@@ -248,7 +250,7 @@ export default function ReviewModal({
               className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
               disabled={isLoading}
             >
-              Отмена
+              {t.cancel}
             </button>
             <button
               type="submit"
@@ -258,10 +260,10 @@ export default function ReviewModal({
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>{editMode ? 'Сохранение...' : 'Отправка...'}</span>
+                  <span>{editMode ? t.saving : t.sending}</span>
                 </>
               ) : (
-                editMode ? 'Сохранить' : 'Отправить'
+                editMode ? t.save : t.send
               )}
             </button>
           </div>
@@ -270,7 +272,7 @@ export default function ReviewModal({
         {/* Info */}
         <div className="mt-4 p-3 bg-gray-50 rounded-xl">
           <p className="text-xs text-gray-600 text-center">
-            Ваш отзыв поможет другим покупателям сделать правильный выбор
+            {t.reviewHelp}
           </p>
         </div>
       </div>

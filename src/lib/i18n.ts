@@ -60,7 +60,6 @@ export interface Translations {
   totalPrice: string
   addToCart: string
   readMore: string
-  productNotFound: string
   goBack: string
   noImage: string
   specifications: string
@@ -76,7 +75,6 @@ export interface Translations {
   
   // Modal confirmations
   confirm: string
-  cancel: string
   confirmRemoveTitle: string
   confirmRemoveMessage: string
   remove: string
@@ -136,6 +134,345 @@ export interface Translations {
   shippedDate: string
   deliveredDate: string
   expectedDate: string
+  
+  // Additional translations for ProductGrid
+  inCart: string
+  
+  // Reviews page
+  reviewsTitle: string
+  reviewSubmitted: string
+  
+  // Checkout modal
+  orderCheckout: string
+  customerName: string
+  customerPhone: string
+  deliveryAddress: string
+  customerComment: string
+  enterName: string
+  enterPhone: string
+  enterAddress: string
+  optionalComment: string
+  phoneValidation: string
+  placeOrder: string
+  orderTotal: string
+  
+  // Common actions
+  submit: string
+  edit: string
+  close: string
+  
+  // Additional missing translations
+  back: string
+  loading: string
+  error: string
+  success: string
+  warning: string
+  info: string
+  
+  // Notification messages
+  errorInsufficientData: string
+  addedToFavorites: string
+  errorAddingToFavorites: string
+  addedToCart: string
+  
+  // Product grid labels
+  sizeLabel: string
+  addToCartButton: string
+  
+  // Review page messages
+  errorLoadingReviews: string
+  reviewSubmitError: string
+  reviewSubmitErrorGeneral: string
+  
+  // Loading states
+  loadingText: string
+  loadingProducts: string
+  loadingCategories: string
+  loadingData: string
+  
+  // Status labels
+  available: string
+  unavailable: string
+  inStock: string
+  outOfStock: string
+  
+  // Common words
+  hot: string
+  new: string
+  sale: string
+  categories: string
+  
+  // Discount page
+  bigDiscounts: string
+  maxDiscountInfo: string
+  temporaryPromotions: string
+  discountsCount: string
+  maxDiscount: string
+  
+  // Product labels
+  men: string
+  women: string
+  children: string
+  sport: string
+  shoes: string
+  accessories: string
+  
+  // Time units
+  days: string
+  hours: string
+  
+  // Product names examples
+  classicTshirt: string
+  elegantDress: string
+  sportJacket: string
+  classicPants: string
+  summerDress: string
+  childrenClothing: string
+  sneakers: string
+  bag: string
+  
+  // Action buttons
+  view: string
+  buy: string
+  watch: string
+  economy: string
+  colors: string
+  sizes: string
+  
+  // New arrivals page
+  newCollectionHero: string
+  latestTrends: string
+  newItemsCount: string
+  discountInfo: string
+  
+  // Returns page
+  wrongSize: string
+  wrongColor: string
+  poorQuality: string
+  notAsExpected: string
+  returnRight: string
+  otherReason: string
+  importantNotice: string
+  returnProcessInfo: string
+  
+  // Returns page - new policy
+  returns: string
+  returnPolicy: string
+  returnPolicyDescription: string
+  returnPossible: string
+  returnConditionsTitle: string
+  onDeliveryReturn: string
+  onDeliveryReturnDesc: string
+  checkOnDelivery: string
+  checkOnDeliveryDesc: string
+  noOtherReturns: string
+  noOtherReturnsDesc: string
+  returnSteps: string
+  step1Title: string
+  step1Desc: string
+  step2Title: string
+  step2Desc: string
+  step3Title: string
+  step3Desc: string
+  contactSupport: string
+  contactSupportDesc: string
+  alwaysAvailable: string
+  responseWithin24h: string
+  
+  // Page titles
+  aboutUs: string
+  discounts: string
+  privacy: string
+  
+  // About page
+  storeDescription: string
+  customersCount: string
+  loyalCustomers: string
+  experienceYears: string
+  years: string
+  productsCount: string
+  variousProducts: string
+  reliability: string
+  customerSatisfaction: string
+  ourStory: string
+  storyParagraph1: string
+  storyParagraph2: string
+  ourValues: string
+  qualityValue: string
+  satisfactionValue: string
+  innovationValue: string
+  reliabilityValue: string
+  ourMission: string
+  missionDescription: string
+  missionQuote: string
+  contactUs: string
+  questionsHelp: string
+  contactButton: string
+  
+  // Privacy page
+  privacyDescription: string
+  dataCollection: string
+  personalInfo: string
+  personalInfoDesc: string
+  technicalInfo: string
+  technicalInfoDesc: string
+  dataUsage: string
+  serviceProvision: string
+  serviceProvisionDesc: string
+  notifications: string
+  notificationsDesc: string
+  dataSharing: string
+  thirdParties: string
+  thirdPartiesDesc: string
+  employees: string
+  employeesDesc: string
+  security: string
+  dataProtection: string
+  dataProtectionDesc: string
+  encryption: string
+  encryptionDesc: string
+  yourRights: string
+  accessRight: string
+  accessRightDesc: string
+  editRight: string
+  editRightDesc: string
+  deleteRight: string
+  deleteRightDesc: string
+  contactInfo: string
+  contactInfoDesc: string
+  policyUpdates: string
+  policyUpdatesDesc: string
+  
+  // Footer
+  footerDescription: string
+  quickLinks: string
+  customerService: string
+  contacts: string
+  allRightsReserved: string
+  termsOfUse: string
+  address: string
+  
+  // Review Modal
+  editReview: string
+  leaveReview: string
+  yourRating: string
+  yourName: string
+  yourReview: string
+  enterYourName: string
+  writeReview: string
+  shareImpressions: string
+  minimumCharacters: string
+  notSelected: string
+  cancel: string
+  save: string
+  send: string
+  saving: string
+  sending: string
+  reviewHelp: string
+  enterNameError: string
+  writeReviewError: string
+  minimumLengthError: string
+  setRatingError: string
+  
+  // Product page additional translations
+  reviews: string
+  noReviewsYet: string
+  beFirstToReview: string
+  writeReview: string
+  showAllReviews: string
+  productNotFound: string
+  errorLoadingProduct: string
+  alreadyReviewed: string
+  reviewUpdated: string
+  reviewAdded: string
+  errorUpdatingReview: string
+  errorAddingReview: string
+  errorOccurred: string
+  tryAgain: string
+  highQualityProduct: string
+  outOf5: string
+  
+  // Terms page
+  personalDataProtection: string
+  personalDataDescription: string
+  falseInformation: string
+  accountBlocked: string
+  serviceDisruption: string
+  accessSuspended: string
+  copyrightViolation: string
+  legalAction: string
+  spamDistribution: string
+  fineApplied: string
+  
+  // Orders page
+  myOrders: string
+  active: string
+  completed: string
+  cancelled: string
+  loadingOrders: string
+  errorLoading: string
+  noOrdersTitle: string
+  noOrdersSubtitle: string
+  orderFrom: string
+  status: string
+  details: string
+  
+  // Order statuses
+  created: string
+  courierWait: string
+  courierPicked: string
+  enroute: string
+  delivered: string
+  canceled: string
+  
+  // Product page
+  productDetails: string
+  selectColor: string
+  selectSize: string
+  addToCart: string
+  addToFavorites: string
+  removeFromFavorites: string
+  quantity: string
+  description: string
+  specifications: string
+  reviews: string
+  relatedProducts: string
+  averageRating: string
+  productNotFound: string
+  failedToLoad: string
+  
+  // Boolean values
+  yes: string
+  no: string
+  
+  // Track order page
+  order: string
+  orderDetails: string
+  orderNotFound: string
+  orderNotFoundDesc: string
+  loadingOrder: string
+  itemsInOrder: string
+  customerInfo: string
+  customerName: string
+  phone: string
+  deliveryAddress: string
+  createdDate: string
+  total: string
+  deliveryStatus: string
+  category: string
+  quantity: string
+  pieces: string
+  currentStatus: string
+  completed: string
+  cancelReason: string
+  orderComment: string
+  
+  // Order tracking statuses
+  orderPlaced: string
+  waitingCourier: string
+  courierTook: string
+  inTransit: string
+  deliveredStatus: string
 }
 
 export const translations: Record<Language, Translations> = {
@@ -199,7 +536,6 @@ export const translations: Record<Language, Translations> = {
     totalPrice: 'Жалпы баасы',
     addToCart: 'Себетке кошуу',
     readMore: 'Толугу менен окуу',
-    productNotFound: 'Товар табылган жок',
     goBack: 'Артка кайтуу',
     noImage: 'Сүрөт жок',
     specifications: 'Техникалык мүнөздөмөлөр',
@@ -215,7 +551,6 @@ export const translations: Record<Language, Translations> = {
     
     // Modal confirmations
     confirm: 'Ырастоо',
-    cancel: 'Жокко чыгаруу',
     confirmRemoveTitle: 'Тандалмалардан чыгаруу',
     confirmRemoveMessage: 'Бул товарды тандалмалардан чыгарууну каалайсызбы?',
     remove: 'Чыгаруу',
@@ -233,7 +568,6 @@ export const translations: Record<Language, Translations> = {
     confirmRemoveFromCartTitle: 'Себеттен чыгаруу',
     confirmRemoveFromCartMessage: 'Бул товарды себеттен чыгарууну каалайсызбы?',
     yesRemove: 'Ооба, чыгаруу',
-    size: 'Өлчөмү',
     color: 'Түсү',
     price: 'Баасы',
     
@@ -247,11 +581,7 @@ export const translations: Record<Language, Translations> = {
     noOrdersSubtitle: 'Биринчи заказды берүү үчүн товарларды сатып алыңыз',
     orderStatus: 'Заказдын статусу',
     orderDate: 'Заказдын датасы',
-    orderTotal: 'Жалпы сумма',
     orderNumber: 'Заказдын номуру',
-    deliveryAddress: 'Жеткирүү дареги',
-    customerPhone: 'Телефон номуру',
-    customerComment: 'Клиенттин комментарийи',
     cancelComment: 'Жокко чыгаруу себеби',
     courierInfo: 'Курьер тууралуу маалымат',
     orderCreated: 'Түзүлгөн',
@@ -274,7 +604,322 @@ export const translations: Record<Language, Translations> = {
     inProgressDate: '23 Авг 2023, 03:54 PM',
     shippedDate: 'Күтүлгөн 02 Сен 2023',
     deliveredDate: '23 Авг 2023, 2023',
-    expectedDate: '03 Сен 2023'
+    expectedDate: '03 Сен 2023',
+    
+    // Additional translations for ProductGrid
+    inCart: 'Корзинада',
+    
+    // Reviews page
+    reviewsTitle: 'Пикирлер',
+    reviewSubmitted: 'Пикир жөнөтүлдү',
+    
+    // Checkout modal
+    orderCheckout: 'Заказ берүү',
+    customerName: 'Атыңыз',
+    customerPhone: 'Телефон номуру',
+    deliveryAddress: 'Жеткирүү дареги',
+    customerComment: 'Комментарий',
+    enterName: 'Атыңызды киргизиңиз',
+    enterPhone: 'Телефон номурун киргизиңиз',
+    enterAddress: 'Даректи киргизиңиз',
+    optionalComment: 'Комментарий (милдеттүү эмес)',
+    phoneValidation: 'Туура телефон номурун киргизиңиз (+996 XXX XXX XXX)',
+    placeOrder: 'Заказ берүү',
+    orderTotal: 'Жалпы сумма',
+    
+    // Common actions
+    submit: 'Жөнөтүү',
+    edit: 'Түзөтүү',
+    close: 'Жабуу',
+    
+    // Additional missing translations
+    back: 'Артка',
+    loading: 'Жүктөлүүдө...',
+    error: 'Ката',
+    success: 'Ийгиликтүү',
+    warning: 'Эскертүү',
+    info: 'Маалымат',
+    
+    // Notification messages
+    errorInsufficientData: 'Ката: товар жөнүндө жетишсиз маалымат',
+    addedToFavorites: 'Тандалмаларга кошулду',
+    errorAddingToFavorites: 'Тандалмаларга кошуудагы ката',
+    addedToCart: 'Себетке кошулду',
+    
+    // Product grid labels
+    sizeLabel: 'Өлчөмү:',
+    addToCartButton: 'Себетке',
+    
+    // Review page messages
+    errorLoadingReviews: 'Пикирлерди жүктөөдөгү ката',
+    reviewSubmitError: 'Пикирди кошуудагы ката',
+    reviewSubmitErrorGeneral: 'Ката кетти. Кайра аракет кылыңыз.',
+    
+    // Loading states
+    loadingText: 'Жүктөлүүдө...',
+    loadingProducts: 'Товарлар жүктөлүүдө...',
+    loadingCategories: 'Категориялар жүктөлүүдө...',
+    loadingData: 'Маалыматтар жүктөлүүдө...',
+    
+    // Status labels
+    available: 'Жеткиликтүү',
+    unavailable: 'Жеткиликсиз',
+    inStock: 'Бар',
+    outOfStock: 'Жок',
+    
+    // Common words
+    hot: 'Ысык',
+    new: 'Жаңы',
+    sale: 'Арзандатуу',
+    
+    // Discount page
+    bigDiscounts: 'Улуу арзандатуулар!',
+    maxDiscountInfo: 'Эң жогору арзандатуулар менен сатып алыңыз. Убактылуу акциялар!',
+    temporaryPromotions: 'Убактылуу акциялар!',
+    discountsCount: 'Арзандатуулар: 50+',
+    maxDiscount: 'Эң жогору: 50%',
+    
+    // Product labels
+    men: 'Эркектер',
+    women: 'Аялдар',
+    children: 'Балдар',
+    sport: 'Спорт',
+    shoes: 'Аяк кийимдери',
+    accessories: 'Аксессуарлар',
+    
+    // Time units
+    days: 'күн',
+    hours: 'саат',
+    
+    // Product names examples
+    classicTshirt: 'Классикалык футболка',
+    elegantDress: 'Элеганттуу көйнөк',
+    sportJacket: 'Спорттуу куртка',
+    classicPants: 'Классикалык шым',
+    summerDress: 'Жайкы көйнөк',
+    childrenClothing: 'Балалардын кийими',
+    sneakers: 'Кроссовкалар',
+    bag: 'Сумка',
+    
+    // Action buttons
+    view: 'Көрүү',
+    buy: 'Сатып алуу',
+    watch: 'Көрүү',
+    economy: 'Экономия:',
+    colors: 'Түстөр:',
+    sizes: 'Өлчөмдөр:',
+    
+    // New arrivals page - custom for this page
+    newCollectionHero: 'Жаңы коллекция!',
+    latestTrends: 'Эң акыркы мода тенденциялары менен таанышыңыз. Жаңы товарлар ар дайым эң жакшы баада!',
+    newItemsCount: 'Жаңы товарлар: 50+',
+    discountInfo: 'Арзандатуулар: 20%',
+    
+    // Returns page
+    wrongSize: 'Өлчөм туура эмес',
+    wrongColor: 'Түс туура эмес',
+    poorQuality: 'Сапат туура эмес',
+    notAsExpected: 'Кыялдан айырма',
+    returnRight: 'Кайтаруу укугу',
+    otherReason: 'Башка себеп',
+    importantNotice: 'Маанилүү эскертүү',
+    returnProcessInfo: 'Кайтаруу процесси 3-5 иш күнүнө созулат. Акы кайтаруу сиз төлөгөн ыкма менен жүргүзүлөт. Кошумча суроолор үчүн биз менен байланышыңыз.',
+    
+    // Returns page - new policy
+    returns: 'Кайтаруу',
+    returnPolicy: 'Кайтаруу эрежелери',
+    returnPolicyDescription: 'Биздин дүкөндө кайтаруу жөнүндө маанилүү маалымат',
+    returnPossible: 'Кайтаруу мүмкүн',
+    returnConditionsTitle: 'Кайтаруу шарттары',
+    onDeliveryReturn: 'Жеткирүү учурунда кайтаруу',
+    onDeliveryReturnDesc: 'Курьер заказды алып келгенде, товарды кайтаруу мүмкүн',
+    checkOnDelivery: 'Жеткирүү учурунда текшерүү',
+    checkOnDeliveryDesc: 'Кардар товарды алуу учурунда сапатын, өлчөмүн жана башка параметрлерин текшериши керек',
+    noOtherReturns: 'Башка учурларда кайтаруу жок',
+    noOtherReturnsDesc: 'Товарды алгандан кийин кайтаруу мүмкүн эмес. Бардык текшерүүлөрдү жеткирүү учурунда жасаңыз',
+    returnSteps: 'Кайтаруу алгоритми',
+    step1Title: 'Курьер келди',
+    step1Desc: 'Курьер заказды жеткирип берди',
+    step2Title: 'Товарды текшериңиз',
+    step2Desc: 'Өлчөмү, түсү, сапаты жана башка параметрлерди текшериңиз',
+    step3Title: 'Чечим кабыл алыңыз',
+    step3Desc: 'Эгер товар жакпаса - кайтарыңыз. Эгер бардыгы туурда - кабыл алыңыз',
+    contactSupport: 'Колдоо кызматы',
+    contactSupportDesc: 'Суроолоруңуз барбы? Биз менен байланышыңыз',
+    alwaysAvailable: 'Дайыма жеткиликтүү',
+    responseWithin24h: '24 саат ичинде жооп',
+    
+    // Page titles
+    aboutUs: 'Биз жөнүндө',
+    discounts: 'Арзандатуулар',
+    privacy: 'Жеке маалыматтын коопсуздугу',
+    
+    // About page
+    storeDescription: 'Биздин дүкөндө эң сонун жана сапаттуу кийимдерди табасыз. Биз ар бир кардарыбызды баалайбыз жана аларга эң жакшы кызмат көрсөтүүгө аракет кылабыз.',
+    customersCount: 'Кардарлардын саны',
+    loyalCustomers: 'Ырааттуу кардарлар',
+    experienceYears: 'Жылдардын тажрыйбасы',
+    years: 'Жылдар',
+    productsCount: 'Товарлардын саны',
+    variousProducts: 'Ар кандай товарлар',
+    reliability: 'Ырааты',
+    customerSatisfaction: 'Кардарлардын канааттануусу',
+    ourStory: 'Биздин тарых',
+    storyParagraph1: 'Store Client 2019-жылы негизделген жана алгачкы күндөрүнөн тартып биздин негизги максат - кардарларга сапаттуу жана стилдүү кийимдерди жеткирүү болгон. Биз ар бир кардарыбыздын муктаждыктарын түшүнүп, аларга эң жакшы кызмат көрсөтүүгө аракет кылабыз.',
+    storyParagraph2: 'Бүгүнкү күндө биз Кыргызстандын алдыңкы онлайн дүкөнү болуп саналат жана ар бир күнү жаңы кардарларды тартууда улантабыз. Биздин команда профессионалдык кызматкерлерден турат, алар сизге эң жакшы кызмат көрсөтүү үчүн дайыма даяр.',
+    ourValues: 'Биздин баалуулуктар',
+    qualityValue: 'Сапат - биздин негизги баалуулук. Биз ар бир товардын сапатына көңүл бурабыз.',
+    satisfactionValue: 'Кардарлардын канааттануусу - биздин негизги максат.',
+    innovationValue: 'Инновация - биз дайыма жаңы технологияларды колдонобуз.',
+    reliabilityValue: 'Ырааттуулук - биздин кардарлар бизге ишенишет.',
+    ourMission: 'Биздин миссия',
+    missionDescription: 'Биздин миссия - ар бир адамга өз стилин табууга жана өзүн жакшы сезүүгө жардам берүү. Биз сапаттуу, стилдүү жана арзан баадагы кийимдерди сунуштайбыз.',
+    missionQuote: '"Биздин максат - сизди эң жакшы көрүнүшүңүздү табууга жардам берүү"',
+    contactUs: 'Биз менен байланышыңыз',
+    questionsHelp: 'Сорууларыңыз барбы? Биз сизге жардам берүүгө дайымыз!',
+    contactButton: 'Байланышуу',
+    
+    // Privacy page
+    privacyDescription: 'Биз сиздин жеке маалыматтарыңыздын коопсуздугуна өзгөчө көңүл бурабыз жана аларды кантип топтоп, колдонуп, коргогонубуз жөнүндө толук маалымат берүүнү каалайбыз.',
+    dataCollection: 'Маалымат топтоо',
+    personalInfo: 'Жеке маалымат',
+    personalInfoDesc: 'Биз сиздин атыңыз, электрондук почтаңыз, телефон номериңиз, дарегиңиз жана башка жеке маалыматтарыңызды топтойбуз.',
+    technicalInfo: 'Техникалык маалымат',
+    technicalInfoDesc: 'Биз сиздин браузериңиздин маалыматын, IP дарегиңизди, кукилерди жана башка техникалык маалыматтарды топтойбуз.',
+    dataUsage: 'Маалыматты колдонуу',
+    serviceProvision: 'Кызмат көрсөтүү',
+    serviceProvisionDesc: 'Биз сиздин маалыматтарыңызды кызмат көрсөтүү үчүн колдонобуз.',
+    notifications: 'Билдирүүлөр',
+    notificationsDesc: 'Биз сизге заказ статусу, жаңы товарлар жана акциялар жөнүндө билдирүүлөр жөнөтөбүз.',
+    dataSharing: 'Маалыматты бөлүшүү',
+    thirdParties: 'Үчүнчү тараптар',
+    thirdPartiesDesc: 'Биз сиздин маалыматтарыңызды үчүнчү тараптарга бере албайбыз, эгерде мыйзам талап кылбаса.',
+    employees: 'Кызматкерлер',
+    employeesDesc: 'Биздин кызматкерлер сиздин маалыматтарыңызды кызмат көрсөтүү үчүн гана колдонушу мүмкүн.',
+    security: 'Коопсуздук',
+    dataProtection: 'Маалыматты коргоо',
+    dataProtectionDesc: 'Биз сиздин маалыматтарыңызды коргоо үчүн бардык зарыл чараларды көрөбүз.',
+    encryption: 'Шифрлөө',
+    encryptionDesc: 'Биздин сайт SSL шифрлөөсүн колдонот жана бардык маалыматтар коопсуз ташылат.',
+    yourRights: 'Сиздин укуктарыңыз',
+    accessRight: 'Кирүү укугу',
+    accessRightDesc: 'Сиз өзүңүздүн жеке маалыматтарыңызга кирүү укугуна ээсиз.',
+    editRight: 'Өзгөртүү укугу',
+    editRightDesc: 'Сиз өзүңүздүн маалыматтарыңызды өзгөртүү укугуна ээсиз.',
+    deleteRight: 'Жок кылуу укугу',
+    deleteRightDesc: 'Сиз өзүңүздүн маалыматтарыңызды жок кылдырууну суроо укугуна ээсиз.',
+    contactInfo: 'Байланыш маалыматы',
+    contactInfoDesc: 'Сорууларыңыз болсо, биз менен байланышыңыз: privacy@storeclient.kg',
+    policyUpdates: 'Саясатты жаңыртуу',
+    policyUpdatesDesc: 'Биз бул саясатты каалаган убакта өзгөртүшүбүз мүмкүн. Өзгөртүүлөр жөнүндө сизге электрондук почта аркылуу кабарлайбыз.',
+    
+    // Footer
+    footerDescription: 'Биздин дүкөндө эң сонун жана сапаттуу кийимдерди табасыз. Биз ар бир кардарыбызды баалайбыз.',
+    quickLinks: 'Тез шилтемелер',
+    customerService: 'Кардарларды тейлөө',
+    contacts: 'Байланыш',
+    allRightsReserved: 'Бардык укуктар корголгон.',
+    termsOfUse: 'Колдонуу шарттары',
+    address: 'Бишкек шаары, Чүй проспекти 123',
+    
+    // Review Modal
+    editReview: 'Отзывды түзөтүү',
+    leaveReview: 'Пикир калтыруу',
+    yourRating: 'Сиздин баалооңуз *',
+    yourName: 'Сиздин атыңыз *',
+    yourReview: 'Сиздин отзыв *',
+    enterYourName: 'Атыңызды киргизиңиз',
+    shareImpressions: 'Товар жөнүндө өз пикириңизди бөлүшүңүз...',
+    minimumCharacters: 'Эң аз 10 символ',
+    notSelected: 'Тандалган жок',
+    cancel: 'Жокко чыгаруу',
+    save: 'Сактоо',
+    send: 'Жөнөтүү',
+    saving: 'Сакталууда...',
+    sending: 'Жөнөтүлүүдө...',
+    reviewHelp: 'Сиздин отзыв башка сатып алуучуларга туура тандоо жасашына жардам берет',
+    enterNameError: 'Атыңызды киргизиңиз',
+    writeReviewError: 'Отзыв жазыңыз',
+    minimumLengthError: 'Отзыв эң аз 10 символду камтышы керек',
+    setRatingError: 'Баалоо коюңуз',
+    
+    // Product page additional translations
+    reviews: 'Пикирлер',
+    noReviewsYet: 'Пикирлер жок',
+    beFirstToReview: 'Бул товар жөнүндө биринчи пикир калтыргыч болуңуз',
+    writeReview: 'Пикир жазуу',
+    showAllReviews: 'Бардык пикирлерди көрүү',
+    productNotFound: 'Товар табылган жок',
+    errorLoadingProduct: 'Товарды жүктөөдө ката',
+    alreadyReviewed: 'Сиз бул товар үчүн пикир калтыргансыз',
+    reviewUpdated: 'Пикир ийгиликтүү жаңыртылды!',
+    reviewAdded: 'Пикир ийгиликтүү кошулду!',
+    errorUpdatingReview: 'Пикирди жаңыртууда ката',
+    errorAddingReview: 'Пикир кошууда ката',
+    errorOccurred: 'Ката кетти. Кайра аракет кылыңыз.',
+    tryAgain: 'Кайра аракет кылыңыз',
+    highQualityProduct: 'Жогорку сапаттагы товар эң сонун мүнөздөмөлөр менен. Күнүмдүк колдонууга жарамдуу жана ишенимдүүлүк жана туруктуулук менен айырмаланат.',
+    outOf5: '5тен',
+    
+    // Terms page
+    personalDataProtection: 'Жеке маалыматты коргоо',
+    personalDataDescription: 'Сиз өз жеке маалыматтарыңызды коргоого милдеттүүсүз.',
+    falseInformation: 'Жалган маалымат берүү',
+    accountBlocked: 'Аккаунт жокко чыгарылат',
+    serviceDisruption: 'Кызматтарды бузуу',
+    accessSuspended: 'Доступ токтотулат',
+    copyrightViolation: 'Автордук укукту бузуу',
+    legalAction: 'Мыйзамдык чаралар көрүлөт',
+    spamDistribution: 'Спам жайылтуу',
+    fineApplied: 'Айып салынат',
+    
+    // Additional orders page
+    loadingOrders: 'Заказдар жүктөлүүдө...',
+    errorLoading: 'Жүктөөдөгү ката',
+    orderFrom: 'Заказ',
+    status: 'Статус',
+    details: 'Толук маалымат',
+    
+    // Order statuses
+    created: 'Түзүлдү',
+    courierWait: 'Курьерди күтүүдө',
+    courierPicked: 'Курьер алды',
+    enroute: 'Жолдо',
+    canceled: 'Жокко чыгарылды',
+    
+    // Additional product page
+    addToFavorites: 'Тандалмаларга кошуу',
+    description: 'Тарыхы',
+    relatedProducts: 'Окшош товарлар',
+    averageRating: 'Орточо рейтинг',
+    failedToLoad: 'Жүктөөдө ката',
+    
+    // Boolean values
+    yes: 'Ооба',
+    no: 'Жок',
+    
+    // Additional track order page
+    order: 'Заказ',
+    orderNotFound: 'Заказ табылган жок',
+    orderNotFoundDesc: 'Мындай ID менен заказ жок',
+    loadingOrder: 'Заказ жүктөлүүдө...',
+    itemsInOrder: 'Заказдагы товарлар',
+    customerInfo: 'Кардардын маалыматы',
+    phone: 'Телефон',
+    createdDate: 'Түзүлгөн датасы',
+    total: 'Жалпы',
+    deliveryStatus: 'Жеткирүү статусу',
+    category: 'Категория',
+    pieces: 'дана',
+    currentStatus: 'Учурдагы статус',
+    cancelReason: 'Жокко чыгаруу себеби',
+    orderComment: 'Заказга комментарий',
+    
+    // Additional order tracking statuses
+    waitingCourier: 'Курьерди күтүүдө',
+    courierTook: 'Курьер алды',
+    inTransit: 'Жолдо',
+    deliveredStatus: 'Жеткирилди'
   },
   
   ru: {
@@ -337,7 +982,6 @@ export const translations: Record<Language, Translations> = {
     totalPrice: 'Общая стоимость',
     addToCart: 'Добавить в корзину',
     readMore: 'Читать далее',
-    productNotFound: 'Товар не найден',
     goBack: 'Вернуться назад',
     noImage: 'Нет изображения',
     specifications: 'Характеристики',
@@ -353,7 +997,6 @@ export const translations: Record<Language, Translations> = {
     
     // Modal confirmations
     confirm: 'Подтвердить',
-    cancel: 'Отмена',
     confirmRemoveTitle: 'Удалить из избранного',
     confirmRemoveMessage: 'Вы уверены, что хотите удалить этот товар из избранного?',
     remove: 'Удалить',
@@ -371,11 +1014,10 @@ export const translations: Record<Language, Translations> = {
     confirmRemoveFromCartTitle: 'Удалить из корзины',
     confirmRemoveFromCartMessage: 'Вы уверены, что хотите удалить этот товар из корзины?',
     yesRemove: 'Да, удалить',
-    size: 'Размер',
-    color: 'Цвет',
-    price: 'Цена',
-    
-    // Orders page
+  color: 'Цвет',
+  price: 'Цена',
+  
+  // Orders page
     myOrders: 'Мои заказы',
     active: 'Активные',
     completed: 'Завершенные',
@@ -385,11 +1027,7 @@ export const translations: Record<Language, Translations> = {
     noOrdersSubtitle: 'Сделайте первую покупку, чтобы увидеть заказы здесь',
     orderStatus: 'Статус заказа',
     orderDate: 'Дата заказа',
-    orderTotal: 'Общая сумма',
     orderNumber: 'Номер заказа',
-    deliveryAddress: 'Адрес доставки',
-    customerPhone: 'Номер телефона',
-    customerComment: 'Комментарий клиента',
     cancelComment: 'Причина отмены',
     courierInfo: 'Информация о курьере',
     orderCreated: 'Создан',
@@ -412,7 +1050,322 @@ export const translations: Record<Language, Translations> = {
     inProgressDate: '23 Авг 2023, 03:54 PM',
     shippedDate: 'Ожидается 02 Сен 2023',
     deliveredDate: '23 Авг 2023, 2023',
-    expectedDate: '03 Сен 2023'
+    expectedDate: '03 Сен 2023',
+    
+    // Additional translations for ProductGrid
+    inCart: 'В корзине',
+    
+    // Reviews page
+    reviewsTitle: 'Отзывы',
+    reviewSubmitted: 'Отзыв отправлен',
+    
+    // Checkout modal
+    orderCheckout: 'Оформление заказа',
+    customerName: 'Ваше имя',
+    customerPhone: 'Номер телефона',
+    deliveryAddress: 'Адрес доставки',
+    customerComment: 'Комментарий',
+    enterName: 'Введите ваше имя',
+    enterPhone: 'Введите номер телефона',
+    enterAddress: 'Введите адрес',
+    optionalComment: 'Комментарий (необязательно)',
+    phoneValidation: 'Введите корректный номер телефона (+996 XXX XXX XXX)',
+    placeOrder: 'Оформить заказ',
+    orderTotal: 'Итого к оплате',
+    
+    // Common actions
+    submit: 'Отправить',
+    edit: 'Редактировать',
+    close: 'Закрыть',
+    
+    // Additional missing translations
+    back: 'Назад',
+    loading: 'Загрузка...',
+    error: 'Ошибка',
+    success: 'Успешно',
+    warning: 'Предупреждение',
+    info: 'Информация',
+    
+    // Notification messages
+    errorInsufficientData: 'Ошибка: недостаточно данных о товаре',
+    addedToFavorites: 'Добавлено в избранное',
+    errorAddingToFavorites: 'Ошибка при добавлении в избранное',
+    addedToCart: 'Добавлено в корзину',
+    
+    // Product grid labels
+    sizeLabel: 'Размер:',
+    addToCartButton: 'В корзину',
+    
+    // Review page messages
+    errorLoadingReviews: 'Ошибка загрузки отзывов',
+    reviewSubmitError: 'Ошибка при добавлении отзыва',
+    reviewSubmitErrorGeneral: 'Произошла ошибка. Попробуйте снова.',
+    
+    // Loading states
+    loadingText: 'Загрузка...',
+    loadingProducts: 'Загрузка товаров...',
+    loadingCategories: 'Загрузка категорий...',
+    loadingData: 'Загрузка данных...',
+    
+    // Status labels
+    available: 'Доступно',
+    unavailable: 'Недоступно',
+    inStock: 'В наличии',
+    outOfStock: 'Нет в наличии',
+    
+    // Common words
+    hot: 'ХИТ',
+    new: 'НОВИНКА',
+    sale: 'РАСПРОДАЖА',
+    
+    // Discount page
+    bigDiscounts: 'Большие скидки!',
+    maxDiscountInfo: 'Покупайте со скидками до 50%. Временные акции!',
+    temporaryPromotions: 'Временные акции!',
+    discountsCount: 'Скидки: 50+',
+    maxDiscount: 'Максимум: 50%',
+    
+    // Product labels
+    men: 'Мужчины',
+    women: 'Женщины',
+    children: 'Дети',
+    sport: 'Спорт',
+    shoes: 'Обувь',
+    accessories: 'Аксессуары',
+    
+    // Time units
+    days: 'дня',
+    hours: 'часов',
+    
+    // Product names examples
+    classicTshirt: 'Классическая футболка',
+    elegantDress: 'Элегантное платье',
+    sportJacket: 'Спортивная куртка',
+    classicPants: 'Джинсы',
+    summerDress: 'Летнее платье',
+    childrenClothing: 'Детская одежда',
+    sneakers: 'Кроссовки',
+    bag: 'Сумка',
+    
+    // Action buttons
+    view: 'Смотреть',
+    buy: 'Купить',
+    watch: 'Смотреть',
+    economy: 'Экономия:',
+    colors: 'Цвета:',
+    sizes: 'Размеры:',
+    
+    // New arrivals page - custom for this page
+    newCollectionHero: 'Новая коллекция!',
+    latestTrends: 'Ознакомьтесь с последними модными тенденциями. Новые товары всегда по лучшим ценам!',
+    newItemsCount: 'Новых товаров: 50+',
+    discountInfo: 'Скидки: 20%',
+    
+    // Returns page
+    wrongSize: 'Неподходящий размер',
+    wrongColor: 'Неподходящий цвет',
+    poorQuality: 'Некачественный товар',
+    notAsExpected: 'Не соответствует ожиданиям',
+    returnRight: 'Право на возврат',
+    otherReason: 'Другая причина',
+    importantNotice: 'Важное уведомление',
+    returnProcessInfo: 'Процесс возврата занимает 3-5 рабочих дней. Возврат денег осуществляется тем же способом, которым вы оплачивали. По дополнительным вопросам свяжитесь с нами.',
+    
+    // Returns page - new policy
+    returns: 'Возвраты',
+    returnPolicy: 'Политика возврата',
+    returnPolicyDescription: 'Важная информация о возврате товаров в нашем магазине',
+    returnPossible: 'Возврат возможен',
+    returnConditionsTitle: 'Условия возврата',
+    onDeliveryReturn: 'Возврат при получении',
+    onDeliveryReturnDesc: 'Возврат товара возможен только при получении заказа от курьера',
+    checkOnDelivery: 'Проверка при получении',
+    checkOnDeliveryDesc: 'Клиент должен проверить качество, размер и другие параметры товара при получении',
+    noOtherReturns: 'В других случаях возврат невозможен',
+    noOtherReturnsDesc: 'После получения товара возврат невозможен. Проводите все проверки при получении',
+    returnSteps: 'Алгоритм возврата',
+    step1Title: 'Курьер прибыл',
+    step1Desc: 'Курьер доставил ваш заказ',
+    step2Title: 'Проверьте товар',
+    step2Desc: 'Проверьте размер, цвет, качество и другие параметры',
+    step3Title: 'Примите решение',
+    step3Desc: 'Если товар не подходит - верните. Если всё в порядке - принимайте',
+    contactSupport: 'Служба поддержки',
+    contactSupportDesc: 'Есть вопросы? Свяжитесь с нами',
+    alwaysAvailable: 'Всегда доступен',
+    responseWithin24h: 'Ответ в течение 24 часов',
+    
+    // Page titles
+    aboutUs: 'О нас',
+    discounts: 'Скидки',
+    privacy: 'Конфиденциальность',
+    
+    // About page
+    storeDescription: 'В нашем магазине вы найдете самую красивую и качественную одежду. Мы ценим каждого нашего клиента и стремимся предоставить им лучший сервис.',
+    customersCount: 'Количество клиентов',
+    loyalCustomers: 'Постоянных клиентов',
+    experienceYears: 'Опыт работы',
+    years: 'Лет',
+    productsCount: 'Количество товаров',
+    variousProducts: 'Различных товаров',
+    reliability: 'Надежность',
+    customerSatisfaction: 'Удовлетворенность клиентов',
+    ourStory: 'Наша история',
+    storyParagraph1: 'Store Client был основан в 2019 году, и с первых дней нашей основной целью было предоставление качественной и стильной одежды нашим клиентам. Мы понимаем потребности каждого клиента и стремимся предоставить им лучший сервис.',
+    storyParagraph2: 'Сегодня мы являемся ведущим интернет-магазином Кыргызстана и продолжаем привлекать новых клиентов каждый день. Наша команда состоит из профессиональных сотрудников, которые всегда готовы предоставить вам лучший сервис.',
+    ourValues: 'Наши ценности',
+    qualityValue: 'Качество - наша основная ценность. Мы уделяем внимание качеству каждого товара.',
+    satisfactionValue: 'Удовлетворенность клиентов - наша основная цель.',
+    innovationValue: 'Инновации - мы всегда используем новые технологии.',
+    reliabilityValue: 'Надежность - наши клиенты доверяют нам.',
+    ourMission: 'Наша миссия',
+    missionDescription: 'Наша миссия - помочь каждому человеку найти свой стиль и чувствовать себя хорошо. Мы предлагаем качественную, стильную и доступную по цене одежду.',
+    missionQuote: '"Наша цель - помочь вам найти свой лучший образ"',
+    contactUs: 'Свяжитесь с нами',
+    questionsHelp: 'Есть вопросы? Мы готовы помочь вам!',
+    contactButton: 'Связаться',
+    
+    // Privacy page
+    privacyDescription: 'Мы особенно внимательно относимся к безопасности ваших личных данных и хотим предоставить полную информацию о том, как мы их собираем, используем и защищаем.',
+    dataCollection: 'Сбор информации',
+    personalInfo: 'Личная информация',
+    personalInfoDesc: 'Мы собираем ваше имя, электронную почту, номер телефона, адрес и другую личную информацию.',
+    technicalInfo: 'Техническая информация',
+    technicalInfoDesc: 'Мы собираем информацию о вашем браузере, IP-адрес, куки и другую техническую информацию.',
+    dataUsage: 'Использование информации',
+    serviceProvision: 'Предоставление услуг',
+    serviceProvisionDesc: 'Мы используем вашу информацию для предоставления услуг.',
+    notifications: 'Уведомления',
+    notificationsDesc: 'Мы отправляем вам уведомления о статусе заказа, новых товарах и акциях.',
+    dataSharing: 'Обмен информацией',
+    thirdParties: 'Третьи стороны',
+    thirdPartiesDesc: 'Мы не передаем вашу информацию третьим лицам, если этого не требует закон.',
+    employees: 'Сотрудники',
+    employeesDesc: 'Наши сотрудники могут использовать вашу информацию только для предоставления услуг.',
+    security: 'Безопасность',
+    dataProtection: 'Защита информации',
+    dataProtectionDesc: 'Мы принимаем все необходимые меры для защиты вашей информации.',
+    encryption: 'Шифрование',
+    encryptionDesc: 'Наш сайт использует SSL-шифрование и все данные передаются безопасно.',
+    yourRights: 'Ваши права',
+    accessRight: 'Право доступа',
+    accessRightDesc: 'Вы имеете право на доступ к своим личным данным.',
+    editRight: 'Право редактирования',
+    editRightDesc: 'Вы имеете право редактировать свои данные.',
+    deleteRight: 'Право на удаление',
+    deleteRightDesc: 'Вы имеете право запросить удаление своих данных.',
+    contactInfo: 'Контактная информация',
+    contactInfoDesc: 'Если у вас есть вопросы, свяжитесь с нами: privacy@storeclient.kg',
+    policyUpdates: 'Обновления политики',
+    policyUpdatesDesc: 'Мы можем изменить эту политику в любое время. О изменениях мы уведомим вас по электронной почте.',
+    
+    // Footer
+    footerDescription: 'В нашем магазине вы найдете самую красивую и качественную одежду. Мы ценим каждого нашего клиента.',
+    quickLinks: 'Быстрые ссылки',
+    customerService: 'Служба поддержки',
+    contacts: 'Контакты',
+    allRightsReserved: 'Все права защищены.',
+    termsOfUse: 'Условия использования',
+    address: 'г. Бишкек, пр. Чуй 123',
+    
+    // Review Modal
+    editReview: 'Редактировать отзыв',
+    leaveReview: 'Оставить отзыв',
+    yourRating: 'Ваша оценка *',
+    yourName: 'Ваше имя *',
+    yourReview: 'Ваш отзыв *',
+    enterYourName: 'Введите ваше имя',
+    shareImpressions: 'Поделитесь своими впечатлениями о товаре...',
+    minimumCharacters: 'Минимум 10 символов',
+    notSelected: 'Не выбрано',
+    cancel: 'Отмена',
+    save: 'Сохранить',
+    send: 'Отправить',
+    saving: 'Сохранение...',
+    sending: 'Отправка...',
+    reviewHelp: 'Ваш отзыв поможет другим покупателям сделать правильный выбор',
+    enterNameError: 'Введите ваше имя',
+    writeReviewError: 'Напишите отзыв',
+    minimumLengthError: 'Отзыв должен содержать минимум 10 символов',
+    setRatingError: 'Поставьте оценку',
+    
+    // Product page additional translations
+    reviews: 'Отзывы',
+    noReviewsYet: 'Отзывов пока нет',
+    beFirstToReview: 'Будьте первым, кто оставит отзыв о этом товаре',
+    writeReview: 'Написать отзыв',
+    showAllReviews: 'Показать все отзывы',
+    productNotFound: 'Товар не найден',
+    errorLoadingProduct: 'Ошибка загрузки товара',
+    alreadyReviewed: 'Вы уже оставили отзыв для этого товара',
+    reviewUpdated: 'Отзыв успешно обновлен!',
+    reviewAdded: 'Отзыв успешно добавлен!',
+    errorUpdatingReview: 'Ошибка при обновлении отзыва',
+    errorAddingReview: 'Ошибка при добавлении отзыва',
+    errorOccurred: 'Произошла ошибка. Попробуйте снова.',
+    tryAgain: 'Попробуйте снова',
+    highQualityProduct: 'Высококачественный товар с отличными характеристиками. Идеально подходит для повседневного использования и отличается надежностью и долговечностью.',
+    outOf5: 'из 5',
+    
+    // Terms page
+    personalDataProtection: 'Защита личных данных',
+    personalDataDescription: 'Вы обязаны защищать свои личные данные.',
+    falseInformation: 'Предоставление ложной информации',
+    accountBlocked: 'Аккаунт будет заблокирован',
+    serviceDisruption: 'Нарушение работы сервисов',
+    accessSuspended: 'Доступ будет приостановлен',
+    copyrightViolation: 'Нарушение авторских прав',
+    legalAction: 'Будут приняты правовые меры',
+    spamDistribution: 'Распространение спама',
+    fineApplied: 'Будет наложен штраф',
+    
+    // Additional orders page
+    loadingOrders: 'Загрузка заказов...',
+    errorLoading: 'Ошибка загрузки',
+    orderFrom: 'Заказ от',
+    status: 'Статус',
+    details: 'Детали',
+    
+    // Order statuses
+    created: 'Создан',
+    courierWait: 'Ожидает курьера',
+    courierPicked: 'Забрал курьер',
+    enroute: 'В пути',
+    canceled: 'Отменен',
+    
+    // Additional product page
+    addToFavorites: 'Добавить в избранное',
+    description: 'Описание',
+    relatedProducts: 'Похожие товары',
+    averageRating: 'Средний рейтинг',
+    failedToLoad: 'Ошибка загрузки',
+    
+    // Boolean values
+    yes: 'Да',
+    no: 'Нет',
+    
+    // Additional track order page
+    order: 'Заказ',
+    orderNotFound: 'Заказ не найден',
+    orderNotFoundDesc: 'Заказ с таким ID не существует',
+    loadingOrder: 'Загрузка заказа...',
+    itemsInOrder: 'Товары в заказе',
+    customerInfo: 'Информация о клиенте',
+    phone: 'Телефон',
+    createdDate: 'Дата создания',
+    total: 'Итого',
+    deliveryStatus: 'Статус доставки',
+    category: 'Категория',
+    pieces: 'шт',
+    currentStatus: 'Текущий статус',
+    cancelReason: 'Причина отмены',
+    orderComment: 'Комментарий к заказу',
+    
+    // Additional order tracking statuses
+    waitingCourier: 'Ожидает курьера',
+    courierTook: 'Забрал курьер',
+    inTransit: 'В пути',
+    deliveredStatus: 'Доставлен'
   }
 }
 

@@ -128,12 +128,10 @@ export default function TermsPage() {
     },
     {
       id: 4,
-      title: t.language === 'kg' ? 'Жеке маалыматты коргоо' : 'Защита личных данных',
+      title: t.personalDataProtection,
       titleKg: 'Жеке маалыматты коргоо',
       titleRu: 'Защита личных данных',
-      description: t.language === 'kg' 
-        ? 'Сиз өз жеке маалыматтарыңызды коргоого милдеттүүсүз.'
-        : 'Вы обязаны защищать свои личные данные.',
+      description: t.personalDataDescription,
       icon: CheckCircle
     }
   ]
@@ -141,39 +139,31 @@ export default function TermsPage() {
   const prohibitedActions = [
     {
       id: 1,
-      action: t.language === 'kg' ? 'Жалган маалымат берүү' : 'Предоставление ложной информации',
+      action: t.falseInformation,
       actionKg: 'Жалган маалымат берүү',
       actionRu: 'Предоставление ложной информации',
-      consequence: t.language === 'kg' 
-        ? 'Аккаунт жокко чыгарылат'
-        : 'Аккаунт будет заблокирован'
+      consequence: t.accountBlocked
     },
     {
       id: 2,
-      action: t.language === 'kg' ? 'Кызматтарды бузуу' : 'Нарушение работы сервисов',
+      action: t.serviceDisruption,
       actionKg: 'Кызматтарды бузуу',
       actionRu: 'Нарушение работы сервисов',
-      consequence: t.language === 'kg' 
-        ? 'Доступ токтотулат'
-        : 'Доступ будет приостановлен'
+      consequence: t.accessSuspended
     },
     {
       id: 3,
-      action: t.language === 'kg' ? 'Автордук укукту бузуу' : 'Нарушение авторских прав',
+      action: t.copyrightViolation,
       actionKg: 'Автордук укукту бузуу',
       actionRu: 'Нарушение авторских прав',
-      consequence: t.language === 'kg' 
-        ? 'Мыйзамдык чаралар көрүлөт'
-        : 'Будут приняты правовые меры'
+      consequence: t.legalAction
     },
     {
       id: 4,
       action: t.language === 'kg' ? 'Башка колдонуучуларды алдау' : 'Обман других пользователей',
       actionKg: 'Башка колдонуучуларды алдау',
       actionRu: 'Обман других пользователей',
-      consequence: t.language === 'kg' 
-        ? 'Аккаунт жокко чыгарылат'
-        : 'Аккаунт будет заблокирован'
+      consequence: t.accountBlocked
     }
   ]
 

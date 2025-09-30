@@ -3,7 +3,7 @@ import AppLayout from '@/components/AppLayout'
 
 export default function Returns() {
   return (
-    <AppLayout>
+    <AppLayout showHeader={false} showBottomNav={true}>
       <ReturnsPage />
     </AppLayout>
   )

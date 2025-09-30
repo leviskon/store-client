@@ -28,7 +28,7 @@ interface Product {
 export default function ProductReviewsPage() {
   const params = useParams()
   const router = useRouter()
-  const { t: _t } = useLanguage()
+  const { t } = useLanguage()
   const { showNotification } = useNotification()
   
   const [product, setProduct] = useState<Product | null>(null)
@@ -89,7 +89,7 @@ export default function ProductReviewsPage() {
         console.error('Ошибка загрузки данных:', error)
         showNotification({
           type: 'cart',
-          message: 'Ошибка загрузки отзывов',
+          message: t.errorLoadingReviews,
           duration: 3000
         })
       } finally {
@@ -109,7 +109,7 @@ export default function ProductReviewsPage() {
     if (!isEditMode && !userReviewId && !canUserReviewProduct(product.id)) {
       showNotification({
         type: 'cart',
-        message: 'Вы уже оставили отзыв для этого товара',
+        message: t.alreadyReviewed,
         duration: 3000
       })
       return
@@ -177,7 +177,7 @@ export default function ProductReviewsPage() {
 
         showNotification({
           type: 'cart',
-          message: isEditMode ? 'Отзыв успешно обновлен!' : 'Отзыв успешно добавлен!',
+          message: isEditMode ? t.reviewUpdated : t.reviewSubmitted,
           duration: 3000
         })
         
@@ -187,7 +187,7 @@ export default function ProductReviewsPage() {
       } else {
         showNotification({
           type: 'cart',
-          message: result.error || `Ошибка при ${isEditMode ? 'обновлении' : 'добавлении'} отзыва`,
+          message: result.error || t.reviewSubmitError,
           duration: 3000
         })
       }
@@ -195,7 +195,7 @@ export default function ProductReviewsPage() {
       console.error('Ошибка при отправке отзыва:', error)
       showNotification({
         type: 'cart',
-        message: 'Произошла ошибка. Попробуйте снова.',
+        message: t.reviewSubmitErrorGeneral,
         duration: 3000
       })
     } finally {
@@ -333,16 +333,16 @@ export default function ProductReviewsPage() {
           <div className="text-center py-12 bg-gray-50 rounded-xl">
             <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Отзывов пока нет
+              {t.noReviewsYet}
             </h3>
             <p className="text-gray-600 mb-4">
-              Будьте первым, кто оставит отзыв о этом товаре
+              {t.beFirstToReview}
             </p>
             <button
               onClick={handleNewReview}
               className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
             >
-              Написать отзыв
+              {t.writeReview}
             </button>
           </div>
         ) : (
@@ -364,7 +364,7 @@ export default function ProductReviewsPage() {
                     <button
                       onClick={handleEditReview}
                       className="p-2 text-blue-600 hover:bg-blue-100 rounded-full transition-colors"
-                      title="Редактировать отзыв"
+                      title={t.editReview}
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>

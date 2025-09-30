@@ -20,10 +20,7 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-orange-400">Store Client</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
-              {t.language === 'kg' 
-                ? 'Биздин дүкөндө эң сонун жана сапаттуу кийимдерди табасыз. Биз ар бир кардарыбызды баалайбыз.'
-                : 'В нашем магазине вы найдете самую красивую и качественную одежду. Мы ценим каждого нашего клиента.'
-              }
+              {t.footerDescription}
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-orange-400 transition-colors">
@@ -41,7 +38,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">
-              {t.language === 'kg' ? 'Тез шилтемелер' : 'Быстрые ссылки'}
+              {t.quickLinks}
             </h3>
             <ul className="space-y-2">
               <li>
@@ -49,7 +46,7 @@ export default function Footer() {
                   onClick={() => handleNavigation('/about')}
                   className="text-gray-300 hover:text-orange-400 transition-colors text-sm text-left"
                 >
-                  {t.language === 'kg' ? 'Биз жөнүндө' : 'О нас'}
+                  {t.aboutUs}
                 </button>
               </li>
               <li>
@@ -57,7 +54,7 @@ export default function Footer() {
                   onClick={() => handleNavigation('/discounts')}
                   className="text-gray-300 hover:text-orange-400 transition-colors text-sm text-left"
                 >
-                  {t.language === 'kg' ? 'Арзандатуулар' : 'Скидки'}
+                  {t.discounts}
                 </button>
               </li>
             </ul>
@@ -66,7 +63,7 @@ export default function Footer() {
           {/* Customer Service */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">
-              {t.language === 'kg' ? 'Кардарларды тейлөө' : 'Служба поддержки'}
+              {t.customerService}
             </h3>
             <ul className="space-y-2">
               <li>
@@ -74,7 +71,7 @@ export default function Footer() {
                   onClick={() => handleNavigation('/returns')}
                   className="text-gray-300 hover:text-orange-400 transition-colors text-sm text-left"
                 >
-                  {t.language === 'kg' ? 'Кайтаруу' : 'Возвраты'}
+                  {t.returns}
                 </button>
               </li>
               <li>
@@ -82,7 +79,7 @@ export default function Footer() {
                   onClick={() => handleNavigation('/privacy')}
                   className="text-gray-300 hover:text-orange-400 transition-colors text-sm text-left"
                 >
-                  {t.language === 'kg' ? 'Жеке маалыматтын коопсуздугу' : 'Конфиденциальность'}
+                  {t.privacy}
                 </button>
               </li>
             </ul>
@@ -91,7 +88,7 @@ export default function Footer() {
           {/* Contact Info */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">
-              {t.language === 'kg' ? 'Байланыш' : 'Контакты'}
+              {t.contacts}
             </h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
@@ -105,10 +102,7 @@ export default function Footer() {
               <div className="flex items-start space-x-3">
                 <MapPin className="w-4 h-4 text-orange-400 flex-shrink-0 mt-0.5" />
                 <span className="text-gray-300 text-sm">
-                  {t.language === 'kg' 
-                    ? 'Бишкек шаары, Чүй проспекти 123'
-                    : 'г. Бишкек, пр. Чуй 123'
-                  }
+                  {t.address}
                 </span>
               </div>
             </div>
@@ -118,20 +112,20 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-gray-400 text-sm">
-            © 2024 Store Client. {t.language === 'kg' ? 'Бардык укуктар корголгон.' : 'Все права защищены.'}
+            © 2024 Store Client. {t.allRightsReserved}
           </div>
           <div className="flex space-x-6 text-sm">
             <button 
               onClick={() => handleNavigation('/terms')}
               className="text-gray-400 hover:text-orange-400 transition-colors"
             >
-              {t.language === 'kg' ? 'Колдонуу шарттары' : 'Условия использования'}
+              {t.termsOfUse}
             </button>
             <button 
               onClick={() => handleNavigation('/privacy')}
               className="text-gray-400 hover:text-orange-400 transition-colors"
             >
-              {t.language === 'kg' ? 'Жеке маалыматтын коопсуздугу' : 'Конфиденциальность'}
+              {t.privacy}
             </button>
           </div>
         </div>
