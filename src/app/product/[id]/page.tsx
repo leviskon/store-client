@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Heart, Star, ShoppingBag, Plus, Minus, X, MessageCircle } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useFavorites } from '@/context/FavoritesContext'
@@ -10,6 +10,7 @@ import { useNotification } from '@/context/NotificationContext'
 import AppLayout from '@/components/AppLayout'
 import ReviewModal, { ReviewFormData } from '@/components/ReviewModal'
 import RelatedProducts from '@/components/RelatedProducts'
+import { canUserReviewProduct, saveUserReviewId, getUserReviewIdForProduct } from '@/lib/reviewStorage'
 
 interface Product {
   id: string
@@ -52,6 +53,7 @@ interface Product {
 export default function ProductPage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { t } = useLanguage()
   
   const [product, setProduct] = useState<Product | null>(null)
@@ -64,6 +66,8 @@ export default function ProductPage() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
   const [isSubmittingReview, setIsSubmittingReview] = useState(false)
   const [resetReviewForm, setResetReviewForm] = useState(false)
+  const [userReviewId, setUserReviewId] = useState<string | null>(null)
+  const [userReviewData, setUserReviewData] = useState<{ clientName: string; text: string; rating: number } | null>(null)
   const { toggleFavorite, isFavorite } = useFavorites()
   const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart()
   const { showNotification } = useNotification()
@@ -75,9 +79,40 @@ export default function ProductPage() {
         if (response.ok) {
           const data = await response.json()
           setProduct(data)
-          // Устанавливаем первый размер и цвет по умолчанию
-          if (data.sizes.length > 0) setSelectedSize(data.sizes[0].id)
-          if (data.colors.length > 0) setSelectedColor(data.colors[0].id)
+          
+          // Получаем параметры из URL
+          const urlSizeId = searchParams.get('sizeId')
+          const urlColorId = searchParams.get('colorId')
+          
+          // Устанавливаем размер из URL или первый доступный
+          if (urlSizeId && data.sizes.find((s: any) => s.id === urlSizeId)) {
+            setSelectedSize(urlSizeId)
+          } else if (data.sizes.length > 0) {
+            setSelectedSize(data.sizes[0].id)
+          }
+          
+          // Устанавливаем цвет из URL или первый доступный
+          if (urlColorId && data.colors.find((c: any) => c.id === urlColorId)) {
+            setSelectedColor(urlColorId)
+          } else if (data.colors.length > 0) {
+            setSelectedColor(data.colors[0].id)
+          }
+          
+          // Проверяем, есть ли ID отзыва пользователя в localStorage
+          const reviewId = getUserReviewIdForProduct(data.id)
+          setUserReviewId(reviewId)
+          
+          // Если есть ID отзыва, загружаем его данные из API
+          if (reviewId) {
+            const userReview = data.reviews.find((r: any) => r.id === reviewId)
+            if (userReview) {
+              setUserReviewData({
+                clientName: userReview.clientName,
+                text: userReview.text,
+                rating: userReview.rating
+              })
+            }
+          }
         } else {
           console.error('Товар не найден')
         }
@@ -91,7 +126,7 @@ export default function ProductPage() {
     if (params.id) {
       fetchProduct()
     }
-  }, [params.id])
+  }, [params.id, searchParams])
 
   // Проверяем, есть ли товар в корзине
   useEffect(() => {
@@ -142,6 +177,20 @@ export default function ProductPage() {
   }
 
   const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+
+  const updateUrlParams = (sizeId?: string, colorId?: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    
+    if (sizeId) {
+      params.set('sizeId', sizeId)
+    }
+    if (colorId) {
+      params.set('colorId', colorId)
+    }
+    
+    const newUrl = `${window.location.pathname}?${params.toString()}`
+    window.history.replaceState({}, '', newUrl)
+  }
 
 
 
@@ -198,20 +247,57 @@ export default function ProductPage() {
   const handleReviewSubmit = async (reviewData: ReviewFormData) => {
     if (!product) return
 
+    // Проверяем, может ли пользователь оставить отзыв (только если это не редактирование)
+    if (!userReviewId && !canUserReviewProduct(product.id)) {
+      showNotification({
+        type: 'cart',
+        message: 'Вы уже оставили отзыв для этого товара',
+        duration: 3000
+      })
+      return
+    }
+
     setIsSubmittingReview(true)
     
     try {
-      const response = await fetch(`/api/products/${product.id}/reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reviewData),
-      })
+      let response: Response
+      let result: any
 
-      const result = await response.json()
+      if (userReviewId) {
+        // Редактируем существующий отзыв
+        response = await fetch(`/api/products/${product.id}/reviews`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            reviewId: userReviewId,
+            ...reviewData
+          }),
+        })
+        result = await response.json()
+      } else {
+        // Создаем новый отзыв
+        response = await fetch(`/api/products/${product.id}/reviews`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(reviewData),
+        })
+        result = await response.json()
+      }
 
       if (response.ok) {
+        // Сохраняем только ID отзыва в localStorage (компактный формат)
+        saveUserReviewId(product.id, result.review.id)
+        setUserReviewId(result.review.id)
+        setUserReviewData({
+          clientName: reviewData.clientName,
+          text: reviewData.text,
+          rating: reviewData.rating
+        })
+
         // Обновляем товар, чтобы показать новый отзыв
         const updatedResponse = await fetch(`/api/products/${product.id}`)
         if (updatedResponse.ok) {
@@ -221,7 +307,7 @@ export default function ProductPage() {
 
         showNotification({
           type: 'cart',
-          message: 'Отзыв успешно добавлен!',
+          message: userReviewId ? 'Отзыв успешно обновлен!' : 'Отзыв успешно добавлен!',
           duration: 3000
         })
         
@@ -230,7 +316,7 @@ export default function ProductPage() {
       } else {
         showNotification({
           type: 'cart',
-          message: result.error || 'Ошибка при добавлении отзыва',
+          message: result.error || `Ошибка при ${userReviewId ? 'обновлении' : 'добавлении'} отзыва`,
           duration: 3000
         })
       }
@@ -428,7 +514,10 @@ export default function ProductPage() {
                   {product.sizes.map((size) => (
                     <button
                       key={size.id}
-                      onClick={() => setSelectedSize(size.id)}
+                      onClick={() => {
+                        setSelectedSize(size.id)
+                        updateUrlParams(size.id, selectedColor)
+                      }}
                       className={`min-w-[2rem] h-8 px-3 rounded-lg border-2 flex items-center justify-center text-xs font-medium transition-all ${
                         selectedSize === size.id
                           ? 'border-orange-500 bg-orange-500 text-white shadow-md'
@@ -454,7 +543,10 @@ export default function ProductPage() {
                   {product.colors.map((color) => (
                     <button
                       key={color.id}
-                      onClick={() => setSelectedColor(color.id)}
+                      onClick={() => {
+                        setSelectedColor(color.id)
+                        updateUrlParams(selectedSize, color.id)
+                      }}
                       className={`w-7 h-7 rounded-full border-2 transition-all ${
                         selectedColor === color.id
                           ? 'border-orange-500 ring-2 ring-orange-200 scale-110'
@@ -549,13 +641,23 @@ export default function ProductPage() {
               </div>
               
               {/* Review Button */}
-              <button
-                onClick={() => setIsReviewModalOpen(true)}
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 md:px-6 py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors border border-gray-200 hover:border-gray-300 text-sm md:text-base"
-              >
-                <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
-                <span>Оставить отзыв</span>
-              </button>
+              {userReviewId ? (
+                <button
+                  onClick={() => setIsReviewModalOpen(true)}
+                  className="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 md:px-6 py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors border border-blue-200 hover:border-blue-300 text-sm md:text-base"
+                >
+                  <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+                  <span>Редактировать отзыв</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsReviewModalOpen(true)}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 md:px-6 py-2.5 md:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors border border-gray-200 hover:border-gray-300 text-sm md:text-base"
+                >
+                  <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+                  <span>Оставить отзыв</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -644,6 +746,12 @@ export default function ProductPage() {
         onSubmit={handleReviewSubmit}
         productName={product.name}
         isLoading={isSubmittingReview}
+        editMode={!!userReviewId}
+        initialData={userReviewData ? {
+          clientName: userReviewData.clientName,
+          text: userReviewData.text,
+          rating: userReviewData.rating
+        } : undefined}
         key={resetReviewForm ? 'reset' : 'normal'}
       />
     </AppLayout>

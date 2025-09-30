@@ -1,10 +1,11 @@
 'use client'
 
-import { Heart, Star } from 'lucide-react'
+import { Heart, Star, ShoppingBag, Plus, Minus } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useNotification } from '@/context/NotificationContext'
+import { useCart } from '@/context/CartContext'
 
 interface Product {
   id: string
@@ -12,11 +13,21 @@ interface Product {
   price: number
   imageUrl?: string[] | null
   category: {
+    id: string
     name: string
   }
   seller: {
     fullname: string
   }
+  sizes: Array<{
+    id: string
+    name: string
+  }>
+  colors: Array<{
+    id: string
+    name: string
+    colorCode?: string
+  }>
   reviews: {
     rating: number
   }[]
@@ -45,8 +56,12 @@ interface ProductGridProps {
 export default function ProductGrid({ selectedCategory, includeSubcategories, searchQuery, filters }: ProductGridProps) {
   const [products, setProducts] = useState<ProductWithLike[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedSizes, setSelectedSizes] = useState<{[productId: string]: string}>({})
+  const [selectedColors, setSelectedColors] = useState<{[productId: string]: string}>({})
+  const [quantities, setQuantities] = useState<{[productId: string]: number}>({})
   const { toggleFavorite, isFavorite } = useFavorites()
   const { showNotification } = useNotification()
+  const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart()
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -105,6 +120,32 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
               : 0
           }))
           setProducts(productsWithLikes)
+          
+          // Инициализируем выбранные размеры и цвета по умолчанию
+          const initialSizes: {[productId: string]: string} = {}
+          const initialColors: {[productId: string]: string} = {}
+          const initialQuantities: {[productId: string]: number} = {}
+          
+          productsWithLikes.forEach(product => {
+            if (product.sizes && product.sizes.length > 0) {
+              initialSizes[product.id] = product.sizes[0].id
+            }
+            if (product.colors && product.colors.length > 0) {
+              initialColors[product.id] = product.colors[0].id
+            }
+            
+            // Проверяем, есть ли товар в корзине
+            const cartItem = cartItems.find(item => 
+              item.id === product.id && 
+              item.selectedSizeId === initialSizes[product.id] && 
+              item.selectedColorId === initialColors[product.id]
+            )
+            initialQuantities[product.id] = cartItem ? cartItem.quantity : 0
+          })
+          
+          setSelectedSizes(initialSizes)
+          setSelectedColors(initialColors)
+          setQuantities(initialQuantities)
         } else {
           // Ошибка загрузки товаров
         }
@@ -118,6 +159,20 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
     setLoading(true)
     fetchProducts()
   }, [selectedCategory, includeSubcategories, searchQuery, filters])
+
+  // Обновляем количества при изменении корзины
+  useEffect(() => {
+    const newQuantities: {[productId: string]: number} = {}
+    products.forEach(product => {
+      const cartItem = cartItems.find(item => 
+        item.id === product.id && 
+        item.selectedSizeId === selectedSizes[product.id] && 
+        item.selectedColorId === selectedColors[product.id]
+      )
+      newQuantities[product.id] = cartItem ? cartItem.quantity : 0
+    })
+    setQuantities(newQuantities)
+  }, [cartItems, products, selectedSizes, selectedColors])
 
   const handleToggleFavorite = async (product: ProductWithLike) => {
     try {
@@ -170,6 +225,78 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
 
   const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
 
+  const getProductUrl = (productId: string) => {
+    const selectedSizeId = selectedSizes[productId]
+    const selectedColorId = selectedColors[productId]
+    
+    const params = new URLSearchParams()
+    if (selectedSizeId) params.append('sizeId', selectedSizeId)
+    if (selectedColorId) params.append('colorId', selectedColorId)
+    
+    const paramString = params.toString()
+    return `/product/${productId}${paramString ? `?${paramString}` : ''}`
+  }
+
+  const handleSizeSelect = (productId: string, sizeId: string) => {
+    setSelectedSizes(prev => ({ ...prev, [productId]: sizeId }))
+  }
+
+  const handleColorSelect = (productId: string, colorId: string) => {
+    setSelectedColors(prev => ({ ...prev, [productId]: colorId }))
+  }
+
+  const handleAddToCart = async (product: ProductWithLike) => {
+    if (!product) return
+
+    const selectedSizeId = selectedSizes[product.id]
+    const selectedColorId = selectedColors[product.id]
+
+    // Находим названия размеров и цветов по их ID
+    const sizeName = product.sizes?.find(size => size.id === selectedSizeId)?.name || ''
+    const colorName = product.colors?.find(color => color.id === selectedColorId)?.name || ''
+
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      selectedSize: sizeName,
+      selectedColor: colorName,
+      selectedSizeId: selectedSizeId,
+      selectedColorId: selectedColorId,
+      category: product.category,
+      seller: product.seller
+    }
+
+    const success = await addToCart(cartItem, 1)
+    
+    if (success) {
+      showNotification({
+        type: 'cart',
+        message: 'Добавлено в корзину',
+        duration: 2000
+      })
+      setQuantities(prev => ({ ...prev, [product.id]: 1 }))
+    }
+  }
+
+  const handleQuantityChange = async (product: ProductWithLike, delta: number) => {
+    const currentQuantity = quantities[product.id] || 0
+    const newQuantity = currentQuantity + delta
+    const selectedSizeId = selectedSizes[product.id]
+    const selectedColorId = selectedColors[product.id]
+    
+    if (newQuantity <= 0) {
+      // Удаляем товар из корзины
+      removeFromCart(product.id, selectedSizeId, selectedColorId)
+      setQuantities(prev => ({ ...prev, [product.id]: 0 }))
+    } else {
+      // Обновляем количество в корзине
+      updateQuantity(product.id, newQuantity, selectedSizeId, selectedColorId)
+      setQuantities(prev => ({ ...prev, [product.id]: newQuantity }))
+    }
+  }
+
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
@@ -190,58 +317,171 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {products.filter(product => product && product.id && product.category?.id).map((product) => (
-        <Link key={product.id} href={`/product/${product.id}`}>
-          <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-orange-200 transition-all duration-300 transform hover:scale-105 group cursor-pointer">
+        <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-orange-200 transition-all duration-300 group relative">
           {/* Product Image */}
-          <div className="relative p-4">
-            <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden">
-              {product.imageUrl && Array.isArray(product.imageUrl) && product.imageUrl.length > 0 ? (
-                <img 
-                  src={product.imageUrl[0]} 
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-200 to-orange-300"></div>
-              )}
-              <button
-                onClick={(e) => {
-                  e.preventDefault()
-                  handleToggleFavorite(product)
-                }}
-                className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-200"
-              >
-                <Heart 
-                  className={`w-4 h-4 ${isFavorite(product.id) ? 'fill-black text-black' : 'text-gray-600'}`} 
-                />
-              </button>
-            </div>
-          </div>
+          <Link href={getProductUrl(product.id)}>
+            <div className="relative p-2 cursor-pointer">
+              <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden">
+                {product.imageUrl && Array.isArray(product.imageUrl) && product.imageUrl.length > 0 ? (
+                  <img 
+                    src={product.imageUrl[0]} 
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-200 to-orange-300"></div>
+                )}
+                
+                {/* Favorite Button - Top Right */}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleToggleFavorite(product)
+                  }}
+                  className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-200 z-10"
+                >
+                  <Heart 
+                    className={`w-3.5 h-3.5 ${isFavorite(product.id) ? 'fill-orange-500 text-orange-500' : 'text-orange-500'}`} 
+                  />
+                </button>
 
-          {/* Product Info */}
-          <div className="px-4 pb-4 space-y-2">
-            {/* Title and Rating in one line */}
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold text-black text-sm md:text-base leading-tight flex-1 truncate">
-                {product.name.length > 25 ? `${product.name.substring(0, 25)}...` : product.name}
-              </h3>
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                <span className="text-xs text-gray-600 font-medium">
-                  {product.averageRating.toFixed(1)}
-                </span>
+                {/* Color Selection - Bottom Right */}
+                {product.colors && product.colors.length > 0 && (
+                  <div className="absolute bottom-2 right-2 flex space-x-1 z-10">
+                    {product.colors.slice(0, 3).map((color) => (
+                      <button
+                        key={color.id}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          handleColorSelect(product.id, color.id)
+                        }}
+                        className={`w-4 h-4 rounded-full border-2 transition-all shadow-sm ${
+                          selectedColors[product.id] === color.id
+                            ? 'border-white ring-2 ring-orange-400 scale-110'
+                            : 'border-white hover:border-gray-200'
+                        }`}
+                        style={{
+                          backgroundColor: color.colorCode || '#8B4513'
+                        }}
+                        title={color.name}
+                      />
+                    ))}
+                    {product.colors.length > 3 && (
+                      <div className="w-4 h-4 rounded-full bg-white border-2 border-white flex items-center justify-center shadow-sm">
+                        <span className="text-[8px] font-bold text-gray-700">+{product.colors.length - 3}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
+          </Link>
 
-            {/* Price */}
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-black text-base">
-                {formatPrice(Number(product.price))}
-              </span>
+          {/* Product Info */}
+          <div className="px-3 pb-3 space-y-2">
+            {/* Title and Rating */}
+            <Link href={getProductUrl(product.id)}>
+              <div className="cursor-pointer">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <h3 className="font-semibold text-black text-sm md:text-base leading-tight flex-1 truncate hover:text-orange-600 transition-colors">
+                    {product.name.length > 25 ? `${product.name.substring(0, 25)}...` : product.name}
+                  </h3>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
+                    <span className="text-xs text-gray-600 font-medium">
+                      {product.averageRating.toFixed(1)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Price */}
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="font-bold text-black text-base">
+                    {formatPrice(Number(product.price))}
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Size Selection */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="space-y-1">
+                <h4 className="text-xs font-medium text-gray-700">Размер:</h4>
+                <div className="flex flex-wrap gap-1">
+                  {product.sizes.slice(0, 3).map((size) => (
+                    <button
+                      key={size.id}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleSizeSelect(product.id, size.id)
+                      }}
+                      className={`min-w-[1.5rem] h-6 px-2 rounded-md border text-xs font-medium transition-all ${
+                        selectedSizes[product.id] === size.id
+                          ? 'border-orange-500 bg-orange-500 text-white'
+                          : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
+                      }`}
+                    >
+                      {size.name}
+                    </button>
+                  ))}
+                  {product.sizes.length > 3 && (
+                    <div className="min-w-[1.5rem] h-6 px-2 rounded-md border border-gray-300 bg-gray-100 flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-700">+{product.sizes.length - 3}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Add to Cart Button */}
+            <div className="pt-1">
+              {quantities[product.id] === 0 ? (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleAddToCart(product)
+                  }}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 font-medium transition-all text-sm"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  <span>В корзину</span>
+                </button>
+              ) : (
+                <div className="w-full bg-orange-500 text-white px-3 py-2 rounded-lg flex items-center justify-between font-medium">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleQuantityChange(product, -1)
+                    }}
+                    className="w-6 h-6 bg-white bg-opacity-30 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-colors"
+                  >
+                    <Minus className="w-3 h-3 text-orange-600" />
+                  </button>
+                  
+                  <span className="text-sm font-bold min-w-[1.5rem] text-center">
+                    {quantities[product.id]}
+                  </span>
+                  
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleQuantityChange(product, 1)
+                    }}
+                    className="w-6 h-6 bg-white bg-opacity-30 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-colors"
+                  >
+                    <Plus className="w-3 h-3 text-orange-600" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-          </div>
-        </Link>
+        </div>
       ))}
     </div>
   )

@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Star, MessageCircle } from 'lucide-react'
+import { ArrowLeft, Star, MessageCircle, Edit2 } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useNotification } from '@/context/NotificationContext'
 import AppLayout from '@/components/AppLayout'
 import ReviewModal, { ReviewFormData } from '@/components/ReviewModal'
+import { getUserReviewIdForProduct, saveUserReviewId, canUserReviewProduct, testLocalStorage } from '@/lib/reviewStorage'
 
 interface Review {
   id: string
@@ -36,6 +37,9 @@ export default function ProductReviewsPage() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
   const [isSubmittingReview, setIsSubmittingReview] = useState(false)
   const [resetReviewForm, setResetReviewForm] = useState(false)
+  const [userReviewId, setUserReviewId] = useState<string | null>(null)
+  const [userReviewData, setUserReviewData] = useState<{ clientName: string; text: string; rating: number } | null>(null)
+  const [isEditMode, setIsEditMode] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +63,27 @@ export default function ProductReviewsPage() {
         if (reviewsResponse.ok) {
           const reviewsData = await reviewsResponse.json()
           setReviews(reviewsData)
+          
+          // Проверяем, есть ли ID отзыва пользователя в localStorage
+          if (params.id) {
+            const reviewId = getUserReviewIdForProduct(params.id as string)
+            setUserReviewId(reviewId)
+            
+            // Если есть ID отзыва, находим его данные
+            if (reviewId) {
+              const userReview = reviewsData.find((r: Review) => r.id === reviewId)
+              if (userReview) {
+                setUserReviewData({
+                  clientName: userReview.clientName,
+                  text: userReview.text,
+                  rating: userReview.rating
+                })
+              }
+            }
+            
+            // Тестируем localStorage
+            testLocalStorage()
+          }
         }
       } catch (error) {
         console.error('Ошибка загрузки данных:', error)
@@ -80,20 +105,57 @@ export default function ProductReviewsPage() {
   const handleReviewSubmit = async (reviewData: ReviewFormData) => {
     if (!product) return
 
+    // Проверяем, может ли пользователь оставить отзыв (только если это новый отзыв, а не редактирование)
+    if (!isEditMode && !userReviewId && !canUserReviewProduct(product.id)) {
+      showNotification({
+        type: 'cart',
+        message: 'Вы уже оставили отзыв для этого товара',
+        duration: 3000
+      })
+      return
+    }
+
     setIsSubmittingReview(true)
     
     try {
-      const response = await fetch(`/api/products/${product.id}/reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reviewData),
-      })
+      let response: Response
+      let result: any
 
-      const result = await response.json()
+      if (isEditMode && userReviewId) {
+        // Редактируем существующий отзыв
+        response = await fetch(`/api/products/${product.id}/reviews`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            reviewId: userReviewId,
+            ...reviewData
+          }),
+        })
+        result = await response.json()
+      } else {
+        // Создаем новый отзыв
+        response = await fetch(`/api/products/${product.id}/reviews`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(reviewData),
+        })
+        result = await response.json()
+      }
 
       if (response.ok) {
+        // Сохраняем только ID отзыва в localStorage (компактный формат)
+        saveUserReviewId(product.id, result.review.id)
+        setUserReviewId(result.review.id)
+        setUserReviewData({
+          clientName: reviewData.clientName,
+          text: reviewData.text,
+          rating: reviewData.rating
+        })
+
         // Обновляем отзывы
         const updatedResponse = await fetch(`/api/products/${product.id}/reviews`)
         if (updatedResponse.ok) {
@@ -115,16 +177,17 @@ export default function ProductReviewsPage() {
 
         showNotification({
           type: 'cart',
-          message: 'Отзыв успешно добавлен!',
+          message: isEditMode ? 'Отзыв успешно обновлен!' : 'Отзыв успешно добавлен!',
           duration: 3000
         })
         
         handleReviewFormReset()
         setIsReviewModalOpen(false)
+        setIsEditMode(false)
       } else {
         showNotification({
           type: 'cart',
-          message: result.error || 'Ошибка при добавлении отзыва',
+          message: result.error || `Ошибка при ${isEditMode ? 'обновлении' : 'добавлении'} отзыва`,
           duration: 3000
         })
       }
@@ -143,6 +206,18 @@ export default function ProductReviewsPage() {
   const handleReviewFormReset = () => {
     setResetReviewForm(true)
     setTimeout(() => setResetReviewForm(false), 100)
+  }
+
+  const handleEditReview = () => {
+    if (userReviewId && userReviewData) {
+      setIsEditMode(true)
+      setIsReviewModalOpen(true)
+    }
+  }
+
+  const handleNewReview = () => {
+    setIsEditMode(false)
+    setIsReviewModalOpen(true)
   }
 
   const renderStars = (rating: number, size: string = 'w-4 h-4') => {
@@ -217,12 +292,21 @@ export default function ProductReviewsPage() {
         
         <h1 className="text-lg font-medium text-gray-900">Отзывы</h1>
         
-        <button
-          onClick={() => setIsReviewModalOpen(true)}
-          className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center hover:bg-orange-600 transition-colors"
-        >
-          <MessageCircle className="w-5 h-5 text-white" />
-        </button>
+        {canUserReviewProduct(params.id as string) ? (
+          <button
+            onClick={handleNewReview}
+            className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center hover:bg-orange-600 transition-colors"
+          >
+            <MessageCircle className="w-5 h-5 text-white" />
+          </button>
+        ) : (
+          <button
+            onClick={handleEditReview}
+            className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-600 transition-colors"
+          >
+            <Edit2 className="w-5 h-5 text-white" />
+          </button>
+        )}
       </div>
 
       <div className="max-w-4xl mx-auto px-4 md:px-6 lg:px-8 py-8">
@@ -255,7 +339,7 @@ export default function ProductReviewsPage() {
               Будьте первым, кто оставит отзыв о этом товаре
             </p>
             <button
-              onClick={() => setIsReviewModalOpen(true)}
+              onClick={handleNewReview}
               className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
             >
               Написать отзыв
@@ -263,24 +347,56 @@ export default function ProductReviewsPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {reviews.map((review) => (
-              <div key={review.id} className="bg-white p-6 rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-xl transition-all duration-300">
+            {/* Отзыв пользователя (если есть) */}
+            {userReviewId && userReviewData && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-blue-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300">
                 <div className="flex items-start justify-between mb-3">
-                  <div>
+                  <div className="flex items-center space-x-2">
                     <h4 className="font-semibold text-gray-900 text-base">
-                      {review.clientName}
+                      {userReviewData.clientName}
                     </h4>
-                    {renderStars(review.rating, 'w-4 h-4')}
+                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                      Ваш отзыв
+                    </span>
                   </div>
-                  <div className="text-xs text-gray-500">
-                    {review.rating} из 5
+                  <div className="flex items-center space-x-2">
+                    {renderStars(userReviewData.rating, 'w-4 h-4')}
+                    <button
+                      onClick={handleEditReview}
+                      className="p-2 text-blue-600 hover:bg-blue-100 rounded-full transition-colors"
+                      title="Редактировать отзыв"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
                 <p className="text-gray-700 leading-relaxed">
-                  {review.text}
+                  {userReviewData.text}
                 </p>
               </div>
-            ))}
+            )}
+
+            {/* Остальные отзывы */}
+            {reviews
+              .filter(review => !userReviewId || review.id !== userReviewId)
+              .map((review) => (
+                <div key={review.id} className="bg-white p-6 rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold text-gray-900 text-base">
+                        {review.clientName}
+                      </h4>
+                      {renderStars(review.rating, 'w-4 h-4')}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {review.rating} из 5
+                    </div>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed">
+                    {review.text}
+                  </p>
+                </div>
+              ))}
           </div>
         )}
       </div>
@@ -288,10 +404,19 @@ export default function ProductReviewsPage() {
       {/* Review Modal */}
       <ReviewModal
         isOpen={isReviewModalOpen}
-        onClose={() => setIsReviewModalOpen(false)}
+        onClose={() => {
+          setIsReviewModalOpen(false)
+          setIsEditMode(false)
+        }}
         onSubmit={handleReviewSubmit}
         productName={product.name}
         isLoading={isSubmittingReview}
+        editMode={isEditMode}
+        initialData={isEditMode && userReviewData ? {
+          clientName: userReviewData.clientName,
+          text: userReviewData.text,
+          rating: userReviewData.rating
+        } : undefined}
         key={resetReviewForm ? 'reset' : 'normal'}
       />
     </AppLayout>

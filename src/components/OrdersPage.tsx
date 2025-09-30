@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft, Package, Clock, User, Truck, CheckCircle, XCircle, AlertCircle, ShoppingCart, Phone, MapPin } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { validateOrdersCookie } from '@/lib/cookies'
@@ -38,6 +39,7 @@ interface Order {
 type OrderStatus = 'active' | 'completed' | 'cancelled'
 
 export default function OrdersPage() {
+  const router = useRouter()
   const { t } = useLanguage()
   const [activeTab, setActiveTab] = useState<OrderStatus>('active')
   const [orders, setOrders] = useState<Order[]>([])
@@ -274,9 +276,19 @@ export default function OrdersPage() {
             {filteredOrders.map((order) => {
               const totalAmount = calculateOrderTotal(order.orderItems)
 
+              const handleOrderClick = (e: React.MouseEvent) => {
+                // Проверяем, что клик не по кнопке "Детали"
+                if (!(e.target as HTMLElement).closest('button')) {
+                  router.push(`/orders/${order.id}/track`)
+                }
+              }
+
               return (
-                <Link key={order.id} href={`/orders/${order.id}/track`} className="block">
-                  <div className="bg-white rounded-2xl p-3 md:p-4 border border-gray-100 hover:border-orange-200 hover:shadow-xl transition-all duration-300 cursor-pointer">
+                <div 
+                  key={order.id} 
+                  className="bg-white rounded-2xl p-3 md:p-4 border border-gray-100 hover:border-orange-200 hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  onClick={handleOrderClick}
+                >
                   {/* Mobile Layout */}
                   <div className="md:hidden">
                     {/* Order Header */}
@@ -315,8 +327,11 @@ export default function OrdersPage() {
                       
                       {/* Details Button */}
                       <div className="ml-3 flex-shrink-0">
-                        <Link href={`/orders/${order.id}/track`} onClick={(e) => e.stopPropagation()}>
-                          <button className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition-colors">
+                        <Link href={`/orders/${order.id}/track`}>
+                          <button 
+                            className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             Детали
                           </button>
                         </Link>
@@ -362,16 +377,18 @@ export default function OrdersPage() {
                       
                       {/* Details Button */}
                       <div className="ml-3 flex-shrink-0">
-                        <Link href={`/orders/${order.id}/track`} onClick={(e) => e.stopPropagation()}>
-                          <button className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition-colors">
+                        <Link href={`/orders/${order.id}/track`}>
+                          <button 
+                            className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             Детали
                           </button>
                         </Link>
                       </div>
                     </div>
                   </div>
-                  </div>
-                </Link>
+                </div>
               )
             })}
           </div>

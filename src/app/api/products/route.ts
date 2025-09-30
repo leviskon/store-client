@@ -118,6 +118,27 @@ export async function GET(request: Request) {
             fullname: true
           }
         },
+        productSizes: {
+          include: {
+            size: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
+        },
+        productColors: {
+          include: {
+            color: {
+              select: {
+                id: true,
+                name: true,
+                colorCode: true
+              }
+            }
+          }
+        },
         reviews: {
           select: {
             rating: true
@@ -133,14 +154,28 @@ export async function GET(request: Request) {
       take: limit ? parseInt(limit) : 50 // Используем переданный лимит или 50 по умолчанию
     })
 
-    // Вычисляем средний рейтинг для каждого товара
+    // Вычисляем средний рейтинг для каждого товара и преобразуем размеры/цвета
     const productsWithRating = products.map(product => {
       const avgRating = product.reviews.length > 0
         ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
         : 0
       
+      // Преобразуем productSizes и productColors в нужный формат
+      const sizes = product.productSizes.map(ps => ({
+        id: ps.size.id,
+        name: ps.size.name
+      }))
+      
+      const colors = product.productColors.map(pc => ({
+        id: pc.color.id,
+        name: pc.color.name,
+        colorCode: pc.color.colorCode
+      }))
+      
       return {
         ...product,
+        sizes,
+        colors,
         averageRating: avgRating
       }
     })

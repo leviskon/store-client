@@ -10,6 +10,8 @@ interface ReviewModalProps {
   productName: string
   isLoading?: boolean
   onReset?: () => void
+  editMode?: boolean
+  initialData?: ReviewFormData
 }
 
 export interface ReviewFormData {
@@ -24,7 +26,9 @@ export default function ReviewModal({
   onSubmit, 
   productName,
   isLoading = false,
-  onReset: _onReset
+  onReset: _onReset,
+  editMode = false,
+  initialData
 }: ReviewModalProps) {
   const [formData, setFormData] = useState<ReviewFormData>({
     clientName: '',
@@ -95,6 +99,15 @@ export default function ReviewModal({
     setHoveredRating(0)
   }
 
+  // Инициализация формы при открытии в режиме редактирования
+  useEffect(() => {
+    if (isOpen && editMode && initialData) {
+      setFormData(initialData)
+    } else if (isOpen && !editMode) {
+      resetForm()
+    }
+  }, [isOpen, editMode, initialData])
+
   const handleClose = () => {
     if (!isLoading) {
       resetForm()
@@ -130,7 +143,9 @@ export default function ReviewModal({
         {/* Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div>
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Оставить отзыв</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+              {editMode ? 'Редактировать отзыв' : 'Оставить отзыв'}
+            </h2>
             <p className="text-xs sm:text-sm text-gray-600 mt-1">{productName}</p>
           </div>
           <button
@@ -243,10 +258,10 @@ export default function ReviewModal({
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Отправка...</span>
+                  <span>{editMode ? 'Сохранение...' : 'Отправка...'}</span>
                 </>
               ) : (
-                'Отправить'
+                editMode ? 'Сохранить' : 'Отправить'
               )}
             </button>
           </div>

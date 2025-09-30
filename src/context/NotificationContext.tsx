@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 interface Notification {
   id: string
-  type: 'cart' | 'favorites'
+  type: 'cart' | 'favorites' | 'success' | 'error'
   message: string
   productName?: string
   duration?: number

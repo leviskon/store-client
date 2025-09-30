@@ -84,6 +84,21 @@ export async function POST(
       )
     }
 
+    // Проверяем, есть ли уже отзыв от этого клиента для этого товара
+    const existingReview = await db.review.findFirst({
+      where: { 
+        productId: id,
+        clientName: clientName.trim()
+      }
+    })
+
+    if (existingReview) {
+      return NextResponse.json(
+        { error: 'Вы уже оставили отзыв для этого товара. Используйте PUT для обновления.' },
+        { status: 400 }
+      )
+    }
+
     // Создаем отзыв
     const review = await db.review.create({
       data: {
@@ -104,6 +119,92 @@ export async function POST(
     console.error('Ошибка создания отзыва:', error)
     return NextResponse.json(
       { error: 'Ошибка создания отзыва' },
+      { status: 500 }
+    )
+  }
+}
+
+// Обновление отзыва
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params
+    const body = await request.json()
+    
+    const { reviewId, clientName, text, rating } = body
+
+    // Валидация данных
+    if (!reviewId) {
+      return NextResponse.json(
+        { error: 'ID отзыва обязателен' },
+        { status: 400 }
+      )
+    }
+
+    if (!clientName || !clientName.trim()) {
+      return NextResponse.json(
+        { error: 'Имя клиента обязательно для заполнения' },
+        { status: 400 }
+      )
+    }
+
+    if (!text || !text.trim()) {
+      return NextResponse.json(
+        { error: 'Текст отзыва обязателен для заполнения' },
+        { status: 400 }
+      )
+    }
+
+    if (text.trim().length < 10) {
+      return NextResponse.json(
+        { error: 'Отзыв должен содержать минимум 10 символов' },
+        { status: 400 }
+      )
+    }
+
+    if (!rating || rating < 1 || rating > 5) {
+      return NextResponse.json(
+        { error: 'Рейтинг должен быть от 1 до 5' },
+        { status: 400 }
+      )
+    }
+
+    // Проверяем, существует ли отзыв и принадлежит ли он товару
+    const existingReview = await db.review.findFirst({
+      where: { 
+        id: reviewId,
+        productId: id
+      }
+    })
+
+    if (!existingReview) {
+      return NextResponse.json(
+        { error: 'Отзыв не найден' },
+        { status: 404 }
+      )
+    }
+
+    // Обновляем отзыв
+    const updatedReview = await db.review.update({
+      where: { id: reviewId },
+      data: {
+        clientName: clientName.trim(),
+        text: text.trim(),
+        rating: parseInt(rating)
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      review: updatedReview,
+      message: 'Отзыв успешно обновлен'
+    })
+  } catch (error) {
+    console.error('Ошибка обновления отзыва:', error)
+    return NextResponse.json(
+      { error: 'Ошибка обновления отзыва' },
       { status: 500 }
     )
   }
