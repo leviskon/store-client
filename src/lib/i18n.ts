@@ -92,7 +92,6 @@ export interface Translations {
   confirmRemoveFromCartTitle: string
   confirmRemoveFromCartMessage: string
   yesRemove: string
-  size: string
   color: string
   price: string
   
@@ -106,9 +105,7 @@ export interface Translations {
   noOrdersSubtitle: string
   orderStatus: string
   orderDate: string
-  orderTotal: string
   orderNumber: string
-  deliveryAddress: string
   customerPhone: string
   customerComment: string
   cancelComment: string
@@ -144,17 +141,12 @@ export interface Translations {
   
   // Checkout modal
   orderCheckout: string
-  customerName: string
-  customerPhone: string
-  deliveryAddress: string
-  customerComment: string
   enterName: string
   enterPhone: string
   enterAddress: string
   optionalComment: string
   phoneValidation: string
   placeOrder: string
-  orderTotal: string
   
   // Common actions
   submit: string
@@ -200,7 +192,6 @@ export interface Translations {
   hot: string
   new: string
   sale: string
-  categories: string
   
   // Discount page
   bigDiscounts: string
@@ -378,7 +369,6 @@ export interface Translations {
   reviews: string
   noReviewsYet: string
   beFirstToReview: string
-  writeReview: string
   showAllReviews: string
   productNotFound: string
   errorLoadingProduct: string
@@ -405,14 +395,8 @@ export interface Translations {
   fineApplied: string
   
   // Orders page
-  myOrders: string
-  active: string
-  completed: string
-  cancelled: string
   loadingOrders: string
   errorLoading: string
-  noOrdersTitle: string
-  noOrdersSubtitle: string
   orderFrom: string
   status: string
   details: string
@@ -422,23 +406,13 @@ export interface Translations {
   courierWait: string
   courierPicked: string
   enroute: string
-  delivered: string
   canceled: string
   
   // Product page
-  productDetails: string
-  selectColor: string
-  selectSize: string
-  addToCart: string
   addToFavorites: string
-  removeFromFavorites: string
-  quantity: string
   description: string
-  specifications: string
-  reviews: string
   relatedProducts: string
   averageRating: string
-  productNotFound: string
   failedToLoad: string
   
   // Boolean values
@@ -447,7 +421,6 @@ export interface Translations {
   
   // Track order page
   order: string
-  orderDetails: string
   orderNotFound: string
   orderNotFoundDesc: string
   loadingOrder: string
@@ -460,15 +433,12 @@ export interface Translations {
   total: string
   deliveryStatus: string
   category: string
-  quantity: string
   pieces: string
   currentStatus: string
-  completed: string
   cancelReason: string
   orderComment: string
   
   // Order tracking statuses
-  orderPlaced: string
   waitingCourier: string
   courierTook: string
   inTransit: string
@@ -625,7 +595,6 @@ export const translations: Record<Language, Translations> = {
     optionalComment: 'Комментарий (милдеттүү эмес)',
     phoneValidation: 'Туура телефон номурун киргизиңиз (+996 XXX XXX XXX)',
     placeOrder: 'Заказ берүү',
-    orderTotal: 'Жалпы сумма',
     
     // Common actions
     submit: 'Жөнөтүү',
@@ -1071,7 +1040,6 @@ export const translations: Record<Language, Translations> = {
     optionalComment: 'Комментарий (необязательно)',
     phoneValidation: 'Введите корректный номер телефона (+996 XXX XXX XXX)',
     placeOrder: 'Оформить заказ',
-    orderTotal: 'Итого к оплате',
     
     // Common actions
     submit: 'Отправить',
