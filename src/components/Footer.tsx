@@ -49,14 +49,6 @@ export default function Footer() {
                   {t.aboutUs}
                 </button>
               </li>
-              <li>
-                <button 
-                  onClick={() => handleNavigation('/discounts')}
-                  className="text-gray-300 hover:text-orange-400 transition-colors text-sm text-left"
-                >
-                  {t.discounts}
-                </button>
-              </li>
             </ul>
           </div>
 

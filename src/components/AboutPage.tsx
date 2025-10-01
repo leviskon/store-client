@@ -28,7 +28,7 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            {t.language === 'kg' ? 'Store Client' : 'Store Client'}
+            {t.storeName}
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
             {t.storeDescription}
@@ -44,7 +44,7 @@ export default function AboutPage() {
             <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
               {t.customersCount}
             </h3>
-            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500">10,000+</p>
+            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500">{t.customersCountValue}</p>
             <p className="text-gray-600 text-xs sm:text-sm mt-1 sm:mt-2">
               {t.loyalCustomers}
             </p>
@@ -57,7 +57,7 @@ export default function AboutPage() {
             <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
               {t.experienceYears}
             </h3>
-            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500">5+</p>
+            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500">{t.experienceYearsValue}</p>
             <p className="text-gray-600 text-xs sm:text-sm mt-1 sm:mt-2">
               {t.years}
             </p>
@@ -70,7 +70,7 @@ export default function AboutPage() {
             <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
               {t.productsCount}
             </h3>
-            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500">500+</p>
+            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500">{t.productsCountValue}</p>
             <p className="text-gray-600 text-xs sm:text-sm mt-1 sm:mt-2">
               {t.variousProducts}
             </p>
@@ -83,7 +83,7 @@ export default function AboutPage() {
             <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
               {t.reliability}
             </h3>
-            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500">100%</p>
+            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500">{t.reliabilityValue}</p>
             <p className="text-gray-600 text-xs sm:text-sm mt-1 sm:mt-2">
               {t.customerSatisfaction}
             </p>
@@ -133,7 +133,7 @@ export default function AboutPage() {
               <li className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                 <span className="text-sm sm:text-base text-gray-600">
-                  {t.reliabilityValue}
+                  {t.reliabilityValueText}
                 </span>
               </li>
             </ul>

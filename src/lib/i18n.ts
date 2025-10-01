@@ -277,14 +277,19 @@ export interface Translations {
   privacy: string
   
   // About page
+  storeName: string
   storeDescription: string
   customersCount: string
+  customersCountValue: string
   loyalCustomers: string
   experienceYears: string
+  experienceYearsValue: string
   years: string
   productsCount: string
+  productsCountValue: string
   variousProducts: string
   reliability: string
+  reliabilityValue: string
   customerSatisfaction: string
   ourStory: string
   storyParagraph1: string
@@ -293,7 +298,7 @@ export interface Translations {
   qualityValue: string
   satisfactionValue: string
   innovationValue: string
-  reliabilityValue: string
+  reliabilityValueText: string
   ourMission: string
   missionDescription: string
   missionQuote: string
@@ -736,17 +741,22 @@ export const translations: Record<Language, Translations> = {
     // Page titles
     aboutUs: 'Биз жөнүндө',
     discounts: 'Арзандатуулар',
-    privacy: 'Жеке маалыматтын коопсуздугу',
+    privacy: 'Колдонуу шарттары жана жеке маалыматтын коопсуздугу',
     
     // About page
+    storeName: 'Store Client',
     storeDescription: 'Биздин дүкөндө эң сонун жана сапаттуу кийимдерди табасыз. Биз ар бир кардарыбызды баалайбыз жана аларга эң жакшы кызмат көрсөтүүгө аракет кылабыз.',
     customersCount: 'Кардарлардын саны',
+    customersCountValue: '10,000+',
     loyalCustomers: 'Ырааттуу кардарлар',
     experienceYears: 'Жылдардын тажрыйбасы',
+    experienceYearsValue: '5+',
     years: 'Жылдар',
     productsCount: 'Товарлардын саны',
+    productsCountValue: '500+',
     variousProducts: 'Ар кандай товарлар',
     reliability: 'Ырааты',
+    reliabilityValue: '100%',
     customerSatisfaction: 'Кардарлардын канааттануусу',
     ourStory: 'Биздин тарых',
     storyParagraph1: 'Store Client 2019-жылы негизделген жана алгачкы күндөрүнөн тартып биздин негизги максат - кардарларга сапаттуу жана стилдүү кийимдерди жеткирүү болгон. Биз ар бир кардарыбыздын муктаждыктарын түшүнүп, аларга эң жакшы кызмат көрсөтүүгө аракет кылабыз.',
@@ -755,7 +765,7 @@ export const translations: Record<Language, Translations> = {
     qualityValue: 'Сапат - биздин негизги баалуулук. Биз ар бир товардын сапатына көңүл бурабыз.',
     satisfactionValue: 'Кардарлардын канааттануусу - биздин негизги максат.',
     innovationValue: 'Инновация - биз дайыма жаңы технологияларды колдонобуз.',
-    reliabilityValue: 'Ырааттуулук - биздин кардарлар бизге ишенишет.',
+    reliabilityValueText: 'Ырааттуулук - биздин кардарлар бизге ишенишет.',
     ourMission: 'Биздин миссия',
     missionDescription: 'Биздин миссия - ар бир адамга өз стилин табууга жана өзүн жакшы сезүүгө жардам берүү. Биз сапаттуу, стилдүү жана арзан баадагы кийимдерди сунуштайбыз.',
     missionQuote: '"Биздин максат - сизди эң жакшы көрүнүшүңүздү табууга жардам берүү"',
@@ -764,15 +774,15 @@ export const translations: Record<Language, Translations> = {
     contactButton: 'Байланышуу',
     
     // Privacy page
-    privacyDescription: 'Биз сиздин жеке маалыматтарыңыздын коопсуздугуна өзгөчө көңүл бурабыз жана аларды кантип топтоп, колдонуп, коргогонубуз жөнүндө толук маалымат берүүнү каалайбыз.',
+    privacyDescription: 'Биз сиздин жеке маалыматтарыңыздын коопсуздугуна кам көрөбүз. Биздин кызмат катталууну талап кылбайт - биз заказдарды иштетүү үчүн гана керектүү маалыматты топтойбуз.',
     dataCollection: 'Маалымат топтоо',
     personalInfo: 'Жеке маалымат',
-    personalInfoDesc: 'Биз сиздин атыңыз, электрондук почтаңыз, телефон номериңиз, дарегиңиз жана башка жеке маалыматтарыңызды топтойбуз.',
+    personalInfoDesc: 'Биз сиздин атыңыз, телефон номериңиз жана жеткирүү дарегиңизди гана топтойбуз заказдарды иштетүү жана аткаруу үчүн.',
     technicalInfo: 'Техникалык маалымат',
-    technicalInfoDesc: 'Биз сиздин браузериңиздин маалыматын, IP дарегиңизди, кукилерди жана башка техникалык маалыматтарды топтойбуз.',
+    technicalInfoDesc: 'Биз сиздин түзүлүшүңүздүн техникалык маалыматын топтобойбуз. Биздин кызмат катталуусуз иштейт.',
     dataUsage: 'Маалыматты колдонуу',
     serviceProvision: 'Кызмат көрсөтүү',
-    serviceProvisionDesc: 'Биз сиздин маалыматтарыңызды кызмат көрсөтүү үчүн колдонобуз.',
+    serviceProvisionDesc: 'Биз сиздин маалыматтарыңызды гана заказдарды иштетүү жана жеткирүү үчүн колдонобуз.',
     notifications: 'Билдирүүлөр',
     notificationsDesc: 'Биз сизге заказ статусу, жаңы товарлар жана акциялар жөнүндө билдирүүлөр жөнөтөбүз.',
     dataSharing: 'Маалыматты бөлүшүү',
@@ -787,11 +797,11 @@ export const translations: Record<Language, Translations> = {
     encryptionDesc: 'Биздин сайт SSL шифрлөөсүн колдонот жана бардык маалыматтар коопсуз ташылат.',
     yourRights: 'Сиздин укуктарыңыз',
     accessRight: 'Кирүү укугу',
-    accessRightDesc: 'Сиз өзүңүздүн жеке маалыматтарыңызга кирүү укугуна ээсиз.',
+    accessRightDesc: 'Сиз өзүңүздүн заказдарыңыз жөнүндө маалыматты бизден суроо укугуна ээсиз.',
     editRight: 'Өзгөртүү укугу',
-    editRightDesc: 'Сиз өзүңүздүн маалыматтарыңызды өзгөртүү укугуна ээсиз.',
+    editRightDesc: 'Сиз заказдагы маалыматты аны иштетүүдөн мурун биз менен байланышып өзгөртө аласыз.',
     deleteRight: 'Жок кылуу укугу',
-    deleteRightDesc: 'Сиз өзүңүздүн маалыматтарыңызды жок кылдырууну суроо укугуна ээсиз.',
+    deleteRightDesc: 'Сиз заказдарыңыз аткарылгандан кийин алардын маалыматтарын жок кылдырууну суроо укугуна ээсиз.',
     contactInfo: 'Байланыш маалыматы',
     contactInfoDesc: 'Сорууларыңыз болсо, биз менен байланышыңыз: privacy@storeclient.kg',
     policyUpdates: 'Саясатты жаңыртуу',
@@ -1195,17 +1205,22 @@ export const translations: Record<Language, Translations> = {
     // Page titles
     aboutUs: 'О нас',
     discounts: 'Скидки',
-    privacy: 'Конфиденциальность',
+    privacy: 'Условия использования и конфиденциальность',
     
     // About page
+    storeName: 'Store Client',
     storeDescription: 'В нашем магазине вы найдете самую красивую и качественную одежду. Мы ценим каждого нашего клиента и стремимся предоставить им лучший сервис.',
     customersCount: 'Количество клиентов',
+    customersCountValue: '10,000+',
     loyalCustomers: 'Постоянных клиентов',
     experienceYears: 'Опыт работы',
+    experienceYearsValue: '5+',
     years: 'Лет',
     productsCount: 'Количество товаров',
+    productsCountValue: '500+',
     variousProducts: 'Различных товаров',
     reliability: 'Надежность',
+    reliabilityValue: '100%',
     customerSatisfaction: 'Удовлетворенность клиентов',
     ourStory: 'Наша история',
     storyParagraph1: 'Store Client был основан в 2019 году, и с первых дней нашей основной целью было предоставление качественной и стильной одежды нашим клиентам. Мы понимаем потребности каждого клиента и стремимся предоставить им лучший сервис.',
@@ -1214,7 +1229,7 @@ export const translations: Record<Language, Translations> = {
     qualityValue: 'Качество - наша основная ценность. Мы уделяем внимание качеству каждого товара.',
     satisfactionValue: 'Удовлетворенность клиентов - наша основная цель.',
     innovationValue: 'Инновации - мы всегда используем новые технологии.',
-    reliabilityValue: 'Надежность - наши клиенты доверяют нам.',
+    reliabilityValueText: 'Надежность - наши клиенты доверяют нам.',
     ourMission: 'Наша миссия',
     missionDescription: 'Наша миссия - помочь каждому человеку найти свой стиль и чувствовать себя хорошо. Мы предлагаем качественную, стильную и доступную по цене одежду.',
     missionQuote: '"Наша цель - помочь вам найти свой лучший образ"',
@@ -1223,15 +1238,15 @@ export const translations: Record<Language, Translations> = {
     contactButton: 'Связаться',
     
     // Privacy page
-    privacyDescription: 'Мы особенно внимательно относимся к безопасности ваших личных данных и хотим предоставить полную информацию о том, как мы их собираем, используем и защищаем.',
+    privacyDescription: 'Мы заботимся о безопасности ваших личных данных. Наш сервис не требует регистрации - мы собираем только необходимую информацию для обработки заказов.',
     dataCollection: 'Сбор информации',
     personalInfo: 'Личная информация',
-    personalInfoDesc: 'Мы собираем ваше имя, электронную почту, номер телефона, адрес и другую личную информацию.',
+    personalInfoDesc: 'Мы собираем только ваше имя, номер телефона и адрес доставки для обработки и выполнения заказов.',
     technicalInfo: 'Техническая информация',
-    technicalInfoDesc: 'Мы собираем информацию о вашем браузере, IP-адрес, куки и другую техническую информацию.',
+    technicalInfoDesc: 'Мы не собираем техническую информацию о вашем устройстве. Наш сервис работает без регистрации.',
     dataUsage: 'Использование информации',
     serviceProvision: 'Предоставление услуг',
-    serviceProvisionDesc: 'Мы используем вашу информацию для предоставления услуг.',
+    serviceProvisionDesc: 'Мы используем вашу информацию только для обработки и доставки заказов.',
     notifications: 'Уведомления',
     notificationsDesc: 'Мы отправляем вам уведомления о статусе заказа, новых товарах и акциях.',
     dataSharing: 'Обмен информацией',
@@ -1246,11 +1261,11 @@ export const translations: Record<Language, Translations> = {
     encryptionDesc: 'Наш сайт использует SSL-шифрование и все данные передаются безопасно.',
     yourRights: 'Ваши права',
     accessRight: 'Право доступа',
-    accessRightDesc: 'Вы имеете право на доступ к своим личным данным.',
+    accessRightDesc: 'Вы можете запросить информацию о ваших заказах, обратившись к нам.',
     editRight: 'Право редактирования',
-    editRightDesc: 'Вы имеете право редактировать свои данные.',
+    editRightDesc: 'Вы можете изменить данные в заказе, связавшись с нами до его обработки.',
     deleteRight: 'Право на удаление',
-    deleteRightDesc: 'Вы имеете право запросить удаление своих данных.',
+    deleteRightDesc: 'Вы можете запросить удаление информации о ваших заказах после их выполнения.',
     contactInfo: 'Контактная информация',
     contactInfoDesc: 'Если у вас есть вопросы, свяжитесь с нами: privacy@storeclient.kg',
     policyUpdates: 'Обновления политики',

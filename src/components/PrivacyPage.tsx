@@ -185,20 +185,6 @@ export default function PrivacyPage() {
           </p>
         </div>
 
-        {/* Policy Updates */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 sm:p-6">
-          <div className="flex items-start space-x-3">
-            <AlertTriangle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <h4 className="text-base sm:text-lg font-semibold text-yellow-800 mb-2">
-                {t.policyUpdates}
-              </h4>
-              <p className="text-sm sm:text-base text-yellow-700 leading-relaxed">
-                {t.policyUpdatesDesc}
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Bottom spacing */}
