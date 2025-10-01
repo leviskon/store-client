@@ -103,12 +103,12 @@ export default function NotificationToast({
       className={`
         relative
         text-white 
-        p-3 md:p-4
-        rounded-xl md:rounded-2xl 
+        p-2 sm:p-3 md:p-4
+        rounded-lg sm:rounded-xl md:rounded-2xl 
         shadow-2xl
         flex items-center 
-        gap-3 md:gap-4
-        w-full md:max-w-sm 
+        gap-2 sm:gap-3 md:gap-4
+        w-full max-w-xs sm:max-w-sm md:max-w-sm 
         backdrop-blur-xl
         border border-white/20
         transition-all duration-500 ease-out
@@ -128,7 +128,7 @@ export default function NotificationToast({
       {/* Иконка */}
       <div className={`
         flex-shrink-0 
-        w-10 h-10 md:w-12 md:h-12 
+        w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 
         rounded-full 
         ${styles.iconBg}
         flex items-center justify-center
@@ -141,7 +141,7 @@ export default function NotificationToast({
       
       {/* Контент */}
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-sm md:text-base leading-tight mb-1">
+        <p className="font-semibold text-xs sm:text-sm md:text-base leading-tight mb-1">
           {message}
         </p>
         {productName && (
@@ -156,7 +156,7 @@ export default function NotificationToast({
         onClick={handleClose}
         className="
           flex-shrink-0
-          w-7 h-7 md:w-8 md:h-8
+          w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8
           flex items-center justify-center
           hover:bg-white/20 
           rounded-full 

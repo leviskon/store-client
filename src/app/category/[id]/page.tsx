@@ -1,13 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Package, Star, Heart } from 'lucide-react'
+import { ArrowLeft, Package } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
-import { useFavorites } from '@/context/FavoritesContext'
-import { useCart } from '@/context/CartContext'
-import { useNotification } from '@/context/NotificationContext'
 import AppLayout from '@/components/AppLayout'
+import ProductGrid from '@/components/ProductGrid'
 
 interface Category {
   id: string
@@ -17,37 +15,16 @@ interface Category {
   subCategories: Category[]
 }
 
-interface Product {
-  id: string
-  name: string
-  price: number
-  imageUrl?: string[] | null
-  category: {
-    id: string
-    name: string
-  }
-  seller: {
-    fullname: string
-  }
-  averageRating: number
-  _count: {
-    reviews: number
-  }
-}
-
 export default function CategoryPage() {
   const params = useParams()
   const router = useRouter()
   const { t } = useLanguage()
-  const { toggleFavorite, isFavorite } = useFavorites()
-  const { addToCart } = useCart()
-  const { showNotification } = useNotification()
   
   const [category, setCategory] = useState<Category | null>(null)
   const [subcategories, setSubcategories] = useState<Category[]>([])
-  const [products, setProducts] = useState<Product[]>([])
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [productsCount, setProductsCount] = useState(0)
   const [productsLoading, setProductsLoading] = useState(false)
 
   useEffect(() => {
@@ -62,9 +39,6 @@ export default function CategoryPage() {
           setCategory(categoryData)
           setSubcategories(categoryData.subCategories || [])
         }
-
-        // Загружаем товары из категории
-        await fetchProducts(params.id as string)
         
       } catch (error) {
         console.error(t.errorLoadingProduct, error)
@@ -78,97 +52,28 @@ export default function CategoryPage() {
     }
   }, [params.id])
 
-  const fetchProducts = async (categoryId: string) => {
-    try {
-      setProductsLoading(true)
-      const response = await fetch(`/api/products?categoryId=${categoryId}&includeSubcategories=true`)
-      if (response.ok) {
-        const data = await response.json()
-        setProducts(data)
-      }
-    } catch (error) {
-      console.error(t.errorLoadingProduct, error)
-    } finally {
-      setProductsLoading(false)
-    }
-  }
-
-  const handleSubcategoryClick = async (subcategoryId: string) => {
+  const handleSubcategoryClick = (subcategoryId: string) => {
     setSelectedSubcategory(subcategoryId)
-    await fetchProducts(subcategoryId)
   }
 
-  const handleBackToCategory = async () => {
-    if (category) {
-      setSelectedSubcategory(null)
-      await fetchProducts(category.id)
-    }
+  const handleBackToCategory = () => {
+    setSelectedSubcategory(null)
   }
 
-  const _handleAddToCart = async (product: Product) => {
-    const cartItem = {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      category: product.category,
-      seller: product.seller
-    }
+  const handleProductsCountChange = useCallback((count: number) => {
+    setProductsCount(count)
+  }, [])
 
-    const success = await addToCart(cartItem, 1)
-    
-    if (success) {
-      showNotification({
-        type: 'cart',
-        message: t.addedToCart,
-        duration: 2000
-      })
-    }
-  }
+  const handleProductsLoadingChange = useCallback((loading: boolean) => {
+    setProductsLoading(loading)
+  }, [])
 
-  const handleToggleFavorite = async (product: Product) => {
-    const favoriteItem = {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      category: product.category,
-      seller: product.seller,
-      reviews: [],
-      _count: product._count,
-      averageRating: product.averageRating
-    }
-    
-    const wasInFavorites = isFavorite(product.id)
-    await toggleFavorite(favoriteItem)
-    
-    if (!wasInFavorites) {
-      showNotification({
-        type: 'favorites',
-        message: t.addedToFavorites,
-        duration: 2000
-      })
-    }
-  }
-
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
-
-  const _renderStars = (rating: number) => {
-    return (
-      <div className="flex">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            className={`w-3 h-3 ${
-              star <= rating
-                ? 'fill-yellow-400 text-yellow-400'
-                : 'text-gray-300'
-            }`}
-          />
-        ))}
-      </div>
-    )
-  }
+  const filters = useMemo(() => ({
+    categories: [],
+    priceRange: { min: 0, max: 10000 },
+    sortBy: 'rating',
+    rating: 0
+  }), [])
 
   if (loading) {
     return (
@@ -301,103 +206,30 @@ export default function CategoryPage() {
 
           {/* Products */}
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">
-                {selectedSubcategory ? t.productsInSubcategory : t.productsInCategory}
-              </h2>
-              {products.length > 0 && (
-                <span className="text-sm text-gray-500">
-                  {products.length} {t.categoryProductsCount}
-                </span>
-              )}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {selectedSubcategory ? t.productsInSubcategory : t.productsInCategory}
+                </h2>
+                {productsLoading ? (
+                  <span className="text-sm text-gray-500">
+                    {t.loading}...
+                  </span>
+                ) : productsCount > 0 && (
+                  <span className="text-sm text-gray-500">
+                    {productsCount} {t.categoryProductsCount}
+                  </span>
+                )}
+              </div>
+              <ProductGrid 
+                selectedCategory={selectedSubcategory || (category?.id || null)}
+                includeSubcategories={!selectedSubcategory}
+                searchQuery=""
+                filters={filters}
+                onProductsCountChange={handleProductsCountChange}
+                onLoadingChange={handleProductsLoadingChange}
+              />
             </div>
-
-            {productsLoading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="animate-pulse">
-                    <div className="aspect-square bg-gray-200 rounded-xl mb-3"></div>
-                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                  </div>
-                ))}
-              </div>
-            ) : products.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                {products.map((product) => {
-                  const productImage = product.imageUrl && Array.isArray(product.imageUrl) && product.imageUrl.length > 0 
-                    ? product.imageUrl[0] 
-                    : null
-
-                  return (
-                    <div
-                      key={product.id}
-                      onClick={() => router.push(`/product/${product.id}`)}
-                      className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-orange-200 transition-all duration-300 transform hover:scale-105 group cursor-pointer"
-                    >
-                      {/* Product Image */}
-                      <div className="relative p-4">
-                        <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden">
-                          {productImage ? (
-                            <img
-                              src={productImage}
-                              alt={product.name}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                          ) : (
-                            <div className="absolute inset-0 bg-gradient-to-br from-orange-200 to-orange-300"></div>
-                          )}
-                          
-                          {/* Favorite button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleToggleFavorite(product)
-                            }}
-                            className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-200"
-                          >
-                            <Heart className={`w-4 h-4 ${isFavorite(product.id) ? 'fill-black text-black' : 'text-gray-600'}`} />
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Product Info */}
-                      <div className="px-4 pb-4 space-y-2">
-                        {/* Title and Rating in one line */}
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="font-semibold text-black text-sm md:text-base leading-tight flex-1 truncate">
-                            {product.name.length > 25 ? `${product.name.substring(0, 25)}...` : product.name}
-                          </h3>
-                          <div className="flex items-center gap-1 flex-shrink-0">
-                            <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                            <span className="text-xs text-gray-600 font-medium">
-                              {product.averageRating.toFixed(1)}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Price */}
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-black text-base">
-                            {formatPrice(Number(product.price))}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {t.productsNotFound}
-                </h3>
-                <p className="text-gray-500">
-                  {selectedSubcategory ? t.noProductsInSubcategory : t.noProductsInCategory}
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>

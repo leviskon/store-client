@@ -39,6 +39,12 @@ export default function CartPage() {
       const item = cartItems.find(item => item.id === removeItemId)
       if (item) {
         removeFromCart(removeItemId, item.selectedSizeId, item.selectedColorId)
+        // Показываем уведомление об удалении
+        showNotification({
+          type: 'cart',
+          message: 'Товар удален из корзины',
+          duration: 2000
+        })
       }
       setRemoveItemId(null)
     }

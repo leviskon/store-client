@@ -1,7 +1,7 @@
 'use client'
 
 import { Heart, Star, ShoppingBag, Plus, Minus } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useNotification } from '@/context/NotificationContext'
@@ -52,9 +52,11 @@ interface ProductGridProps {
     seller?: string
     rating?: number
   }
+  onProductsCountChange?: (count: number) => void
+  onLoadingChange?: (loading: boolean) => void
 }
 
-export default function ProductGrid({ selectedCategory, includeSubcategories, searchQuery, filters }: ProductGridProps) {
+export default function ProductGrid({ selectedCategory, includeSubcategories, searchQuery, filters, onProductsCountChange, onLoadingChange }: ProductGridProps) {
   const [products, setProducts] = useState<ProductWithLike[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedSizes, setSelectedSizes] = useState<{[productId: string]: string}>({})
@@ -65,6 +67,13 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
   const { showNotification } = useNotification()
   const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart()
   const { t } = useLanguage()
+  
+  // Используем ref для стабилизации callback
+  const onProductsCountChangeRef = useRef(onProductsCountChange)
+  onProductsCountChangeRef.current = onProductsCountChange
+  
+  const onLoadingChangeRef = useRef(onLoadingChange)
+  onLoadingChangeRef.current = onLoadingChange
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -146,42 +155,34 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
         // Ошибка загрузки товаров
       } finally {
         setLoading(false)
+        onLoadingChangeRef.current?.(false)
       }
     }
 
     setLoading(true)
+    onLoadingChangeRef.current?.(true)
     fetchProducts()
   }, [selectedCategory, includeSubcategories, searchQuery, filters])
 
-  // Инициализируем количества при первой загрузке товаров
+  // Уведомляем о количестве товаров при изменении
+  useEffect(() => {
+    if (onProductsCountChangeRef.current) {
+      onProductsCountChangeRef.current(products.length)
+    }
+  }, [products.length])
+
+  // Обновляем количества при изменении товаров или корзины
   useEffect(() => {
     if (products.length > 0) {
-      const initialQuantities: {[productId: string]: number} = {}
+      const newQuantities: {[productId: string]: number} = {}
       products.forEach(product => {
-        const cartItem = cartItems.find(item => 
-          item.id === product.id && 
-          item.selectedSizeId === selectedSizes[product.id] && 
-          item.selectedColorId === selectedColors[product.id]
-        )
-        initialQuantities[product.id] = cartItem ? cartItem.quantity : 0
+        // Ищем товар в корзине по ID, игнорируя размер и цвет для начального отображения
+        const cartItem = cartItems.find(item => item.id === product.id)
+        newQuantities[product.id] = cartItem ? cartItem.quantity : 0
       })
-      setQuantities(initialQuantities)
+      setQuantities(newQuantities)
     }
-  }, [products, cartItems, selectedSizes, selectedColors])
-
-  // Обновляем количества при изменении корзины
-  useEffect(() => {
-    const newQuantities: {[productId: string]: number} = {}
-    products.forEach(product => {
-      const cartItem = cartItems.find(item => 
-        item.id === product.id && 
-        item.selectedSizeId === selectedSizes[product.id] && 
-        item.selectedColorId === selectedColors[product.id]
-      )
-      newQuantities[product.id] = cartItem ? cartItem.quantity : 0
-    })
-    setQuantities(newQuantities)
-  }, [cartItems, products, selectedSizes, selectedColors])
+  }, [products, cartItems])
 
   const handleToggleFavorite = async (product: ProductWithLike) => {
     try {
@@ -311,6 +312,12 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
       // Удаляем товар из корзины
       removeFromCart(product.id, selectedSizeId, selectedColorId)
       setQuantities(prev => ({ ...prev, [product.id]: 0 }))
+      // Показываем уведомление об удалении
+      showNotification({
+        type: 'cart',
+        message: 'Товар удален из корзины',
+        duration: 2000
+      })
     } else {
       // Обновляем количество в корзине
       updateQuantity(product.id, newQuantity, selectedSizeId, selectedColorId)
@@ -366,12 +373,8 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                     e.stopPropagation()
                     handleToggleFavorite(product)
                   }}
-                  onTouchEnd={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    handleToggleFavorite(product)
-                  }}
                   className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-200 z-10"
+                  style={{ touchAction: 'manipulation' }}
                 >
                   <Heart 
                     className={`w-3.5 h-3.5 ${isFavorite(product.id) ? 'fill-orange-500 text-orange-500' : 'text-orange-500'}`} 
@@ -389,18 +392,14 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                           e.stopPropagation()
                           handleColorSelect(product.id, color.id)
                         }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          handleColorSelect(product.id, color.id)
-                        }}
                         className={`w-4 h-4 rounded-full border-2 transition-all shadow-sm ${
                           selectedColors[product.id] === color.id
                             ? 'border-white ring-2 ring-orange-400 scale-110'
                             : 'border-white hover:border-gray-200'
                         }`}
                         style={{
-                          backgroundColor: color.colorCode || '#8B4513'
+                          backgroundColor: color.colorCode || '#8B4513',
+                          touchAction: 'manipulation'
                         }}
                         title={color.name}
                       />
@@ -455,16 +454,12 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                         e.stopPropagation()
                         handleSizeSelect(product.id, size.id)
                       }}
-                      onTouchEnd={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleSizeSelect(product.id, size.id)
-                      }}
                       className={`min-w-[1.5rem] h-6 px-2 rounded-md border text-xs font-medium transition-all ${
                         selectedSizes[product.id] === size.id
                           ? 'border-orange-500 bg-orange-500 text-white'
                           : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
                       }`}
+                      style={{ touchAction: 'manipulation' }}
                     >
                       {size.name}
                     </button>
@@ -487,18 +482,10 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                     e.stopPropagation()
                     handleAddToCart(product)
                   }}
-                  onTouchStart={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                  }}
-                  onTouchEnd={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    handleAddToCart(product)
-                  }}
                   className={`w-full bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 font-medium transition-all text-sm ${
                     processingItems.has(product.id) ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
+                  style={{ touchAction: 'manipulation' }}
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>{t.addToCartButton}</span>
@@ -511,18 +498,10 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                       e.stopPropagation()
                       handleQuantityChange(product, -1)
                     }}
-                    onTouchStart={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                    }}
-                    onTouchEnd={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      handleQuantityChange(product, -1)
-                    }}
                     className={`w-6 h-6 bg-white bg-opacity-30 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-colors ${
                       processingItems.has(product.id) ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
+                    style={{ touchAction: 'manipulation' }}
                   >
                     <Minus className="w-3 h-3 text-orange-600" />
                   </button>
@@ -537,18 +516,10 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                       e.stopPropagation()
                       handleQuantityChange(product, 1)
                     }}
-                    onTouchStart={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                    }}
-                    onTouchEnd={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      handleQuantityChange(product, 1)
-                    }}
                     className={`w-6 h-6 bg-white bg-opacity-30 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-colors ${
                       processingItems.has(product.id) ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
+                    style={{ touchAction: 'manipulation' }}
                   >
                     <Plus className="w-3 h-3 text-orange-600" />
                   </button>

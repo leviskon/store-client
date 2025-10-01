@@ -5,7 +5,7 @@ import { ArrowLeft, Shield, Lock, Eye, User, Database, AlertTriangle } from 'luc
 import { useRouter } from 'next/navigation'
 
 export default function PrivacyPage() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const router = useRouter()
 
   const privacySections = [
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
           <ArrowLeft className="w-5 h-5 text-gray-700" />
         </button>
         
-        <h1 className="text-lg font-medium text-white">{t.privacy}</h1>
+        <h1 className="text-lg font-medium text-white text-center flex-1 px-2 truncate">{t.privacy}</h1>
         
         <div className="w-10 h-10"></div>
       </div>
@@ -168,10 +168,112 @@ export default function PrivacyPage() {
                   {right.description}
                 </p>
                 <div className={`inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${right.color}`}>
-                  {t.important}
+                  {language === 'kg' ? 'Маанилүү' : 'Важно'}
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Terms of Use Section */}
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 lg:p-8 mb-8 sm:mb-12">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
+            {language === 'kg' ? 'Колдонуу шарттары' : 'Условия использования'}
+          </h3>
+          
+          {/* User Obligations */}
+          <div className="mb-8">
+            <h4 className="text-lg font-semibold text-gray-800 mb-4">
+              {language === 'kg' ? 'Колдонуучунун милдеттенмелери' : 'Обязанности пользователя'}
+            </h4>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h5 className="font-medium text-gray-900 mb-1">
+                    {language === 'kg' ? 'Туура маалымат берүү' : 'Предоставление точной информации'}
+                  </h5>
+                  <p className="text-sm text-gray-600">
+                    {language === 'kg' 
+                      ? 'Сиз бардык маалыматтарды туура жана толук берүүгө милдеттүүсүз.'
+                      : 'Вы обязаны предоставлять всю информацию точно и полностью.'
+                    }
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h5 className="font-medium text-gray-900 mb-1">
+                    {language === 'kg' ? 'Кызматтарды туура колдонуу' : 'Правильное использование услуг'}
+                  </h5>
+                  <p className="text-sm text-gray-600">
+                    {language === 'kg' 
+                      ? 'Сиз биздин кызматтарды мыйзамга каршы эмес жол менен колдонууга милдеттүүсүз.'
+                      : 'Вы обязаны использовать наши услуги законным способом.'
+                    }
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                <div>
+                  <h5 className="font-medium text-gray-900 mb-1">
+                    {t.personalDataProtection}
+                  </h5>
+                  <p className="text-sm text-gray-600">
+                    {t.personalDataDescription}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Prohibited Actions */}
+          <div className="mb-8">
+            <h4 className="text-lg font-semibold text-gray-800 mb-4">
+              {language === 'kg' ? 'Тыйылган иш-аракеттер' : 'Запрещенные действия'}
+            </h4>
+            <div className="space-y-3">
+              <div className="flex items-start space-x-3 p-3 bg-red-50 rounded-lg">
+                <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h5 className="font-medium text-red-800 mb-1">{t.falseInformation}</h5>
+                  <p className="text-sm text-red-700">{t.accountBlocked}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3 p-3 bg-red-50 rounded-lg">
+                <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h5 className="font-medium text-red-800 mb-1">{t.serviceDisruption}</h5>
+                  <p className="text-sm text-red-700">{t.accessSuspended}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3 p-3 bg-red-50 rounded-lg">
+                <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h5 className="font-medium text-red-800 mb-1">{t.copyrightViolation}</h5>
+                  <p className="text-sm text-red-700">{t.legalAction}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Acceptance */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h4 className="text-lg font-semibold text-green-800 mb-2">
+              {language === 'kg' ? 'Шарттарды кабыл алуу' : 'Принятие условий'}
+            </h4>
+            <p className="text-sm text-green-700">
+              {language === 'kg' 
+                ? 'Биздин кызматтарды колдонуу менен сиз бул шарттарды толук кабыл аласыз. Эгерде сиз бул шарттар менен макул эмес болсоңуз, кызматтарды колдонбоңуз.'
+                : 'Используя наши услуги, вы полностью принимаете эти условия. Если вы не согласны с этими условиями, не используйте услуги.'
+              }
+            </p>
           </div>
         </div>
 

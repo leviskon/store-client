@@ -13,7 +13,7 @@ export default function Footer() {
   }
   
   return (
-    <footer className="bg-gray-900 text-white mt-16">
+    <footer className="bg-gray-900 text-white mt-16 pb-20 md:pb-0">
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
@@ -107,12 +107,6 @@ export default function Footer() {
             © 2024 Store Client. {t.allRightsReserved}
           </div>
           <div className="flex space-x-6 text-sm">
-            <button 
-              onClick={() => handleNavigation('/terms')}
-              className="text-gray-400 hover:text-orange-400 transition-colors"
-            >
-              {t.termsOfUse}
-            </button>
             <button 
               onClick={() => handleNavigation('/privacy')}
               className="text-gray-400 hover:text-orange-400 transition-colors"
