@@ -38,7 +38,7 @@ interface Product {
 export default function CategoryPage() {
   const params = useParams()
   const router = useRouter()
-  const { t: _t } = useLanguage()
+  const { t } = useLanguage()
   const { toggleFavorite, isFavorite } = useFavorites()
   const { addToCart } = useCart()
   const { showNotification } = useNotification()
@@ -67,7 +67,7 @@ export default function CategoryPage() {
         await fetchProducts(params.id as string)
         
       } catch (error) {
-        console.error('Ошибка загрузки данных категории:', error)
+        console.error(t.errorLoadingProduct, error)
       } finally {
         setLoading(false)
       }
@@ -87,7 +87,7 @@ export default function CategoryPage() {
         setProducts(data)
       }
     } catch (error) {
-      console.error('Ошибка загрузки товаров:', error)
+      console.error(t.errorLoadingProduct, error)
     } finally {
       setProductsLoading(false)
     }
@@ -120,7 +120,7 @@ export default function CategoryPage() {
     if (success) {
       showNotification({
         type: 'cart',
-        message: 'Добавлено в корзину',
+        message: t.addedToCart,
         duration: 2000
       })
     }
@@ -145,7 +145,7 @@ export default function CategoryPage() {
     if (!wasInFavorites) {
       showNotification({
         type: 'favorites',
-        message: 'Добавлено в избранное',
+        message: t.addedToFavorites,
         duration: 2000
       })
     }
@@ -216,14 +216,14 @@ export default function CategoryPage() {
               <ArrowLeft className="w-5 h-5 text-gray-700" />
             </button>
             
-            <h1 className="text-lg font-medium text-white">Категория</h1>
+            <h1 className="text-lg font-medium text-white">{t.category}</h1>
             
             <div className="w-10 h-10"></div>
           </div>
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <Package className="w-16 h-16 text-gray-300 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Категория не найдена</h3>
-            <p className="text-gray-500 text-center">Категория с таким ID не существует</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t.categoryNotFound}</h3>
+            <p className="text-gray-500 text-center">{t.categoryNotFoundDesc}</p>
           </div>
         </div>
       </AppLayout>
@@ -244,7 +244,7 @@ export default function CategoryPage() {
           
           <h1 className="text-lg font-medium text-white">
             {selectedSubcategory 
-              ? subcategories.find(sub => sub.id === selectedSubcategory)?.name || 'Подкатегория'
+              ? subcategories.find(sub => sub.id === selectedSubcategory)?.name || t.subcategory
               : category.name
             }
           </h1>
@@ -257,7 +257,7 @@ export default function CategoryPage() {
           {subcategories.length > 0 && !selectedSubcategory && (
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Подкатегории
+                {t.subcategories}
               </h2>
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {subcategories.map((subcategory) => (
@@ -294,7 +294,7 @@ export default function CategoryPage() {
                 className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm font-medium">Назад к категории "{category.name}"</span>
+                <span className="text-sm font-medium">{t.backToCategory} "{category.name}"</span>
               </button>
             </div>
           )}
@@ -303,11 +303,11 @@ export default function CategoryPage() {
           <div>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900">
-                Товары {selectedSubcategory ? 'в подкатегории' : 'в категории'}
+                {selectedSubcategory ? t.productsInSubcategory : t.productsInCategory}
               </h2>
               {products.length > 0 && (
                 <span className="text-sm text-gray-500">
-                  {products.length} товаров
+                  {products.length} {t.categoryProductsCount}
                 </span>
               )}
             </div>
@@ -391,10 +391,10 @@ export default function CategoryPage() {
               <div className="text-center py-12">
                 <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Товары не найдены
+                  {t.productsNotFound}
                 </h3>
                 <p className="text-gray-500">
-                  В {selectedSubcategory ? 'этой подкатегории' : 'этой категории'} пока нет товаров
+                  {selectedSubcategory ? t.noProductsInSubcategory : t.noProductsInCategory}
                 </p>
               </div>
             )}

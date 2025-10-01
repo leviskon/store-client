@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
+import { sendOrderNotification } from '@/services/telegram/telegramService'
 
 // Получение всех заказов
 export async function GET() {
@@ -171,11 +172,51 @@ export async function POST(request: NextRequest) {
                   }
                 }
               }
+            },
+            size: {
+              select: {
+                name: true
+              }
+            },
+            color: {
+              select: {
+                name: true
+              }
             }
           }
         }
       }
     })
+
+    // Отправляем уведомление в Telegram
+    if (createdOrder) {
+      try {
+        const totalAmount = createdOrder.orderItems.reduce((sum, item) => 
+          sum + (Number(item.price) * item.amount), 0
+        )
+
+        const orderData = {
+          id: createdOrder.id,
+          customerName: createdOrder.customerName,
+          customerPhone: createdOrder.customerPhone,
+          customerAddress: createdOrder.deliveryAddress,
+          totalAmount,
+          items: createdOrder.orderItems.map(item => ({
+            name: item.product.name,
+            quantity: item.amount,
+            price: Number(item.price),
+            size: item.size?.name,
+            color: item.color?.name
+          })),
+          createdAt: createdOrder.createdAt
+        }
+
+        await sendOrderNotification(orderData)
+      } catch (telegramError) {
+        console.error('Ошибка отправки уведомления в Telegram:', telegramError)
+        // Не прерываем создание заказа из-за ошибки Telegram
+      }
+    }
 
     return NextResponse.json({
       success: true,

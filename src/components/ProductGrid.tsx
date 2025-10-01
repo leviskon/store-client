@@ -60,6 +60,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
   const [selectedSizes, setSelectedSizes] = useState<{[productId: string]: string}>({})
   const [selectedColors, setSelectedColors] = useState<{[productId: string]: string}>({})
   const [quantities, setQuantities] = useState<{[productId: string]: number}>({})
+  const [processingItems, setProcessingItems] = useState<Set<string>>(new Set())
   const { toggleFavorite, isFavorite } = useFavorites()
   const { showNotification } = useNotification()
   const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart()
@@ -126,7 +127,6 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
           // Инициализируем выбранные размеры и цвета по умолчанию
           const initialSizes: {[productId: string]: string} = {}
           const initialColors: {[productId: string]: string} = {}
-          const initialQuantities: {[productId: string]: number} = {}
           
           productsWithLikes.forEach(product => {
             if (product.sizes && product.sizes.length > 0) {
@@ -135,19 +135,10 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
             if (product.colors && product.colors.length > 0) {
               initialColors[product.id] = product.colors[0].id
             }
-            
-            // Проверяем, есть ли товар в корзине
-            const cartItem = cartItems.find(item => 
-              item.id === product.id && 
-              item.selectedSizeId === initialSizes[product.id] && 
-              item.selectedColorId === initialColors[product.id]
-            )
-            initialQuantities[product.id] = cartItem ? cartItem.quantity : 0
           })
           
           setSelectedSizes(initialSizes)
           setSelectedColors(initialColors)
-          setQuantities(initialQuantities)
         } else {
           // Ошибка загрузки товаров
         }
@@ -160,7 +151,23 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
 
     setLoading(true)
     fetchProducts()
-  }, [selectedCategory, includeSubcategories, searchQuery, filters, cartItems])
+  }, [selectedCategory, includeSubcategories, searchQuery, filters])
+
+  // Инициализируем количества при первой загрузке товаров
+  useEffect(() => {
+    if (products.length > 0) {
+      const initialQuantities: {[productId: string]: number} = {}
+      products.forEach(product => {
+        const cartItem = cartItems.find(item => 
+          item.id === product.id && 
+          item.selectedSizeId === selectedSizes[product.id] && 
+          item.selectedColorId === selectedColors[product.id]
+        )
+        initialQuantities[product.id] = cartItem ? cartItem.quantity : 0
+      })
+      setQuantities(initialQuantities)
+    }
+  }, [products, cartItems, selectedSizes, selectedColors])
 
   // Обновляем количества при изменении корзины
   useEffect(() => {
@@ -248,7 +255,9 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
   }
 
   const handleAddToCart = async (product: ProductWithLike) => {
-    if (!product) return
+    if (!product || processingItems.has(product.id)) return
+
+    setProcessingItems(prev => new Set(prev).add(product.id))
 
     const selectedSizeId = selectedSizes[product.id]
     const selectedColorId = selectedColors[product.id]
@@ -280,9 +289,19 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
       })
       setQuantities(prev => ({ ...prev, [product.id]: 1 }))
     }
+
+    setProcessingItems(prev => {
+      const newSet = new Set(prev)
+      newSet.delete(product.id)
+      return newSet
+    })
   }
 
   const handleQuantityChange = async (product: ProductWithLike, delta: number) => {
+    if (processingItems.has(product.id)) return
+
+    setProcessingItems(prev => new Set(prev).add(product.id))
+
     const currentQuantity = quantities[product.id] || 0
     const newQuantity = currentQuantity + delta
     const selectedSizeId = selectedSizes[product.id]
@@ -297,6 +316,12 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
       updateQuantity(product.id, newQuantity, selectedSizeId, selectedColorId)
       setQuantities(prev => ({ ...prev, [product.id]: newQuantity }))
     }
+
+    setProcessingItems(prev => {
+      const newSet = new Set(prev)
+      newSet.delete(product.id)
+      return newSet
+    })
   }
 
   if (loading) {
@@ -341,6 +366,11 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                     e.stopPropagation()
                     handleToggleFavorite(product)
                   }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleToggleFavorite(product)
+                  }}
                   className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-200 z-10"
                 >
                   <Heart 
@@ -355,6 +385,11 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                       <button
                         key={color.id}
                         onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          handleColorSelect(product.id, color.id)
+                        }}
+                        onTouchEnd={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
                           handleColorSelect(product.id, color.id)
@@ -420,6 +455,11 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                         e.stopPropagation()
                         handleSizeSelect(product.id, size.id)
                       }}
+                      onTouchEnd={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleSizeSelect(product.id, size.id)
+                      }}
                       className={`min-w-[1.5rem] h-6 px-2 rounded-md border text-xs font-medium transition-all ${
                         selectedSizes[product.id] === size.id
                           ? 'border-orange-500 bg-orange-500 text-white'
@@ -447,7 +487,18 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                     e.stopPropagation()
                     handleAddToCart(product)
                   }}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 font-medium transition-all text-sm"
+                  onTouchStart={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleAddToCart(product)
+                  }}
+                  className={`w-full bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 font-medium transition-all text-sm ${
+                    processingItems.has(product.id) ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>{t.addToCartButton}</span>
@@ -460,7 +511,18 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                       e.stopPropagation()
                       handleQuantityChange(product, -1)
                     }}
-                    className="w-6 h-6 bg-white bg-opacity-30 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-colors"
+                    onTouchStart={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                    }}
+                    onTouchEnd={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleQuantityChange(product, -1)
+                    }}
+                    className={`w-6 h-6 bg-white bg-opacity-30 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-colors ${
+                      processingItems.has(product.id) ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   >
                     <Minus className="w-3 h-3 text-orange-600" />
                   </button>
@@ -475,7 +537,18 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                       e.stopPropagation()
                       handleQuantityChange(product, 1)
                     }}
-                    className="w-6 h-6 bg-white bg-opacity-30 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-colors"
+                    onTouchStart={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                    }}
+                    onTouchEnd={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleQuantityChange(product, 1)
+                    }}
+                    className={`w-6 h-6 bg-white bg-opacity-30 hover:bg-opacity-40 rounded-full flex items-center justify-center transition-colors ${
+                      processingItems.has(product.id) ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   >
                     <Plus className="w-3 h-3 text-orange-600" />
                   </button>

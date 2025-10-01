@@ -141,6 +141,7 @@ export interface Translations {
   
   // Checkout modal
   orderCheckout: string
+  orderTotal: string
   enterName: string
   enterPhone: string
   enterAddress: string
@@ -432,7 +433,6 @@ export interface Translations {
   createdDate: string
   total: string
   deliveryStatus: string
-  category: string
   pieces: string
   currentStatus: string
   cancelReason: string
@@ -443,6 +443,20 @@ export interface Translations {
   courierTook: string
   inTransit: string
   deliveredStatus: string
+  
+  // Category page
+  category: string
+  subcategory: string
+  categoryNotFound: string
+  categoryNotFoundDesc: string
+  subcategories: string
+  backToCategory: string
+  productsInCategory: string
+  productsInSubcategory: string
+  productsNotFound: string
+  noProductsInCategory: string
+  noProductsInSubcategory: string
+  categoryProductsCount: string
 }
 
 export const translations: Record<Language, Translations> = {
@@ -585,6 +599,7 @@ export const translations: Record<Language, Translations> = {
     
     // Checkout modal
     orderCheckout: 'Заказ берүү',
+    orderTotal: 'Жалпы сумма',
     customerName: 'Атыңыз',
     customerPhone: 'Телефон номуру',
     deliveryAddress: 'Жеткирүү дареги',
@@ -878,7 +893,6 @@ export const translations: Record<Language, Translations> = {
     createdDate: 'Түзүлгөн датасы',
     total: 'Жалпы',
     deliveryStatus: 'Жеткирүү статусу',
-    category: 'Категория',
     pieces: 'дана',
     currentStatus: 'Учурдагы статус',
     cancelReason: 'Жокко чыгаруу себеби',
@@ -888,7 +902,21 @@ export const translations: Record<Language, Translations> = {
     waitingCourier: 'Курьерди күтүүдө',
     courierTook: 'Курьер алды',
     inTransit: 'Жолдо',
-    deliveredStatus: 'Жеткирилди'
+    deliveredStatus: 'Жеткирилди',
+    
+    // Category page
+    category: 'Категория',
+    subcategory: 'Подкатегория',
+    categoryNotFound: 'Категория табылган жок',
+    categoryNotFoundDesc: 'Мындай ID менен категория жок',
+    subcategories: 'Подкатегориялар',
+    backToCategory: 'Категорияга кайтуу',
+    productsInCategory: 'Категориядагы товарлар',
+    productsInSubcategory: 'Подкатегориядагы товарлар',
+    productsNotFound: 'Товарлар табылган жок',
+    noProductsInCategory: 'Бул категорияда товарлар жок',
+    noProductsInSubcategory: 'Бул подкатегорияда товарлар жок',
+    categoryProductsCount: 'товар'
   },
   
   ru: {
@@ -1030,6 +1058,7 @@ export const translations: Record<Language, Translations> = {
     
     // Checkout modal
     orderCheckout: 'Оформление заказа',
+    orderTotal: 'Итого к оплате',
     customerName: 'Ваше имя',
     customerPhone: 'Номер телефона',
     deliveryAddress: 'Адрес доставки',
@@ -1323,7 +1352,6 @@ export const translations: Record<Language, Translations> = {
     createdDate: 'Дата создания',
     total: 'Итого',
     deliveryStatus: 'Статус доставки',
-    category: 'Категория',
     pieces: 'шт',
     currentStatus: 'Текущий статус',
     cancelReason: 'Причина отмены',
@@ -1333,7 +1361,21 @@ export const translations: Record<Language, Translations> = {
     waitingCourier: 'Ожидает курьера',
     courierTook: 'Забрал курьер',
     inTransit: 'В пути',
-    deliveredStatus: 'Доставлен'
+    deliveredStatus: 'Доставлен',
+    
+    // Category page
+    category: 'Категория',
+    subcategory: 'Подкатегория',
+    categoryNotFound: 'Категория не найдена',
+    categoryNotFoundDesc: 'Категория с таким ID не существует',
+    subcategories: 'Подкатегории',
+    backToCategory: 'Назад к категории',
+    productsInCategory: 'Товары в категории',
+    productsInSubcategory: 'Товары в подкатегории',
+    productsNotFound: 'Товары не найдены',
+    noProductsInCategory: 'В этой категории пока нет товаров',
+    noProductsInSubcategory: 'В этой подкатегории пока нет товаров',
+    categoryProductsCount: 'товаров'
   }
 }
 
