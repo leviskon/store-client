@@ -3,13 +3,15 @@
 import { useLanguage } from '@/context/LanguageContext'
 import { ArrowLeft, Package, CheckCircle, XCircle, Phone, Mail, AlertTriangle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import AppLayout from '@/components/AppLayout'
 
 export default function ReturnsPage() {
   const { t } = useLanguage()
   const router = useRouter()
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <AppLayout showHeader={false} showBottomNav={true}>
+      <div className="min-h-screen bg-gray-50">
       {/* Header как на странице Избранное */}
       <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
         <button
@@ -198,6 +200,7 @@ export default function ReturnsPage() {
 
       {/* Bottom spacing */}
       <div className="h-20"></div>
-    </div>
+      </div>
+    </AppLayout>
   )
 }
