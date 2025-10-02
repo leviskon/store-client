@@ -62,11 +62,11 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
         const ordersData = await response.json()
         setOrders(ordersData)
       } else {
-        console.error('Ошибка загрузки заказов из API', response.status)
+        // Orders loading failed
         setOrders([])
       }
-    } catch (error) {
-      console.error('Ошибка при загрузке заказов:', error)
+    } catch {
+      // Orders loading failed
       setOrders([])
     }
   }
@@ -76,8 +76,8 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       // Получаем ID заказов из куков
       const orderIds = validateOrdersCookie()
       await loadOrdersFromAPI(orderIds)
-    } catch (err) {
-      console.error('Ошибка загрузки заказов:', err)
+    } catch {
+      // Orders loading failed
       setOrders([])
     }
   }

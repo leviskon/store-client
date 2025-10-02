@@ -144,10 +144,10 @@ export default function ProductPage() {
             }
           }
         } else {
-          console.error('Товар не найден')
+          // Product not found
         }
-      } catch (error) {
-        console.error('Ошибка загрузки товара:', error)
+      } catch {
+        // Product loading failed
       } finally {
         setLoading(false)
       }
@@ -204,7 +204,7 @@ export default function ProductPage() {
         })
       }
     } else {
-      console.error('Invalid product data in ProductPage:', product)
+      // Invalid product data
     }
   }
 
@@ -352,8 +352,8 @@ export default function ProductPage() {
           duration: 3000
         })
       }
-    } catch (error) {
-      console.error('Ошибка при отправке отзыва:', error)
+    } catch {
+      // Review submission failed
       showNotification({
         type: 'cart',
         message: 'Произошла ошибка',

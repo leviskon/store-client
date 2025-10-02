@@ -73,8 +73,8 @@ function HomeContent() {
           })
           setCategories(flatCategories)
         }
-      } catch (error) {
-        console.error('Ошибка загрузки категорий:', error)
+      } catch {
+        // Categories loading failed
       }
     }
 

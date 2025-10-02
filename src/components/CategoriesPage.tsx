@@ -32,10 +32,10 @@ export default function CategoriesPage() {
           
           setCategories(data)
         } else {
-          console.error('Ошибка загрузки категорий')
+          // Categories loading failed
         }
-      } catch (error) {
-        console.error('Ошибка загрузки категорий:', error)
+      } catch {
+        // Categories loading failed
       } finally {
         setLoading(false)
       }

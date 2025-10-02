@@ -19,8 +19,8 @@ export async function POST() {
         { status: 500 }
       )
     }
-  } catch (error) {
-    console.error('Ошибка тестирования Telegram:', error)
+  } catch {
+    // Telegram test failed
     return NextResponse.json(
       { 
         success: false, 

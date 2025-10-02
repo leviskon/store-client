@@ -72,8 +72,8 @@ export default function CartItemOptionsModal({
             }
           }
         })
-        .catch(error => {
-          console.error('Ошибка загрузки данных товара:', error)
+        .catch(() => {
+          // Product data loading failed
         })
         .finally(() => {
           setIsLoading(false)

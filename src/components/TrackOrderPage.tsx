@@ -80,8 +80,8 @@ export default function TrackOrderPage() {
         } else {
           setError(t.failedToLoad)
         }
-      } catch (err) {
-        console.error('Ошибка загрузки заказа:', err)
+      } catch {
+        // Order loading failed
         setError(t.failedToLoad)
       } finally {
         setIsLoading(false)

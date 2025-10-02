@@ -82,8 +82,8 @@ export async function GET(
     }
 
     return NextResponse.json(formattedProduct)
-  } catch (error) {
-    console.error('Ошибка загрузки товара:', error)
+  } catch {
+    // Product loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки товара' },
       { status: 500 }

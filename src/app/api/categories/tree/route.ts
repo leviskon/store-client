@@ -54,8 +54,8 @@ async function buildCategoryTree(categories: CategoryTreeNode[]): Promise<Catego
     })
     
     return result
-  } catch (error) {
-    console.error('Ошибка при построении дерева категорий:', error)
+  } catch {
+    // Category tree building failed
     return []
   }
 }
@@ -80,8 +80,8 @@ export async function GET() {
       totalCategories: fullTree.length,
       maxDepth: Math.max(...fullTree.map(cat => getMaxDepth(cat)), 0)
     })
-  } catch (error) {
-    console.error('Ошибка загрузки дерева категорий:', error)
+  } catch {
+    // Category tree loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки дерева категорий' },
       { status: 500 }

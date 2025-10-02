@@ -38,8 +38,8 @@ async function buildSubcategories(categoryId: string): Promise<CategoryWithSubs[
     }
     
     return result
-  } catch (error) {
-    console.error('Ошибка при построении подкатегорий:', error)
+  } catch {
+    // Subcategories building failed
     return []
   }
 }
@@ -72,8 +72,8 @@ export async function GET(
     }
 
     return NextResponse.json(categoryWithSubs)
-  } catch (error) {
-    console.error('Ошибка загрузки категории:', error)
+  } catch {
+    // Category loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки категории' },
       { status: 500 }

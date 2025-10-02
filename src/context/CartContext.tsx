@@ -97,8 +97,8 @@ export function parseCartCookie(cartString: string): Array<{id: string, sizeId: 
         quantity: parseInt(quantity) || 1
       }
     }).filter(item => item.id) // Фильтруем пустые ID
-  } catch (error) {
-    console.error('Ошибка парсинга корзины:', error)
+  } catch {
+    // Cart parsing error
     return []
   }
 }
@@ -153,11 +153,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
         setCartItems(fullCartItems)
       } else {
-        console.error('Ошибка загрузки товаров из БД', response.status)
+        // Products loading failed
         setCartItems([])
       }
-    } catch (error) {
-      console.error('Ошибка при загрузке товаров корзины:', error)
+    } catch {
+      // Cart products loading failed
       setCartItems([])
     } finally {
       setIsLoading(false)

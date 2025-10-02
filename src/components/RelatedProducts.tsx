@@ -58,8 +58,8 @@ export default function RelatedProducts({
         } else {
           setError('Ошибка загрузки товаров')
         }
-      } catch (err) {
-        console.error('Ошибка загрузки связанных товаров:', err)
+      } catch {
+        // Related products loading failed
         setError('Ошибка загрузки товаров')
       } finally {
         setLoading(false)

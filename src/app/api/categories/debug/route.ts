@@ -35,8 +35,8 @@ export async function GET() {
         level: !cat.categoryId ? 0 : (!cat.parentCategory?.categoryId ? 1 : 2)
       }))
     })
-  } catch (error) {
-    console.error('Ошибка отладки категорий:', error)
+  } catch {
+    // Categories debug failed
     return NextResponse.json(
       { error: 'Ошибка отладки категорий' },
       { status: 500 }

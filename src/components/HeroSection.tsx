@@ -30,8 +30,8 @@ export default function HeroSection() {
           }))
           setBanners(bannerList)
         }
-      } catch (error) {
-        console.error('Ошибка загрузки баннеров:', error)
+      } catch {
+        // Banners loading failed
       } finally {
         setIsLoading(false)
       }

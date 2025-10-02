@@ -95,8 +95,8 @@ export default function ProductReviewsPage() {
             testLocalStorage()
           }
         }
-      } catch (error) {
-        console.error('Ошибка загрузки данных:', error)
+      } catch {
+        // Data loading failed
         showNotification({
           type: 'cart',
           message: t.errorLoadingReviews,
@@ -201,8 +201,8 @@ export default function ProductReviewsPage() {
           duration: 3000
         })
       }
-    } catch (error) {
-      console.error('Ошибка при отправке отзыва:', error)
+    } catch {
+      // Review submission failed
       showNotification({
         type: 'cart',
         message: t.reviewSubmitErrorGeneral,

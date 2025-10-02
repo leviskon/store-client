@@ -30,8 +30,8 @@ export async function GET() {
     })
 
     return NextResponse.json(orders)
-  } catch (error) {
-    console.error('Ошибка загрузки заказов:', error)
+  } catch {
+    // Orders loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки заказов' },
       { status: 500 }
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     // Проверяем, есть ли тело запроса
     const text = await request.text()
     if (!text || text.trim() === '') {
-      console.log('POST /api/orders: получен пустой запрос от:', request.headers.get('referer') || 'неизвестно')
+      // Empty request received
       return NextResponse.json(
         { error: 'Пустое тело запроса' },
         { status: 400 }
@@ -55,8 +55,8 @@ export async function POST(request: NextRequest) {
     let body
     try {
       body = JSON.parse(text)
-    } catch (parseError) {
-      console.log('POST /api/orders: ошибка парсинга JSON:', parseError)
+     } catch {
+      // JSON parsing error
       return NextResponse.json(
         { error: 'Некорректный JSON' },
         { status: 400 }
@@ -231,8 +231,8 @@ export async function POST(request: NextRequest) {
         }
 
         await sendOrderNotification(orderData)
-      } catch (telegramError) {
-        console.error('Ошибка отправки уведомления в Telegram:', telegramError)
+       } catch {
+        // Telegram notification failed
         // Не прерываем создание заказа из-за ошибки Telegram
       }
     }
@@ -243,8 +243,8 @@ export async function POST(request: NextRequest) {
       message: 'Заказ успешно создан'
     }, { status: 201 })
 
-  } catch (error) {
-    console.error('Ошибка создания заказа:', error)
+  } catch {
+    // Order creation failed
     return NextResponse.json(
       { error: 'Ошибка создания заказа' },
       { status: 500 }

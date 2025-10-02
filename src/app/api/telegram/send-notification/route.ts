@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     )
 
-  } catch (error) {
-    console.error('Ошибка API Telegram:', error)
+  } catch {
+    // Telegram API error
     return NextResponse.json(
       { error: 'Внутренняя ошибка сервера' },
       { status: 500 }

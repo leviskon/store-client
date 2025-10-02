@@ -28,8 +28,8 @@ export default function TestCategoriesPage() {
         const response = await fetch('/api/categories/debug')
         const result = await response.json()
         setData(result)
-      } catch (error) {
-        console.error('Ошибка:', error)
+      } catch {
+        // Test error
       } finally {
         setLoading(false)
       }

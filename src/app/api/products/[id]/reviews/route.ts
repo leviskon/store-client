@@ -15,8 +15,8 @@ export async function GET(
     })
 
     return NextResponse.json(reviews)
-  } catch (error) {
-    console.error('Ошибка загрузки отзывов:', error)
+  } catch {
+    // Reviews loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки отзывов' },
       { status: 500 }
@@ -115,8 +115,8 @@ export async function POST(
       message: 'Отзыв успешно добавлен'
     }, { status: 201 })
 
-  } catch (error) {
-    console.error('Ошибка создания отзыва:', error)
+  } catch {
+    // Review creation failed
     return NextResponse.json(
       { error: 'Ошибка создания отзыва' },
       { status: 500 }
@@ -201,8 +201,8 @@ export async function PUT(
       review: updatedReview,
       message: 'Отзыв успешно обновлен'
     })
-  } catch (error) {
-    console.error('Ошибка обновления отзыва:', error)
+  } catch {
+    // Review update failed
     return NextResponse.json(
       { error: 'Ошибка обновления отзыва' },
       { status: 500 }

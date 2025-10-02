@@ -267,9 +267,9 @@ export async function GET(request: Request) {
 
     // Товары найдены
     return NextResponse.json(filteredProducts)
-  } catch (error) {
+  } catch {
     // Ошибка загрузки товаров
-    console.error('Ошибка загрузки товаров:', error)
+    // Products loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки товаров' },
       { status: 500 }
@@ -282,7 +282,7 @@ export async function POST(request: Request) {
     // Проверяем, есть ли тело запроса
     const text = await request.text()
     if (!text || text.trim() === '') {
-      console.log('POST /api/products: получен пустой запрос от:', request.headers.get('referer') || 'неизвестно')
+      // Empty request received
       return NextResponse.json(
         { error: 'Пустое тело запроса' },
         { status: 400 }
@@ -292,8 +292,8 @@ export async function POST(request: Request) {
     let body
     try {
       body = JSON.parse(text)
-    } catch (parseError) {
-      console.log('POST /api/products: ошибка парсинга JSON:', parseError)
+     } catch {
+      // JSON parsing error
       return NextResponse.json(
         { error: 'Некорректный JSON' },
         { status: 400 }
@@ -387,8 +387,8 @@ export async function POST(request: Request) {
     })
 
     return NextResponse.json(productsWithRating)
-  } catch (error) {
-    console.error('Ошибка загрузки товаров по ID:', error)
+  } catch {
+    // Products by ID loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки товаров' },
       { status: 500 }

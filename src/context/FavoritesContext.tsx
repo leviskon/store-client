@@ -126,11 +126,11 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
         setFavorites(fullFavorites)
       } else {
-        console.error('Ошибка загрузки товаров из БД', response.status)
+        // Products loading failed
         setFavorites([])
       }
-    } catch (error) {
-      console.error('Ошибка при загрузке товаров избранных:', error)
+    } catch {
+      // Favorites products loading failed
       setFavorites([])
     } finally {
       setIsLoading(false)
@@ -181,8 +181,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         }
         
         setIsLoading(false)
-      } catch (error) {
-        console.error('Ошибка загрузки избранных:', error)
+      } catch {
+        // Favorites loading failed
         setIsLoading(false)
       }
     }

@@ -40,7 +40,7 @@ async function getTelegramConfig(): Promise<TelegramConfig | null> {
     const chatIdSetting = settings.find(s => s.key === 'TELEGRAM_CHAT_ID')
 
     if (!botTokenSetting?.value || !chatIdSetting?.value) {
-      console.error('Telegram настройки не найдены в базе данных')
+      // Telegram settings not found
       return null
     }
 
@@ -48,8 +48,8 @@ async function getTelegramConfig(): Promise<TelegramConfig | null> {
       botToken: botTokenSetting.value,
       chatId: chatIdSetting.value
     }
-  } catch (error) {
-    console.error('Ошибка получения настроек Telegram:', error)
+  } catch {
+    // Failed to get Telegram settings
     return null
   }
 }
@@ -61,7 +61,7 @@ async function sendTelegramMessage(message: string): Promise<boolean> {
   try {
     const config = await getTelegramConfig()
     if (!config) {
-      console.error('Не удалось получить настройки Telegram')
+      // Could not get Telegram settings
       return false
     }
 
@@ -78,14 +78,13 @@ async function sendTelegramMessage(message: string): Promise<boolean> {
     })
 
     if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Ошибка отправки сообщения в Telegram:', errorData)
+      // Telegram message send error
       return false
     }
 
     return true
-  } catch (error) {
-    console.error('Ошибка при отправке сообщения в Telegram:', error)
+  } catch {
+    // Telegram message send failed
     return false
   }
 }
@@ -131,8 +130,8 @@ export async function sendOrderNotification(orderData: OrderData): Promise<boole
   try {
     const message = formatOrderMessage(orderData)
     return await sendTelegramMessage(message)
-  } catch (error) {
-    console.error('Ошибка отправки уведомления о заказе:', error)
+  } catch {
+    // Order notification failed
     return false
   }
 }
@@ -144,8 +143,8 @@ export async function sendTestMessage(): Promise<boolean> {
   try {
     const message = '🧪 <b>Тестовое сообщение</b>\n\nЭто тестовое сообщение для проверки работы Telegram бота.'
     return await sendTelegramMessage(message)
-  } catch (error) {
-    console.error('Ошибка отправки тестового сообщения:', error)
+  } catch {
+    // Test message failed
     return false
   }
 }

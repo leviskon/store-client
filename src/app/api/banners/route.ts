@@ -17,14 +17,14 @@ export async function GET() {
     let banners: string[] = []
     try {
       banners = JSON.parse(setting.value)
-    } catch (error) {
-      console.error('Ошибка парсинга баннеров:', error)
+    } catch {
+      // Banner parsing failed
       return NextResponse.json({ banners: [] })
     }
 
     return NextResponse.json({ banners })
-  } catch (error) {
-    console.error('Ошибка загрузки баннеров:', error)
+  } catch {
+    // Banners loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки баннеров' },
       { status: 500 }

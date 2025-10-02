@@ -39,8 +39,8 @@ export async function GET(
     }
 
     return NextResponse.json(order)
-  } catch (error) {
-    console.error('Ошибка загрузки заказа:', error)
+  } catch {
+    // Order loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки заказа' },
       { status: 500 }
@@ -114,8 +114,8 @@ export async function PATCH(
       message: 'Заказ успешно обновлен'
     })
 
-  } catch (error) {
-    console.error('Ошибка обновления заказа:', error)
+  } catch {
+    // Order update failed
     return NextResponse.json(
       { error: 'Ошибка обновления заказа' },
       { status: 500 }

@@ -111,7 +111,7 @@ export default function CartPage() {
       if (response.ok) {
         // Сохраняем только ID заказа в куки для отображения на фронте
         if (result.order && result.order.id) {
-          console.log('CartPage: Adding order ID to cookies:', result.order.id)
+          // Order ID added to cookies
           addOrderToCookie(result.order.id)
         }
         
@@ -140,8 +140,8 @@ export default function CartPage() {
           duration: 3000
         })
       }
-    } catch (error) {
-      console.error('Ошибка при отправке заказа:', error)
+    } catch {
+      // Order submission failed
       showNotification({
         type: 'cart',
         message: 'Произошла ошибка. Попробуйте снова.',

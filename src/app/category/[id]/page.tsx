@@ -41,8 +41,8 @@ export default function CategoryPage() {
           setSubcategories(categoryData.subCategories || [])
         }
         
-      } catch (error) {
-        console.error('Ошибка загрузки категории:', error)
+      } catch {
+        // Category loading failed
       } finally {
         setLoading(false)
       }

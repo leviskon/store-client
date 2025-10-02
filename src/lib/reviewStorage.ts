@@ -17,8 +17,7 @@ function getUserReviewIdsString(): string {
   try {
     const stored = localStorage.getItem(REVIEWS_STORAGE_KEY)
     return stored || ''
-  } catch (error) {
-    console.error('Ошибка чтения отзывов из localStorage:', error)
+  } catch {
     return ''
   }
 }
@@ -29,9 +28,8 @@ function saveUserReviewIdsString(reviewsString: string): void {
   
   try {
     localStorage.setItem(REVIEWS_STORAGE_KEY, reviewsString)
-    console.log('Сохранено в localStorage:', reviewsString)
-  } catch (error) {
-    console.error('Ошибка сохранения отзывов в localStorage:', error)
+  } catch {
+    // Silently fail
   }
 }
 
@@ -55,8 +53,7 @@ export function getAllUserReviewIds(): UserReviewId[] {
     }
     
     return reviewIds
-  } catch (error) {
-    console.error('Ошибка парсинга ID отзывов:', error)
+  } catch {
     return []
   }
 }
@@ -87,8 +84,8 @@ export function saveUserReviewId(productId: string, reviewId: string): void {
     // Конвертируем в компактный формат
     const reviewsString = reviewIds.map(r => `${r.productId}:${r.reviewId}`).join(';')
     saveUserReviewIdsString(reviewsString)
-  } catch (error) {
-    console.error('Ошибка сохранения ID отзыва в localStorage:', error)
+  } catch {
+    // Silently fail
   }
 }
 
@@ -103,8 +100,8 @@ export function removeUserReviewId(productId: string): void {
     // Конвертируем в компактный формат
     const reviewsString = filteredReviewIds.map(r => `${r.productId}:${r.reviewId}`).join(';')
     saveUserReviewIdsString(reviewsString)
-  } catch (error) {
-    console.error('Ошибка удаления ID отзыва из localStorage:', error)
+  } catch {
+    // Silently fail
   }
 }
 
@@ -120,19 +117,16 @@ export function hasUserReviewForProduct(productId: string): boolean {
   return reviewId !== null
 }
 
-// Тестовая функция для проверки localStorage
+// Тестовая функция для проверки localStorage (для отладки)
 export function testLocalStorage(): void {
   if (typeof window === 'undefined') return
   
   try {
-    const reviewsString = getUserReviewIdsString()
-    const reviewIds = getAllUserReviewIds()
-    console.log('Формат отзывов в localStorage (компактный):', reviewsString)
-    console.log('Количество символов:', reviewsString.length)
-    console.log('Распарсенные ID отзывов:', reviewIds)
-    console.log('Количество отзывов:', reviewIds.length)
-  } catch (error) {
-    console.error('Ошибка тестирования localStorage:', error)
+    // Test storage functionality - logs removed for production
+    getUserReviewIdsString()
+    getAllUserReviewIds()
+  } catch {
+    // Silently fail
   }
 }
 

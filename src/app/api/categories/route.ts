@@ -37,8 +37,8 @@ async function buildCategoryHierarchy(categories: CategoryWithHierarchy[], level
     }
     
     return result
-  } catch (error) {
-    console.error('Ошибка при построении иерархии категорий:', error)
+  } catch {
+    // Category hierarchy building failed
     return []
   }
 }
@@ -59,8 +59,8 @@ export async function GET() {
     const fullHierarchy = await buildCategoryHierarchy(rootCategories)
 
     return NextResponse.json(fullHierarchy)
-  } catch (error) {
-    console.error('Ошибка загрузки категорий:', error)
+  } catch {
+    // Categories loading failed
     return NextResponse.json(
       { error: 'Ошибка загрузки категорий' },
       { status: 500 }

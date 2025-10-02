@@ -55,7 +55,6 @@ export default function OrdersPage() {
         
         // Получаем ID заказов из куков
         const orderIds = validateOrdersCookie()
-        console.log('OrdersPage: Loaded order IDs from cookies:', orderIds.length)
         
         if (orderIds.length === 0) {
           setOrders([])
@@ -74,15 +73,12 @@ export default function OrdersPage() {
 
         if (response.ok) {
           const ordersData = await response.json()
-          console.log('OrdersPage: Loaded orders from API:', ordersData.length)
           setOrders(ordersData)
         } else {
-          console.error('Ошибка загрузки заказов из API', response.status)
           setError('Не удалось загрузить заказы')
           setOrders([])
         }
-      } catch (err) {
-        console.error('Ошибка загрузки заказов:', err)
+      } catch {
         setError('Не удалось загрузить заказы')
         setOrders([])
       } finally {
@@ -160,8 +156,6 @@ export default function OrdersPage() {
   }
 
   const getFilteredOrders = (): Order[] => {
-    console.log('OrdersPage: Filtering orders. Total orders:', orders.length, 'Active tab:', activeTab)
-    
     let filtered: Order[] = []
     switch (activeTab) {
       case 'active':
@@ -179,7 +173,6 @@ export default function OrdersPage() {
         filtered = []
     }
     
-    console.log('OrdersPage: Filtered orders count:', filtered.length)
     return filtered
   }
 
