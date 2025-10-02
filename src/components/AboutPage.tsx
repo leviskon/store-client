@@ -154,21 +154,6 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Contact CTA */}
-        <div className="bg-orange-500 rounded-lg p-4 sm:p-6 lg:p-8 text-center text-white">
-          <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">
-            {t.contactUs}
-          </h3>
-          <p className="text-orange-100 mb-4 sm:mb-6 text-sm sm:text-base">
-            {t.questionsHelp}
-          </p>
-          <button
-            onClick={() => router.push('/contact')}
-            className="bg-white text-orange-500 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm sm:text-base"
-          >
-            {t.contactButton}
-          </button>
-        </div>
       </div>
 
       {/* Bottom spacing */}

@@ -1,6 +1,6 @@
 'use client'
 
-import { Mail, Phone, MapPin, Instagram, Facebook, Twitter } from 'lucide-react'
+import { Mail, Phone, MapPin, Instagram, MessageCircle } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useRouter } from 'next/navigation'
 
@@ -27,10 +27,7 @@ export default function Footer() {
                 <Instagram className="w-5 h-5" />
               </a>
               <a href="#" className="text-gray-400 hover:text-orange-400 transition-colors">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-orange-400 transition-colors">
-                <Twitter className="w-5 h-5" />
+                <MessageCircle className="w-5 h-5" />
               </a>
             </div>
           </div>
@@ -102,17 +99,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="text-gray-400 text-sm">
-            © 2024 Store Client. {t.allRightsReserved}
-          </div>
-          <div className="flex space-x-6 text-sm">
-            <button 
-              onClick={() => handleNavigation('/privacy')}
-              className="text-gray-400 hover:text-orange-400 transition-colors"
-            >
-              {t.privacy}
-            </button>
+        <div className="border-t border-gray-800 mt-8 pt-8 flex justify-center items-center">
+          <div className="text-gray-400 text-sm text-center">
+            © 2025 Store Client. {t.allRightsReserved}
           </div>
         </div>
       </div>

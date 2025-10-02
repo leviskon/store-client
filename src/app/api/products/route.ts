@@ -214,7 +214,26 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    // Проверяем, есть ли тело запроса
+    const text = await request.text()
+    if (!text || text.trim() === '') {
+      console.log('POST /api/products: получен пустой запрос от:', request.headers.get('referer') || 'неизвестно')
+      return NextResponse.json(
+        { error: 'Пустое тело запроса' },
+        { status: 400 }
+      )
+    }
+    
+    let body
+    try {
+      body = JSON.parse(text)
+    } catch (parseError) {
+      console.log('POST /api/products: ошибка парсинга JSON:', parseError)
+      return NextResponse.json(
+        { error: 'Некорректный JSON' },
+        { status: 400 }
+      )
+    }
     const { ids } = body
 
     if (!Array.isArray(ids) || ids.length === 0) {

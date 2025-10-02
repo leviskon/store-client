@@ -173,9 +173,6 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl md:text-2xl font-bold text-black">{t.categories}</h2>
-          <button className="text-sm font-semibold text-gray-600">
-            {t.seeAll}
-          </button>
         </div>
         <div className="overflow-x-auto pb-2 scrollbar-hide">
           <div className="flex gap-4 min-w-max">
@@ -220,11 +217,7 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
               isCompact={true}
             />
           </div>
-        ) : (
-          <button className="text-sm font-semibold text-gray-600">
-            {t.seeAll}
-          </button>
-        )}
+        ) : null}
       </div>
 
       {/* Горизонтальный скролл категорий (заменяется подкатегориями) */}

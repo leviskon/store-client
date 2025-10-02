@@ -42,7 +42,26 @@ export async function GET() {
 // Создание нового заказа или получение заказов по ID
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    // Проверяем, есть ли тело запроса
+    const text = await request.text()
+    if (!text || text.trim() === '') {
+      console.log('POST /api/orders: получен пустой запрос от:', request.headers.get('referer') || 'неизвестно')
+      return NextResponse.json(
+        { error: 'Пустое тело запроса' },
+        { status: 400 }
+      )
+    }
+    
+    let body
+    try {
+      body = JSON.parse(text)
+    } catch (parseError) {
+      console.log('POST /api/orders: ошибка парсинга JSON:', parseError)
+      return NextResponse.json(
+        { error: 'Некорректный JSON' },
+        { status: 400 }
+      )
+    }
     
     // Если передан массив ids, возвращаем заказы по этим ID
     if (body.ids && Array.isArray(body.ids)) {
