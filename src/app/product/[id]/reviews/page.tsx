@@ -25,6 +25,16 @@ interface Product {
   }
 }
 
+interface ReviewApiResponse {
+  review: {
+    id: string
+    clientName: string
+    text: string
+    rating: number
+  }
+  error?: string
+}
+
 export default function ProductReviewsPage() {
   const params = useParams()
   const router = useRouter()
@@ -100,7 +110,7 @@ export default function ProductReviewsPage() {
     if (params.id) {
       fetchData()
     }
-  }, [params.id, showNotification])
+  }, [params.id, showNotification, t])
 
   const handleReviewSubmit = async (reviewData: ReviewFormData) => {
     if (!product) return
@@ -119,7 +129,7 @@ export default function ProductReviewsPage() {
     
     try {
       let response: Response
-      let result: any
+      let result: ReviewApiResponse
 
       if (isEditMode && userReviewId) {
         // Редактируем существующий отзыв

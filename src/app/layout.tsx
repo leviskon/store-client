@@ -22,6 +22,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Store Client",
   description: "Интернет-магазин одежды",
+  icons: {
+    icon: "/client-store-logo.ico",
+    shortcut: "/client-store-logo.ico",
+    apple: "/client-store-logo.ico",
+  },
 };
 
 export default function RootLayout({

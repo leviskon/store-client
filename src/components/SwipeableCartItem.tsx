@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Image from 'next/image'
 import { Minus, Plus, Trash2, Palette, Ruler } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { CartItem } from '@/context/CartContext'
@@ -23,7 +24,7 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false)
   const itemRef = useRef<HTMLDivElement>(null)
 
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartX(e.touches[0].clientX)
@@ -134,9 +135,11 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
           {/* Product Image */}
           <div className="w-20 h-20 bg-gray-200 rounded-xl overflow-hidden flex-shrink-0">
             {item.imageUrl && Array.isArray(item.imageUrl) && item.imageUrl.length > 0 ? (
-              <img 
+              <Image 
                 src={item.imageUrl[0]} 
                 alt={item.name}
+                width={80}
+                height={80}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -230,7 +233,7 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
       <CartItemOptionsModal
         isOpen={isSizeModalOpen}
         onClose={() => setIsSizeModalOpen(false)}
-        onSave={(sizeId, _colorId, sizeName, _colorName) => {
+        onSave={(sizeId, _colorId, sizeName) => {
           if (onOptionsChange && (sizeId || sizeName)) {
             onOptionsChange(item.id, item.selectedSizeId, item.selectedColorId, sizeId, item.selectedColorId, sizeName, item.selectedColor)
           }

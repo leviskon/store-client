@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingCart, Palette, Ruler } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { useLanguage } from '@/context/LanguageContext'
-import { useCart } from '@/context/CartContext'
+import { useCart, CartItem } from '@/context/CartContext'
 import { useNotification } from '@/context/NotificationContext'
 import { useOrders } from '@/context/OrdersContext'
 import { addOrderToCookie } from '@/lib/cookies'
@@ -25,9 +26,9 @@ export default function CartPage() {
   const [isProcessingOrder, setIsProcessingOrder] = useState(false)
   const [isColorModalOpen, setIsColorModalOpen] = useState(false)
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false)
-  const [selectedItemForOptions, setSelectedItemForOptions] = useState<any>(null)
+  const [selectedItemForOptions, setSelectedItemForOptions] = useState<CartItem | null>(null)
 
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
 
   const handleRemoveItem = (itemId: string) => {
     setRemoveItemId(itemId)
@@ -54,12 +55,12 @@ export default function CartPage() {
     updateQuantity(itemId, newQuantity, selectedSizeId, selectedColorId)
   }
 
-  const handleOpenColorModal = (item: any) => {
+  const handleOpenColorModal = (item: CartItem) => {
     setSelectedItemForOptions(item)
     setIsColorModalOpen(true)
   }
 
-  const handleOpenSizeModal = (item: any) => {
+  const handleOpenSizeModal = (item: CartItem) => {
     setSelectedItemForOptions(item)
     setIsSizeModalOpen(true)
   }
@@ -266,9 +267,11 @@ export default function CartPage() {
                       {/* Product Image */}
                       <div className="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden flex-shrink-0">
                         {item.imageUrl && Array.isArray(item.imageUrl) && item.imageUrl.length > 0 ? (
-                          <img 
+                          <Image 
                             src={item.imageUrl[0]} 
-                            alt={item.name}
+                            alt={item.name || 'Товар'}
+                            width={96}
+                            height={96}
                             className="w-full h-full object-cover"
                           />
                         ) : (

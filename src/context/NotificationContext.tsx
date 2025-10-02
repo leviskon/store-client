@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 
 interface Notification {
   id: string
@@ -29,7 +29,11 @@ export function useNotification() {
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([])
 
-  const showNotification = (notification: Omit<Notification, 'id'>) => {
+  const removeNotification = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id))
+  }, [])
+
+  const showNotification = useCallback((notification: Omit<Notification, 'id'>) => {
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9)
     const newNotification = { ...notification, id }
     
@@ -39,7 +43,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     setTimeout(() => {
       removeNotification(id)
     }, notification.duration || 3000)
-  }
+  }, [removeNotification])
 
   // Слушаем кастомные события для уведомлений
   useEffect(() => {
@@ -54,11 +58,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         window.removeEventListener('showNotification', handleCustomNotification as EventListener)
       }
     }
-  }, [])
-
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id))
-  }
+  }, [showNotification])
 
   return (
     <NotificationContext.Provider

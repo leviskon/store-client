@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { ArrowLeft, Heart, Star, ShoppingBag, X, Plus, Minus } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useFavorites } from '@/context/FavoritesContext'
@@ -44,7 +45,7 @@ import Link from 'next/link'
 
 export default function FavoritesPage() {
   const router = useRouter()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const { favorites, removeFromFavorites, isLoading } = useFavorites()
   const { showNotification } = useNotification()
   const { addToCart, removeFromCart, updateQuantity, cartItems, isLoading: cartLoading } = useCart()
@@ -56,7 +57,7 @@ export default function FavoritesPage() {
   const [quantities, setQuantities] = useState<{[productId: string]: number}>({})
   const [processingItems, setProcessingItems] = useState<Set<string>>(new Set())
 
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
 
   const handleRemoveClick = (productId: string) => {
     setProductToRemove(productId)
@@ -362,10 +363,12 @@ export default function FavoritesPage() {
                 <div className="relative p-2 cursor-pointer">
                   <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden">
                     {product.imageUrl && Array.isArray(product.imageUrl) && product.imageUrl.length > 0 ? (
-                      <img 
+                      <Image 
                         src={product.imageUrl[0]} 
                         alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        fill
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+                        className="object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gradient-to-br from-orange-200 to-orange-300"></div>
@@ -552,10 +555,10 @@ export default function FavoritesPage() {
               <ShoppingBag className="w-12 h-12 text-gray-400" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {t.language === 'kg' ? 'Бул категорияда товар жок' : 'Нет товаров в этой категории'}
+              {language === 'kg' ? 'Бул категорияда товар жок' : 'Нет товаров в этой категории'}
             </h3>
             <p className="text-gray-600 text-center">
-              {t.language === 'kg' 
+              {language === 'kg' 
                 ? 'Башка категорияны тандап көрүңүз' 
                 : 'Попробуйте выбрать другую категорию'
               }

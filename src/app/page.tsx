@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Header from '@/components/Header'
 import HeroSection from '@/components/HeroSection'
@@ -18,7 +18,19 @@ interface FilterState {
   rating?: number
 }
 
-export default function Home() {
+// Типы для категорий из API
+interface SubCategory {
+  id: string
+  name: string
+}
+
+interface ParentCategory {
+  id: string
+  name: string
+  subCategories?: SubCategory[]
+}
+
+function HomeContent() {
   const searchParams = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [includeSubcategories, setIncludeSubcategories] = useState<boolean>(false)
@@ -48,13 +60,13 @@ export default function Home() {
       try {
         const response = await fetch('/api/categories')
         if (response.ok) {
-          const data = await response.json()
+          const data: ParentCategory[] = await response.json()
           // Преобразуем иерархическую структуру в плоский список для фильтра
           const flatCategories: Array<{ id: string; name: string }> = []
-          data.forEach((parent: any) => {
+          data.forEach((parent: ParentCategory) => {
             flatCategories.push({ id: parent.id, name: parent.name })
             if (parent.subCategories) {
-              parent.subCategories.forEach((sub: any) => {
+              parent.subCategories.forEach((sub: SubCategory) => {
                 flatCategories.push({ id: sub.id, name: sub.name })
               })
             }
@@ -160,5 +172,15 @@ export default function Home() {
       {/* Bottom Navigation - только для мобильных */}
       <BottomNavigation />
     </>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-gray-600">Загрузка...</div>
+    </div>}>
+      <HomeContent />
+    </Suspense>
   )
 }

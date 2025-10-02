@@ -3,6 +3,21 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { validateOrdersCookie } from '@/lib/cookies'
 
+// Типы для элементов заказа
+interface OrderItem {
+  id: string
+  amount: number
+  price: number
+  product: {
+    id: string
+    name: string
+    imageUrl?: string[] | null
+    category: {
+      name: string
+    }
+  }
+}
+
 interface Order {
   id: string
   customerName: string
@@ -13,7 +28,7 @@ interface Order {
   updatedAt: string
   customerComment?: string
   cancelComment?: string
-  orderItems: any[]
+  orderItems: OrderItem[]
 }
 
 interface OrdersContextType {

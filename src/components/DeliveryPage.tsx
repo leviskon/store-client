@@ -6,39 +6,39 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export default function DeliveryPage() {
-  const { t } = useLanguage()
+  const { language } = useLanguage()
   const router = useRouter()
   const [trackingNumber, setTrackingNumber] = useState('')
 
   const deliveryZones = [
     {
       id: 1,
-      name: t.language === 'kg' ? 'Бишкек шаары' : 'Город Бишкек',
+      name: language === 'kg' ? 'Бишкек шаары' : 'Город Бишкек',
       nameKg: 'Бишкек шаары',
       nameRu: 'Город Бишкек',
-      deliveryTime: t.language === 'kg' ? '1-2 күн' : '1-2 дня',
-      cost: t.language === 'kg' ? '200 сом' : '200 сом',
-      freeFrom: t.language === 'kg' ? '5000 сом' : '5000 сом',
+      deliveryTime: language === 'kg' ? '1-2 күн' : '1-2 дня',
+      cost: language === 'kg' ? '200 с.' : '200 с.',
+      freeFrom: language === 'kg' ? '5000 с.' : '5000 с.',
       icon: '🏙️'
     },
     {
       id: 2,
-      name: t.language === 'kg' ? 'Чүй облусу' : 'Чуйская область',
+      name: language === 'kg' ? 'Чүй облусу' : 'Чуйская область',
       nameKg: 'Чүй облусу',
       nameRu: 'Чуйская область',
-      deliveryTime: t.language === 'kg' ? '2-3 күн' : '2-3 дня',
-      cost: t.language === 'kg' ? '300 сом' : '300 сом',
-      freeFrom: t.language === 'kg' ? '7000 сом' : '7000 сом',
+      deliveryTime: language === 'kg' ? '2-3 күн' : '2-3 дня',
+      cost: language === 'kg' ? '300 с.' : '300 с.',
+      freeFrom: language === 'kg' ? '7000 с.' : '7000 с.',
       icon: '🏘️'
     },
     {
       id: 3,
-      name: t.language === 'kg' ? 'Башка облустар' : 'Другие области',
+      name: language === 'kg' ? 'Башка облустар' : 'Другие области',
       nameKg: 'Башка облустар',
       nameRu: 'Другие области',
-      deliveryTime: t.language === 'kg' ? '3-5 күн' : '3-5 дней',
-      cost: t.language === 'kg' ? '500 сом' : '500 сом',
-      freeFrom: t.language === 'kg' ? '10000 сом' : '10000 сом',
+      deliveryTime: language === 'kg' ? '3-5 күн' : '3-5 дней',
+      cost: language === 'kg' ? '500 с.' : '500 с.',
+      freeFrom: language === 'kg' ? '10000 с.' : '10000 с.',
       icon: '🌄'
     }
   ]
@@ -46,49 +46,49 @@ export default function DeliveryPage() {
   const deliveryMethods = [
     {
       id: 1,
-      name: t.language === 'kg' ? 'Курьер жеткирүү' : 'Курьерская доставка',
+      name: language === 'kg' ? 'Курьер жеткирүү' : 'Курьерская доставка',
       nameKg: 'Курьер жеткирүү',
       nameRu: 'Курьерская доставка',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Курьер сиздин көрсөткөн дарегиңизге товарды жеткирет'
         : 'Курьер доставит товар по указанному вами адресу',
       icon: Truck,
       features: [
-        t.language === 'kg' ? 'Үйгө жеткирүү' : 'Доставка на дом',
-        t.language === 'kg' ? 'Текшерүү мүмкүнчүлүгү' : 'Возможность проверки',
-        t.language === 'kg' ? 'Төлөмдүн түрүн тандоо' : 'Выбор способа оплаты'
+        language === 'kg' ? 'Үйгө жеткирүү' : 'Доставка на дом',
+        language === 'kg' ? 'Текшерүү мүмкүнчүлүгү' : 'Возможность проверки',
+        language === 'kg' ? 'Төлөмдүн түрүн тандоо' : 'Выбор способа оплаты'
       ],
       color: 'bg-blue-500'
     },
     {
       id: 2,
-      name: t.language === 'kg' ? 'Почта аркылуу' : 'Почтовая доставка',
+      name: language === 'kg' ? 'Почта аркылуу' : 'Почтовая доставка',
       nameKg: 'Почта аркылуу',
       nameRu: 'Почтовая доставка',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Товарды почта аркылуу жеткирүү'
         : 'Доставка товара почтой',
       icon: Package,
       features: [
-        t.language === 'kg' ? 'Арзан баа' : 'Низкая цена',
-        t.language === 'kg' ? 'Бардык жерге жеткирүү' : 'Доставка везде',
-        t.language === 'kg' ? 'Кутучада сакталуу' : 'Сохранность в упаковке'
+        language === 'kg' ? 'Арзан баа' : 'Низкая цена',
+        language === 'kg' ? 'Бардык жерге жеткирүү' : 'Доставка везде',
+        language === 'kg' ? 'Кутучада сакталуу' : 'Сохранность в упаковке'
       ],
       color: 'bg-green-500'
     },
     {
       id: 3,
-      name: t.language === 'kg' ? 'Дүкөндөн алуу' : 'Самовывоз',
+      name: language === 'kg' ? 'Дүкөндөн алуу' : 'Самовывоз',
       nameKg: 'Дүкөндөн алуу',
       nameRu: 'Самовывоз',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Товарды дүкөндөн өзүңүз алып кетесиз'
         : 'Вы сами забираете товар из магазина',
       icon: MapPin,
       features: [
-        t.language === 'kg' ? 'Акысыз' : 'Бесплатно',
-        t.language === 'kg' ? 'Тез алуу' : 'Быстрое получение',
-        t.language === 'kg' ? 'Текшерүү мүмкүнчүлүгү' : 'Возможность проверки'
+        language === 'kg' ? 'Акысыз' : 'Бесплатно',
+        language === 'kg' ? 'Тез алуу' : 'Быстрое получение',
+        language === 'kg' ? 'Текшерүү мүмкүнчүлүгү' : 'Возможность проверки'
       ],
       color: 'bg-orange-500'
     }
@@ -97,10 +97,10 @@ export default function DeliveryPage() {
   const deliverySteps = [
     {
       step: 1,
-      title: t.language === 'kg' ? 'Заказ жасоо' : 'Оформление заказа',
+      title: language === 'kg' ? 'Заказ жасоо' : 'Оформление заказа',
       titleKg: 'Заказ жасоо',
       titleRu: 'Оформление заказа',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Товарды тандап, заказды толуктаңыз'
         : 'Выберите товар и завершите заказ',
       icon: CheckCircle,
@@ -108,10 +108,10 @@ export default function DeliveryPage() {
     },
     {
       step: 2,
-      title: t.language === 'kg' ? 'Обработка' : 'Обработка',
+      title: language === 'kg' ? 'Обработка' : 'Обработка',
       titleKg: 'Обработка',
       titleRu: 'Обработка',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Биз сиздин заказыңызды даярдайбыз'
         : 'Мы подготавливаем ваш заказ',
       icon: Package,
@@ -119,10 +119,10 @@ export default function DeliveryPage() {
     },
     {
       step: 3,
-      title: t.language === 'kg' ? 'Жөнөтүү' : 'Отправка',
+      title: language === 'kg' ? 'Жөнөтүү' : 'Отправка',
       titleKg: 'Жөнөтүү',
       titleRu: 'Отправка',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Товарды жөнөтүүгө жиберилди'
         : 'Товар отправлен в доставку',
       icon: Truck,
@@ -130,10 +130,10 @@ export default function DeliveryPage() {
     },
     {
       step: 4,
-      title: t.language === 'kg' ? 'Жеткирүү' : 'Доставка',
+      title: language === 'kg' ? 'Жеткирүү' : 'Доставка',
       titleKg: 'Жеткирүү',
       titleRu: 'Доставка',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Товар сизге жеткирилди'
         : 'Товар доставлен вам',
       icon: CheckCircle,
@@ -144,10 +144,10 @@ export default function DeliveryPage() {
   const deliveryFeatures = [
     {
       id: 1,
-      title: t.language === 'kg' ? 'Тез жеткирүү' : 'Быстрая доставка',
+      title: language === 'kg' ? 'Тез жеткирүү' : 'Быстрая доставка',
       titleKg: 'Тез жеткирүү',
       titleRu: 'Быстрая доставка',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Бишкек шаарында 1-2 күндө жеткиребиз'
         : 'В Бишкеке доставляем за 1-2 дня',
       icon: Clock,
@@ -155,10 +155,10 @@ export default function DeliveryPage() {
     },
     {
       id: 2,
-      title: t.language === 'kg' ? 'Коопсуз жеткирүү' : 'Безопасная доставка',
+      title: language === 'kg' ? 'Коопсуз жеткирүү' : 'Безопасная доставка',
       titleKg: 'Коопсуз жеткирүү',
       titleRu: 'Безопасная доставка',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Товар коопсуз жана сакталуу менен жеткирилет'
         : 'Товар доставляется безопасно и в сохранности',
       icon: CheckCircle,
@@ -166,10 +166,10 @@ export default function DeliveryPage() {
     },
     {
       id: 3,
-      title: t.language === 'kg' ? 'Текшерүү мүмкүнчүлүгү' : 'Возможность проверки',
+      title: language === 'kg' ? 'Текшерүү мүмкүнчүлүгү' : 'Возможность проверки',
       titleKg: 'Текшерүү мүмкүнчүлүгү',
       titleRu: 'Возможность проверки',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Товарды алуудан мурун текшере аласыз'
         : 'Можете проверить товар перед получением',
       icon: Package,
@@ -177,10 +177,10 @@ export default function DeliveryPage() {
     },
     {
       id: 4,
-      title: t.language === 'kg' ? 'Акысыз жеткирүү' : 'Бесплатная доставка',
+      title: language === 'kg' ? 'Акысыз жеткирүү' : 'Бесплатная доставка',
       titleKg: 'Акысыз жеткирүү',
       titleRu: 'Бесплатная доставка',
-      description: t.language === 'kg' 
+      description: language === 'kg' 
         ? 'Белгилүү суммадан жогору заказдарда акысыз'
         : 'Бесплатно при заказе на определенную сумму',
       icon: CheckCircle,
@@ -200,11 +200,11 @@ export default function DeliveryPage() {
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="text-xs sm:text-sm font-medium">
-                {t.language === 'kg' ? 'Артка' : 'Назад'}
+                {language === 'kg' ? 'Артка' : 'Назад'}
               </span>
             </button>
             <h1 className="text-lg sm:text-xl font-bold text-gray-900">
-              {t.language === 'kg' ? 'Жеткирүү' : 'Доставка'}
+              {language === 'kg' ? 'Жеткирүү' : 'Доставка'}
             </h1>
             <div className="w-16 sm:w-20"></div>
           </div>
@@ -215,10 +215,10 @@ export default function DeliveryPage() {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            {t.language === 'kg' ? 'Жеткирүү кызматы' : 'Служба доставки'}
+            {language === 'kg' ? 'Жеткирүү кызматы' : 'Служба доставки'}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            {t.language === 'kg' 
+            {language === 'kg' 
               ? 'Биз сиздин заказыңызды тез жана коопсуз жеткиребиз. Бардык жерге жеткирүү мүмкүнчүлүгү бар.'
               : 'Мы быстро и безопасно доставим ваш заказ. Доставка возможна везде.'
             }
@@ -228,7 +228,7 @@ export default function DeliveryPage() {
         {/* Delivery Zones */}
         <div className="mb-12">
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-            {t.language === 'kg' ? 'Жеткирүү зоналары' : 'Зоны доставки'}
+            {language === 'kg' ? 'Жеткирүү зоналары' : 'Зоны доставки'}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {deliveryZones.map((zone) => (
@@ -238,19 +238,19 @@ export default function DeliveryPage() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">
-                      {t.language === 'kg' ? 'Убакыт:' : 'Время:'}
+                      {language === 'kg' ? 'Убакыт:' : 'Время:'}
                     </span>
                     <span className="font-semibold text-gray-900">{zone.deliveryTime}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">
-                      {t.language === 'kg' ? 'Акысы:' : 'Стоимость:'}
+                      {language === 'kg' ? 'Акысы:' : 'Стоимость:'}
                     </span>
                     <span className="font-semibold text-gray-900">{zone.cost}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">
-                      {t.language === 'kg' ? 'Акысыз:' : 'Бесплатно:'}
+                      {language === 'kg' ? 'Акысыз:' : 'Бесплатно:'}
                     </span>
                     <span className="font-semibold text-orange-500">{zone.freeFrom}</span>
                   </div>
@@ -263,7 +263,7 @@ export default function DeliveryPage() {
         {/* Delivery Methods */}
         <div className="mb-12">
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-            {t.language === 'kg' ? 'Жеткирүү ыкмалары' : 'Способы доставки'}
+            {language === 'kg' ? 'Жеткирүү ыкмалары' : 'Способы доставки'}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {deliveryMethods.map((method) => (
@@ -289,7 +289,7 @@ export default function DeliveryPage() {
         {/* Delivery Process */}
         <div className="mb-12">
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-            {t.language === 'kg' ? 'Жеткирүү процесси' : 'Процесс доставки'}
+            {language === 'kg' ? 'Жеткирүү процесси' : 'Процесс доставки'}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {deliverySteps.map((step) => (
@@ -312,7 +312,7 @@ export default function DeliveryPage() {
         {/* Delivery Features */}
         <div className="mb-12">
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-            {t.language === 'kg' ? 'Жеткирүү мүмкүнчүлүктөрү' : 'Возможности доставки'}
+            {language === 'kg' ? 'Жеткирүү мүмкүнчүлүктөрү' : 'Возможности доставки'}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {deliveryFeatures.map((feature) => (
@@ -321,7 +321,7 @@ export default function DeliveryPage() {
                 <h4 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h4>
                 <p className="text-gray-600 text-sm">{feature.description}</p>
                 <div className={`mt-4 inline-block px-3 py-1 rounded-full text-sm font-medium ${feature.color}`}>
-                  {t.available}
+                  {language === 'kg' ? 'Жеткиликтүү' : 'Доступно'}
                 </div>
               </div>
             ))}
@@ -331,7 +331,7 @@ export default function DeliveryPage() {
         {/* Tracking */}
         <div className="bg-white rounded-lg shadow-sm p-8 mb-12">
           <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            {t.language === 'kg' ? 'Заказды көзөмөлдөө' : 'Отслеживание заказа'}
+            {language === 'kg' ? 'Заказды көзөмөлдөө' : 'Отслеживание заказа'}
           </h3>
           <div className="max-w-md mx-auto">
             <div className="flex space-x-4">
@@ -339,15 +339,15 @@ export default function DeliveryPage() {
                 type="text"
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
-                placeholder={t.language === 'kg' ? 'Заказ номериңизди киргизиңиз' : 'Введите номер заказа'}
+                placeholder={language === 'kg' ? 'Заказ номериңизди киргизиңиз' : 'Введите номер заказа'}
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <button className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors">
-                {t.language === 'kg' ? 'Көзөмөлдөө' : 'Отследить'}
+                {language === 'kg' ? 'Көзөмөлдөө' : 'Отследить'}
               </button>
             </div>
             <p className="text-gray-600 text-sm mt-4 text-center">
-              {t.language === 'kg' 
+              {language === 'kg' 
                 ? 'Заказ номериңизди киргизип, анын статусун текшериңиз'
                 : 'Введите номер заказа и проверьте его статус'
               }
@@ -358,10 +358,10 @@ export default function DeliveryPage() {
         {/* Contact Info */}
         <div className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg p-8 text-white mb-12">
           <h3 className="text-2xl font-bold mb-4">
-            {t.language === 'kg' ? 'Жеткирүү боюнча көмөк' : 'Помощь по доставке'}
+            {language === 'kg' ? 'Жеткирүү боюнча көмөк' : 'Помощь по доставке'}
           </h3>
           <p className="text-orange-100 mb-6">
-            {t.language === 'kg' 
+            {language === 'kg' 
               ? 'Жеткирүү боюнча суроолоруңуз барбы? Биз менен байланышыңыз!'
               : 'Есть вопросы по доставке? Свяжитесь с нами!'
             }
@@ -372,7 +372,7 @@ export default function DeliveryPage() {
               <div>
                 <div className="font-semibold">+996 555 123 456</div>
                 <div className="text-orange-100 text-sm">
-                  {t.language === 'kg' ? 'Дайыма жеткиликтүү' : 'Всегда доступен'}
+                  {language === 'kg' ? 'Дайыма жеткиликтүү' : 'Всегда доступен'}
                 </div>
               </div>
             </div>
@@ -381,7 +381,7 @@ export default function DeliveryPage() {
               <div>
                 <div className="font-semibold">delivery@storeclient.kg</div>
                 <div className="text-orange-100 text-sm">
-                  {t.language === 'kg' ? '24 саат ичинде жооп' : 'Ответ в течение 24 часов'}
+                  {language === 'kg' ? '24 саат ичинде жооп' : 'Ответ в течение 24 часов'}
                 </div>
               </div>
             </div>
@@ -394,13 +394,13 @@ export default function DeliveryPage() {
             <AlertCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="text-lg font-semibold text-blue-800 mb-2">
-                {t.language === 'kg' ? 'Маанилүү маалымат' : 'Важная информация'}
+                {language === 'kg' ? 'Маанилүү маалымат' : 'Важная информация'}
               </h4>
               <ul className="text-blue-700 space-y-2">
-                <li>• {t.language === 'kg' ? 'Жеткирүү убактысы иш күндөрүндө эсептелет' : 'Время доставки считается в рабочие дни'}</li>
-                <li>• {t.language === 'kg' ? 'Товарды алуудан мурун текшериңиз' : 'Проверьте товар перед получением'}</li>
-                <li>• {t.language === 'kg' ? 'Кайтаруу 14 күн ичинде мүмкүн' : 'Возврат возможен в течение 14 дней'}</li>
-                <li>• {t.language === 'kg' ? 'Кошумча суроолор үчүн биз менен байланышыңыз' : 'По дополнительным вопросам свяжитесь с нами'}</li>
+                <li>• {language === 'kg' ? 'Жеткирүү убактысы иш күндөрүндө эсептелет' : 'Время доставки считается в рабочие дни'}</li>
+                <li>• {language === 'kg' ? 'Товарды алуудан мурун текшериңиз' : 'Проверьте товар перед получением'}</li>
+                <li>• {language === 'kg' ? 'Кайтаруу 14 күн ичинде мүмкүн' : 'Возврат возможен в течение 14 дней'}</li>
+                <li>• {language === 'kg' ? 'Кошумча суроолор үчүн биз менен байланышыңыз' : 'По дополнительным вопросам свяжитесь с нами'}</li>
               </ul>
             </div>
           </div>

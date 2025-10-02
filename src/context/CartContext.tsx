@@ -22,6 +22,33 @@ export interface CartItem {
   }
 }
 
+// Типы для продукта из API
+interface ProductSize {
+  id: string
+  name: string
+}
+
+interface ProductColor {
+  id: string
+  name: string
+}
+
+interface ProductFromAPI {
+  id: string
+  name: string
+  price: number
+  imageUrl?: string[] | null
+  sizes?: ProductSize[]
+  colors?: ProductColor[]
+  category: {
+    id: string
+    name: string
+  }
+  seller: {
+    fullname: string
+  }
+}
+
 interface CartContextType {
   cartItems: CartItem[]
   addToCart: (product: Omit<CartItem, 'quantity'>, quantity?: number) => Promise<boolean>
@@ -99,15 +126,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
       })
 
       if (response.ok) {
-        const products = await response.json()
+        const products: ProductFromAPI[] = await response.json()
         
         const fullCartItems: CartItem[] = cartData.map(cartItem => {
-          const product = products.find((p: any) => p.id === cartItem.id)
+          const product = products.find((p: ProductFromAPI) => p.id === cartItem.id)
           if (!product) return null
 
           // Находим размер и цвет по ID
-          const size = product.sizes?.find((s: any) => s.id === cartItem.sizeId)
-          const color = product.colors?.find((c: any) => c.id === cartItem.colorId)
+          const size = product.sizes?.find((s: ProductSize) => s.id === cartItem.sizeId)
+          const color = product.colors?.find((c: ProductColor) => c.id === cartItem.colorId)
 
           return {
             id: product.id,

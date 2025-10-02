@@ -3,6 +3,7 @@
 import { Mail, Phone, MapPin, Instagram } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 // WhatsApp иконка как SVG компонент
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -29,7 +30,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-orange-400">Store Client</h3>
+            <div className="flex items-center">
+              <Image 
+                src="/client-store-logo.svg" 
+                alt="Client Store" 
+                width={120}
+                height={40}
+                className="h-10 w-auto filter brightness-0 invert"
+              />
+            </div>
             <p className="text-gray-300 text-sm leading-relaxed">
               {t.footerDescription}
             </p>

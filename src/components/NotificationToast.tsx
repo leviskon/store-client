@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { CheckCircle, Heart, ShoppingBag, X, AlertCircle } from 'lucide-react'
 
 interface NotificationToastProps {
@@ -23,12 +23,12 @@ export default function NotificationToast({
   const [progress, setProgress] = useState(100)
   const [isAnimatingOut, setIsAnimatingOut] = useState(false)
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsAnimatingOut(true)
     setTimeout(() => {
       onClose()
     }, 300) // Время анимации исчезновения
-  }
+  }, [onClose])
 
   useEffect(() => {
     if (isVisible) {

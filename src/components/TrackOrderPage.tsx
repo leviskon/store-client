@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
+import Image from 'next/image'
 import { ArrowLeft, Package, ClipboardList, Truck, CheckCircle, Clock, User } from 'lucide-react'
 import { getOrdersCookie } from '@/lib/cookies'
 import { useLanguage } from '@/context/LanguageContext'
@@ -90,7 +91,7 @@ export default function TrackOrderPage() {
     if (orderId) {
       fetchOrder()
     }
-  }, [orderId])
+  }, [orderId, t.orderNotFound, t.failedToLoad])
 
 
   const getStatusSteps = (currentStatus: Order['status']): StatusStep[] => {
@@ -147,7 +148,7 @@ export default function TrackOrderPage() {
     })
   }
 
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
 
   const calculateOrderTotal = (orderItems: OrderItem[]) => {
     return orderItems.reduce((total, item) => total + (Number(item.price) * item.amount), 0)
@@ -220,9 +221,11 @@ export default function TrackOrderPage() {
                   {/* Product Image */}
                   <div className="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
                     {productImage ? (
-                      <img 
+                      <Image 
                         src={productImage} 
                         alt={item.product.name}
+                        width={80}
+                        height={80}
                         className="w-full h-full object-cover"
                       />
                     ) : (

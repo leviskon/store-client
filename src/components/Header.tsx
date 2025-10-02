@@ -4,6 +4,7 @@ import { Search, Filter, Home, ShoppingCart, Heart, X, Package, Grid3X3 } from '
 import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useLanguage } from '@/context/LanguageContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useCart } from '@/context/CartContext'
@@ -186,7 +187,18 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
       {/* Desktop Navigation */}
       <div className="hidden md:block border-b border-orange-50">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          <nav className="flex items-center justify-center py-3">
+          <nav className="flex items-center justify-between py-3">
+            {/* Logo */}
+            <Link href="/" className="flex items-center">
+              <Image 
+                src="/client-store-logo.svg" 
+                alt="Client Store" 
+                width={120}
+                height={48}
+                className="h-12 w-auto hover:scale-105 transition-transform duration-200"
+              />
+            </Link>
+            
             <div className="flex items-center justify-center flex-1">
               {navItems.map((item) => {
                 const IconComponent = item.icon
@@ -293,6 +305,21 @@ export default function Header({ onFilterClick, onSearch }: HeaderProps) {
       {/* Search Section */}
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
         <div className="flex gap-3 items-center">
+          {/* Mobile Logo - скрывается при расширении поиска */}
+          <div className={`md:hidden transition-all duration-300 ${
+            isSearchExpanded ? 'opacity-0 pointer-events-none w-0 overflow-hidden' : 'opacity-100'
+          }`}>
+            <Link href="/" className="flex items-center">
+              <Image 
+                src="/client-store-logo.svg" 
+                alt="Client Store" 
+                width={84}
+                height={28}
+                className="h-7 w-auto hover:scale-105 transition-transform duration-200"
+              />
+            </Link>
+          </div>
+          
           {/* Search Bar */}
           <div className={`relative flex transition-all duration-300 ${
             isSearchExpanded ? 'flex-1' : 'flex-1'

@@ -2,6 +2,7 @@
 
 import { Tag, ChevronRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useLanguage } from '@/context/LanguageContext'
 
 interface Category {
@@ -12,9 +13,9 @@ interface Category {
 }
 
 // Иконка по умолчанию для всех категорий
-const getDefaultIcon = (_categoryName: string) => {
+const getDefaultIcon = () => {
   // Возвращаем иконку тега для всех категорий
-  const DefaultIcon = (props: any) => (
+  const DefaultIcon = (props: React.ComponentProps<typeof Tag>) => (
     <Tag {...props} />
   )
   DefaultIcon.displayName = 'DefaultIcon'
@@ -74,7 +75,6 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
   const [loading, setLoading] = useState(true)
   const [currentCategories, setCurrentCategories] = useState<Category[]>([])
   const [breadcrumbPath, setBreadcrumbPath] = useState<Array<{ id: string; name: string }>>([])
-  const [_currentCategoryId, setCurrentCategoryId] = useState<string | null>(null)
   const { t } = useLanguage()
 
   // Функция для поиска категории по ID в иерархии
@@ -117,7 +117,6 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
       // Если есть подкатегории, показываем их
       setCurrentCategories(category.subCategories!)
       setBreadcrumbPath(getCategoryPath(categories, categoryId) || [])
-      setCurrentCategoryId(categoryId)
       onCategoryClick(categoryId, true)
     } else {
       // Если нет подкатегорий, выбираем эту категорию
@@ -130,7 +129,6 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
       // Возвращаемся к корневым категориям
       setCurrentCategories(categories)
       setBreadcrumbPath([])
-      setCurrentCategoryId(null)
       onCategoryClick(null, false)
     } else {
       // Переходим к выбранной категории
@@ -141,7 +139,6 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
         if (hasSubcategories) {
           setCurrentCategories(category.subCategories!)
           setBreadcrumbPath(getCategoryPath(categories, categoryId) || [])
-          setCurrentCategoryId(categoryId)
           onCategoryClick(categoryId, true)
         } else {
           onCategoryClick(categoryId, false)
@@ -248,7 +245,7 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
 
             {/* Отображаем текущие категории (либо корневые, либо подкатегории) */}
             {currentCategories.map((category) => {
-              const IconComponent = getDefaultIcon(category.name)
+              const IconComponent = getDefaultIcon()
               const isSelected = selectedCategory === category.id
               
               return (
@@ -263,9 +260,11 @@ export default function Categories({ onCategoryClick, selectedCategory }: Catego
                         : 'bg-orange-50 hover:bg-orange-100 text-orange-600 group-hover:scale-105 group-hover:shadow-xl'
                     }`}>
                       {category.imageUrl ? (
-                        <img
+                        <Image
                           src={category.imageUrl}
                           alt={category.name}
+                          width={80}
+                          height={80}
                           className="w-full h-full object-cover rounded-2xl"
                         />
                       ) : (

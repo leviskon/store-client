@@ -2,9 +2,20 @@
 
 import { useNotification } from '@/context/NotificationContext'
 import NotificationToast from './NotificationToast'
+import { useEffect, useState } from 'react'
 
 export default function NotificationContainer() {
   const { notifications, removeNotification } = useNotification()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Предотвращаем рендеринг на сервере для избежания ошибок гидратации
+  if (!isMounted) {
+    return null
+  }
 
   return (
     <div className="fixed top-4 right-4 z-[9999] pointer-events-none">

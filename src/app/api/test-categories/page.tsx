@@ -2,8 +2,24 @@
 
 import { useState, useEffect } from 'react'
 
+interface CategoryData {
+  total?: number
+  byLevel?: {
+    root?: number
+    level1?: number
+    level2?: number
+  }
+  categories?: Array<{
+    id: string
+    name: string
+    level: number
+    parentName?: string
+    subCategoriesCount: number
+  }>
+}
+
 export default function TestCategoriesPage() {
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<CategoryData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -39,7 +55,7 @@ export default function TestCategoriesPage() {
       <div>
         <h2 className="text-lg font-semibold mb-2">Все категории:</h2>
         <div className="space-y-2">
-          {data?.categories?.map((cat: any) => (
+          {data?.categories?.map((cat) => (
             <div key={cat.id} className="p-2 border rounded">
               <div className="flex items-center space-x-4">
                 <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">

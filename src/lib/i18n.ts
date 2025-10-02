@@ -527,7 +527,7 @@ export const translations: Record<Language, Translations> = {
     readMore: 'Толугу менен окуу',
     goBack: 'Артка кайтуу',
     noImage: 'Сүрөт жок',
-    specifications: 'Техникалык мүнөздөмөлөр',
+    specifications: 'Атрибуттар',
     noColorsAvailable: 'Түстөр жеткиликсиз',
     
     // Favorites page
@@ -991,7 +991,7 @@ export const translations: Record<Language, Translations> = {
     readMore: 'Читать далее',
     goBack: 'Вернуться назад',
     noImage: 'Нет изображения',
-    specifications: 'Характеристики',
+    specifications: 'Атрибуты',
     noColorsAvailable: 'Цвета недоступны',
     
     // Favorites page

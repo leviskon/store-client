@@ -1,31 +1,47 @@
 import { db } from '@/lib/db'
 import { NextResponse } from 'next/server'
 
-// Рекурсивная функция для построения иерархии подкатегорий
-async function buildSubcategories(categoryId: string): Promise<any[]> {
-  const subcategories = await db.category.findMany({
-    where: {
-      categoryId: categoryId
-    },
-    orderBy: {
-      name: 'asc'
-    }
-  })
+interface CategoryWithSubs {
+  id: string
+  name: string
+  description?: string | null
+  imageUrl?: string | null
+  categoryId?: string | null
+  createdAt?: Date
+  updatedAt?: Date
+  subCategories: CategoryWithSubs[]
+}
 
-  const result = []
-  
-  for (const subcategory of subcategories) {
-    const subSubcategories = await buildSubcategories(subcategory.id)
+// Рекурсивная функция для построения иерархии подкатегорий
+async function buildSubcategories(categoryId: string): Promise<CategoryWithSubs[]> {
+  try {
+    const subcategories = await db.category.findMany({
+      where: {
+        categoryId: categoryId
+      },
+      orderBy: {
+        name: 'asc'
+      }
+    })
+
+    const result: CategoryWithSubs[] = []
     
-    const categoryWithSubs = {
-      ...subcategory,
-      subCategories: subSubcategories
+    for (const subcategory of subcategories) {
+      const subSubcategories = await buildSubcategories(subcategory.id)
+      
+      const categoryWithSubs: CategoryWithSubs = {
+        ...subcategory,
+        subCategories: subSubcategories
+      }
+      
+      result.push(categoryWithSubs)
     }
     
-    result.push(categoryWithSubs)
+    return result
+  } catch (error) {
+    console.error('Ошибка при построении подкатегорий:', error)
+    return []
   }
-  
-  return result
 }
 
 export async function GET(

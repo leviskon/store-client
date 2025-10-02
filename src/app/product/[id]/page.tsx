@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { ArrowLeft, Heart, Star, ShoppingBag, Plus, Minus, X, MessageCircle } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import { useFavorites } from '@/context/FavoritesContext'
@@ -45,9 +46,37 @@ interface Product {
   _count: {
     reviews: number
   }
-  attributes?: any
+  attributes?: Record<string, unknown>
   createdAt: string
   updatedAt: string
+}
+
+interface Size {
+  id: string
+  name: string
+}
+
+interface Color {
+  id: string
+  name: string
+  colorCode?: string
+}
+
+interface Review {
+  id: string
+  clientName: string
+  text: string
+  rating: number
+}
+
+interface ReviewApiResponse {
+  review: {
+    id: string
+    clientName: string
+    text: string
+    rating: number
+  }
+  error?: string
 }
 
 export default function ProductPage() {
@@ -68,6 +97,7 @@ export default function ProductPage() {
   const [resetReviewForm, setResetReviewForm] = useState(false)
   const [userReviewId, setUserReviewId] = useState<string | null>(null)
   const [userReviewData, setUserReviewData] = useState<{ clientName: string; text: string; rating: number } | null>(null)
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const { toggleFavorite, isFavorite } = useFavorites()
   const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart()
   const { showNotification } = useNotification()
@@ -85,14 +115,14 @@ export default function ProductPage() {
           const urlColorId = searchParams.get('colorId')
           
           // Устанавливаем размер из URL или первый доступный
-          if (urlSizeId && data.sizes.find((s: any) => s.id === urlSizeId)) {
+          if (urlSizeId && data.sizes.find((s: Size) => s.id === urlSizeId)) {
             setSelectedSize(urlSizeId)
           } else if (data.sizes.length > 0) {
             setSelectedSize(data.sizes[0].id)
           }
           
           // Устанавливаем цвет из URL или первый доступный
-          if (urlColorId && data.colors.find((c: any) => c.id === urlColorId)) {
+          if (urlColorId && data.colors.find((c: Color) => c.id === urlColorId)) {
             setSelectedColor(urlColorId)
           } else if (data.colors.length > 0) {
             setSelectedColor(data.colors[0].id)
@@ -104,7 +134,7 @@ export default function ProductPage() {
           
           // Если есть ID отзыва, загружаем его данные из API
           if (reviewId) {
-            const userReview = data.reviews.find((r: any) => r.id === reviewId)
+            const userReview = data.reviews.find((r: Review) => r.id === reviewId)
             if (userReview) {
               setUserReviewData({
                 clientName: userReview.clientName,
@@ -114,10 +144,10 @@ export default function ProductPage() {
             }
           }
         } else {
-          console.error(t.productNotFound)
+          console.error('Товар не найден')
         }
       } catch (error) {
-        console.error(t.errorLoadingProduct, error)
+        console.error('Ошибка загрузки товара:', error)
       } finally {
         setLoading(false)
       }
@@ -126,7 +156,7 @@ export default function ProductPage() {
     if (params.id) {
       fetchProduct()
     }
-  }, [params.id, searchParams])
+  }, [params.id, searchParams, t])
 
   // Проверяем, есть ли товар в корзине
   useEffect(() => {
@@ -157,7 +187,9 @@ export default function ProductPage() {
         seller: product.seller,
         reviews: product.reviews,
         _count: product._count,
-        averageRating: product.averageRating
+        averageRating: product.averageRating,
+        sizes: product.sizes || [],
+        colors: product.colors || []
       }
       
       const wasInFavorites = isFavorite(product.id)
@@ -176,7 +208,7 @@ export default function ProductPage() {
     }
   }
 
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
 
   const updateUrlParams = (sizeId?: string, colorId?: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -261,7 +293,7 @@ export default function ProductPage() {
     
     try {
       let response: Response
-      let result: any
+      let result: ReviewApiResponse
 
       if (userReviewId) {
         // Редактируем существующий отзыв
@@ -321,10 +353,10 @@ export default function ProductPage() {
         })
       }
     } catch (error) {
-      console.error(t.errorLoadingProduct, error)
+      console.error('Ошибка при отправке отзыва:', error)
       showNotification({
         type: 'cart',
-        message: t.errorOccurred,
+        message: 'Произошла ошибка',
         duration: 3000
       })
     } finally {
@@ -432,10 +464,13 @@ export default function ProductPage() {
             {/* Main Image */}
             <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden">
               {images.length > 0 ? (
-                <img
+                <Image
                   src={images[currentImageIndex]}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 50vw"
+                  className="object-cover"
+                  priority
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-orange-200 to-orange-300 flex items-center justify-center">
@@ -457,9 +492,11 @@ export default function ProductPage() {
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <img
+                    <Image
                       src={image}
                       alt={`${product.name} ${index + 1}`}
+                      width={80}
+                      height={80}
                       className="w-full h-full object-cover"
                     />
                   </button>
@@ -496,14 +533,26 @@ export default function ProductPage() {
                 <span className="w-1 h-4 bg-orange-500 rounded-full mr-2"></span>
                 {t.productDetails}
               </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {product.description || t.highQualityProduct}
-                {product.description && product.description.length > 80 && (
-                  <button className="text-orange-500 font-medium ml-1 hover:text-orange-600 text-sm transition-colors">
-                    {t.readMore}
-                  </button>
+              <div className="text-sm text-gray-600 leading-relaxed">
+                {product.description && product.description.length > 80 ? (
+                  <>
+                    <p>
+                      {isDescriptionExpanded 
+                        ? product.description 
+                        : `${product.description.substring(0, 80)}...`
+                      }
+                    </p>
+                    <button 
+                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                      className="text-orange-500 font-medium mt-1 hover:text-orange-600 text-sm transition-colors block"
+                    >
+                      {isDescriptionExpanded ? 'Скрыть' : t.readMore}
+                    </button>
+                  </>
+                ) : (
+                  <p>{product.description || t.highQualityProduct}</p>
                 )}
-              </p>
+              </div>
             </div>
 
             {/* Size Selection */}
@@ -574,7 +623,7 @@ export default function ProductPage() {
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-gray-900">{t.specifications}</h3>
                 <div className="grid grid-cols-1 gap-2">
-                  {Object.entries(product.attributes as Record<string, any>).map(([key, value]) => (
+                  {Object.entries(product.attributes as Record<string, unknown>).map(([key, value]) => (
                     <div key={key} className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
                       <span className="text-xs font-medium text-gray-700 capitalize">
                         {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}

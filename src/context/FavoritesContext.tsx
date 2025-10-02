@@ -33,10 +33,49 @@ interface FavoriteItem {
   averageRating: number
 }
 
+// Типы для продукта из API
+interface ProductReview {
+  rating: number
+}
+
+interface ProductFromAPI {
+  id: string
+  name: string
+  price: number
+  imageUrl?: string[] | null
+  category: {
+    id: string
+    name: string
+  }
+  seller: {
+    fullname: string
+  }
+  sizes?: Array<{
+    id: string
+    name: string
+  }>
+  colors?: Array<{
+    id: string
+    name: string
+    colorCode?: string
+  }>
+  reviews: ProductReview[]
+  _count: {
+    reviews: number
+  }
+  averageRating?: number
+  status?: string
+}
+
+// Тип для элемента localStorage при миграции
+interface LegacyFavoriteItem {
+  id: string
+}
+
 interface FavoritesContextType {
   favorites: FavoriteItem[]
   addToFavorites: (product: FavoriteItem) => Promise<void>
-  removeFromFavorites: (productId: string, _productName?: string) => void
+  removeFromFavorites: (productId: string) => void
   isFavorite: (productId: string) => boolean
   toggleFavorite: (product: FavoriteItem) => void
   clearFavorites: () => void
@@ -67,9 +106,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       })
 
       if (response.ok) {
-        const products = await response.json()
+        const products: ProductFromAPI[] = await response.json()
         
-        const fullFavorites: FavoriteItem[] = products.map((product: any) => ({
+        const fullFavorites: FavoriteItem[] = products.map((product: ProductFromAPI) => ({
           id: product.id,
           name: product.name,
           price: product.price,
@@ -81,7 +120,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
           reviews: product.reviews,
           _count: product._count,
           averageRating: product.reviews.length > 0 
-            ? product.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / product.reviews.length
+            ? product.reviews.reduce((sum: number, review: ProductReview) => sum + review.rating, 0) / product.reviews.length
             : 0
         }))
 
@@ -122,8 +161,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
               if (parsedFavorites && parsedFavorites.length > 0) {
                 // Мигрируем старые данные - извлекаем только ID
                 const favoriteIds = parsedFavorites
-                  .filter((item: any) => item && item.id)
-                  .map((item: any) => item.id)
+                  .filter((item: LegacyFavoriteItem) => item && item.id)
+                  .map((item: LegacyFavoriteItem) => item.id)
                 
                 if (favoriteIds.length > 0) {
                   // Сохраняем ID в новые куки
@@ -209,7 +248,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         reviews: productData.reviews,
         _count: productData._count,
         averageRating: productData.averageRating || (productData.reviews.length > 0 
-          ? productData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / productData.reviews.length
+          ? productData.reviews.reduce((sum: number, review: ProductReview) => sum + review.rating, 0) / productData.reviews.length
           : 0)
       }
 
@@ -223,7 +262,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const removeFromFavorites = (productId: string, _productName?: string) => {
+  const removeFromFavorites = (productId: string) => {
     setFavorites(prev => prev.filter(item => item.id !== productId))
     
     // Удаляем ID из куки

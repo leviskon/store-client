@@ -73,16 +73,13 @@ export async function GET(
       : 0
 
     // Форматируем данные для клиента
+    const { productSizes, productColors, ...productWithoutIntermediate } = product
     const formattedProduct = {
-      ...product,
+      ...productWithoutIntermediate,
       averageRating,
-      sizes: product.productSizes.map(ps => ps.size),
-      colors: product.productColors.map(pc => pc.color)
+      sizes: productSizes.map(ps => ps.size),
+      colors: productColors.map(pc => pc.color)
     }
-
-    // Удаляем промежуточные поля
-    delete (formattedProduct as any).productSizes
-    delete (formattedProduct as any).productColors
 
     return NextResponse.json(formattedProduct)
   } catch (error) {

@@ -35,7 +35,7 @@ export default function CheckoutModal({
   const [errors, setErrors] = useState<Partial<OrderFormData>>({})
   const { t, language } = useLanguage()
 
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
 
   const validateForm = (): boolean => {
     const newErrors: Partial<OrderFormData> = {}
@@ -67,7 +67,23 @@ export default function CheckoutModal({
   }
 
   const handleInputChange = (field: keyof OrderFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    // Применяем ограничения по символам
+    let limitedValue = value
+    switch (field) {
+      case 'customerName':
+        limitedValue = value.slice(0, 20)
+        break
+      case 'deliveryAddress':
+        limitedValue = value.slice(0, 25)
+        break
+      case 'customerComment':
+        limitedValue = value.slice(0, 150)
+        break
+      default:
+        limitedValue = value
+    }
+    
+    setFormData(prev => ({ ...prev, [field]: limitedValue }))
     
     // Очищаем ошибку при вводе
     if (errors[field]) {
@@ -153,12 +169,13 @@ export default function CheckoutModal({
           {/* Customer Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t.customerName} *
+              {t.customerName} * <span className="text-xs text-gray-500">({formData.customerName.length}/20)</span>
             </label>
             <input
               type="text"
               value={formData.customerName}
               onChange={(e) => handleInputChange('customerName', e.target.value)}
+              maxLength={20}
               className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base ${
                 errors.customerName ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -193,11 +210,12 @@ export default function CheckoutModal({
           {/* Delivery Address */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t.deliveryAddress} *
+              {t.deliveryAddress} * <span className="text-xs text-gray-500">({formData.deliveryAddress.length}/25)</span>
             </label>
             <textarea
               value={formData.deliveryAddress}
               onChange={(e) => handleInputChange('deliveryAddress', e.target.value)}
+              maxLength={25}
               rows={2}
               className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base ${
                 errors.deliveryAddress ? 'border-red-500' : 'border-gray-300'
@@ -213,12 +231,13 @@ export default function CheckoutModal({
           {/* Customer Comment */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t.customerComment}
+              {t.customerComment} <span className="text-xs text-gray-500">({(formData.customerComment || '').length}/150)</span>
             </label>
             <textarea
               value={formData.customerComment || ''}
               onChange={(e) => handleInputChange('customerComment', e.target.value)}
-              rows={2}
+              maxLength={150}
+              rows={3}
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base"
               placeholder={t.optionalComment}
               disabled={isLoading}

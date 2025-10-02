@@ -1,11 +1,23 @@
 import { db } from '@/lib/db'
 import { NextResponse } from 'next/server'
 
+interface CategoryTreeNode {
+  id: string
+  name: string
+  description?: string | null
+  imageUrl?: string | null
+  categoryId?: string | null
+  createdAt?: Date
+  updatedAt?: Date
+  subCategories?: CategoryTreeNode[]
+  totalSubcategories?: number
+}
+
 // Рекурсивная функция для подсчета общего количества подкатегорий
-function countAllSubcategories(category: any): number {
+function countAllSubcategories(category: CategoryTreeNode): number {
   let count = category.subCategories ? category.subCategories.length : 0
   if (category.subCategories) {
-    category.subCategories.forEach((sub: any) => {
+    category.subCategories.forEach((sub: CategoryTreeNode) => {
       count += countAllSubcategories(sub)
     })
   }
@@ -13,34 +25,39 @@ function countAllSubcategories(category: any): number {
 }
 
 // Рекурсивная функция для построения полной иерархии с дополнительной информацией
-async function buildCategoryTree(categories: any[]): Promise<any[]> {
-  const result = []
-  
-  for (const category of categories) {
-    const subCategories = await db.category.findMany({
-      where: {
-        categoryId: category.id
-      },
-      orderBy: {
-        name: 'asc'
-      }
-    })
+async function buildCategoryTree(categories: CategoryTreeNode[]): Promise<CategoryTreeNode[]> {
+  try {
+    const result: CategoryTreeNode[] = []
     
-    const categoryWithSubs = {
-      ...category,
-      subCategories: subCategories.length > 0 ? await buildCategoryTree(subCategories) : [],
-      totalSubcategories: 0 // Будет вычислено после построения дерева
+    for (const category of categories) {
+      const subCategories = await db.category.findMany({
+        where: {
+          categoryId: category.id
+        },
+        orderBy: {
+          name: 'asc'
+        }
+      })
+      
+      const categoryWithSubs: CategoryTreeNode = {
+        ...category,
+        subCategories: subCategories.length > 0 ? await buildCategoryTree(subCategories) : [],
+        totalSubcategories: 0 // Будет вычислено после построения дерева
+      }
+      
+      result.push(categoryWithSubs)
     }
     
-    result.push(categoryWithSubs)
+    // Вычисляем общее количество подкатегорий для каждой категории
+    result.forEach(category => {
+      category.totalSubcategories = countAllSubcategories(category)
+    })
+    
+    return result
+  } catch (error) {
+    console.error('Ошибка при построении дерева категорий:', error)
+    return []
   }
-  
-  // Вычисляем общее количество подкатегорий для каждой категории
-  result.forEach(category => {
-    category.totalSubcategories = countAllSubcategories(category)
-  })
-  
-  return result
 }
 
 export async function GET() {
@@ -73,11 +90,11 @@ export async function GET() {
 }
 
 // Функция для определения максимальной глубины иерархии
-function getMaxDepth(category: any): number {
+function getMaxDepth(category: CategoryTreeNode): number {
   if (!category.subCategories || category.subCategories.length === 0) {
     return 1
   }
   
-  const maxChildDepth = Math.max(...category.subCategories.map((child: any) => getMaxDepth(child)))
+  const maxChildDepth = Math.max(...category.subCategories.map((child: CategoryTreeNode) => getMaxDepth(child)))
   return 1 + maxChildDepth
 }

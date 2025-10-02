@@ -4,6 +4,7 @@ import { useLanguage } from '@/context/LanguageContext'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 interface Category {
   id: string
@@ -15,7 +16,7 @@ interface Category {
 
 
 export default function CategoriesPage() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -27,19 +28,7 @@ export default function CategoriesPage() {
         const response = await fetch('/api/categories')
         if (response.ok) {
           const data = await response.json()
-          console.log('Загруженные категории:', data)
-          console.log('Количество корневых категорий:', data.length)
-          
-          // Проверяем глубину иерархии
-          const checkDepth = (categories: Category[], level = 0) => {
-            categories.forEach(cat => {
-              console.log(`${'  '.repeat(level)}${cat.name} (ID: ${cat.id}) - подкатегорий: ${cat.subCategories?.length || 0}`)
-              if (cat.subCategories && cat.subCategories.length > 0) {
-                checkDepth(cat.subCategories, level + 1)
-              }
-            })
-          }
-          checkDepth(data)
+          // Данные категорий загружены успешно
           
           setCategories(data)
         } else {
@@ -120,10 +109,12 @@ export default function CategoriesPage() {
               className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer overflow-hidden"
             >
               <div className="relative aspect-square overflow-hidden">
-                <img
+                <Image
                   src={category.imageUrl || '/api/placeholder/300/300'}
                   alt={category.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 {category.subCategories && category.subCategories.length > 0 && (
@@ -154,10 +145,10 @@ export default function CategoriesPage() {
               <div className="w-12 h-12 text-gray-400">📁</div>
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {t.language === 'kg' ? 'Категориялар табылган жок' : 'Категории не найдены'}
+              {language === 'kg' ? 'Категориялар табылган жок' : 'Категории не найдены'}
             </h3>
             <p className="text-gray-600 mb-6">
-              {t.language === 'kg' 
+              {language === 'kg' 
                 ? 'Категориялар жүктөлүп жатат.'
                 : 'Категории загружаются.'
               }

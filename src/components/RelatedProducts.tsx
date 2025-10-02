@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Star, Package } from 'lucide-react'
 
 interface RelatedProduct {
@@ -70,7 +71,7 @@ export default function RelatedProducts({
     }
   }, [categoryId, currentProductId, limit])
 
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
 
   const renderStars = (rating: number) => {
     return (
@@ -135,12 +136,14 @@ export default function RelatedProducts({
               className="group cursor-pointer bg-white rounded-xl border border-gray-200 hover:border-orange-300 hover:shadow-lg transition-all duration-200 overflow-hidden"
             >
               {/* Product Image */}
-              <div className="aspect-square bg-gray-100 overflow-hidden">
+              <div className="relative aspect-square bg-gray-100 overflow-hidden">
                 {productImage ? (
-                  <img
+                  <Image
                     src={productImage}
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-200"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-200 to-orange-300">

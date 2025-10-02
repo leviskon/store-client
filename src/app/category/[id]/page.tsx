@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { ArrowLeft, Package } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
 import AppLayout from '@/components/AppLayout'
@@ -41,7 +42,7 @@ export default function CategoryPage() {
         }
         
       } catch (error) {
-        console.error(t.errorLoadingProduct, error)
+        console.error('Ошибка загрузки категории:', error)
       } finally {
         setLoading(false)
       }
@@ -50,7 +51,7 @@ export default function CategoryPage() {
     if (params.id) {
       fetchCategoryData()
     }
-  }, [params.id])
+  }, [params.id, t])
 
   const handleSubcategoryClick = (subcategoryId: string) => {
     setSelectedSubcategory(subcategoryId)
@@ -172,9 +173,11 @@ export default function CategoryPage() {
                     className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer overflow-hidden border border-gray-200 hover:border-orange-300 flex-shrink-0 w-24"
                   >
                     <div className="relative aspect-square overflow-hidden">
-                      <img
+                      <Image
                         src={subcategory.imageUrl || '/api/placeholder/300/300'}
                         alt={subcategory.name}
+                        width={96}
+                        height={96}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -199,7 +202,7 @@ export default function CategoryPage() {
                 className="flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm font-medium">{t.backToCategory} "{category.name}"</span>
+                <span className="text-sm font-medium">{t.backToCategory} &quot;{category.name}&quot;</span>
               </button>
             </div>
           )}

@@ -1,6 +1,6 @@
 'use client'
 
-import { X, Check, Filter, ChevronDown, Star, DollarSign, Tag } from 'lucide-react'
+import { X, Check, Filter, ChevronDown, Star, DollarSign, Tag, LucideIcon } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
@@ -15,7 +15,7 @@ interface FilterState {
   categories: string[]
   priceRange: { min: number; max: number }
   sortBy: string
-  rating?: number
+  rating: number
 }
 
 export default function FilterModal({ isOpen, onClose, onApplyFilters, categories }: FilterModalProps) {
@@ -104,7 +104,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
     count 
   }: { 
     title: string; 
-    icon: any; 
+    icon: LucideIcon; 
     sectionKey: keyof typeof expandedSections;
     count?: number;
   }) => (
@@ -197,7 +197,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
             {/* Price Range */}
             <div className="space-y-2 md:space-y-3">
               <SectionHeader 
-                title={`${t.priceRange} (сом)`} 
+                title={`${t.priceRange} (с.)`} 
                 icon={DollarSign} 
                 sectionKey="price" 
               />
@@ -215,7 +215,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
                           placeholder="0"
                         />
                         <span className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs md:text-sm">
-                          сом
+                          с.
                         </span>
                       </div>
                     </div>
@@ -230,13 +230,13 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
                           placeholder="10000"
                         />
                         <span className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs md:text-sm">
-                          сом
+                          с.
                         </span>
                       </div>
                     </div>
                   </div>
                   <div className="text-center text-xs md:text-sm text-gray-500">
-                    {filters.priceRange.min} сом - {filters.priceRange.max} сом
+                    {filters.priceRange.min} с. - {filters.priceRange.max} с.
                   </div>
                 </div>
               )}
@@ -249,7 +249,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
                 title={t.minimumRating} 
                 icon={Star} 
                 sectionKey="rating"
-                count={filters.rating > 0 ? 1 : 0}
+                count={filters.rating && filters.rating > 0 ? 1 : 0}
               />
               {expandedSections.rating && (
                 <div className="pl-3 md:pl-4">

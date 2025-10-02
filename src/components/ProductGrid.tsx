@@ -3,6 +3,7 @@
 import { Heart, Star, ShoppingBag, Plus, Minus } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useNotification } from '@/context/NotificationContext'
 import { useCart } from '@/context/CartContext'
@@ -235,7 +236,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
   }
 
 
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
 
   const getProductUrl = (productId: string) => {
     const selectedSizeId = selectedSizes[productId]
@@ -359,10 +360,12 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
             <div className="relative p-2 cursor-pointer">
               <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden">
                 {product.imageUrl && Array.isArray(product.imageUrl) && product.imageUrl.length > 0 ? (
-                  <img 
+                  <Image 
                     src={product.imageUrl[0]} 
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, (max-width: 1536px) 20vw, 16vw"
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                 ) : (
                   <div className="absolute inset-0 bg-gradient-to-br from-orange-200 to-orange-300"></div>

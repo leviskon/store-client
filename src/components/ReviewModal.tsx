@@ -10,7 +10,6 @@ interface ReviewModalProps {
   onSubmit: (reviewData: ReviewFormData) => void
   productName: string
   isLoading?: boolean
-  onReset?: () => void
   editMode?: boolean
   initialData?: ReviewFormData
 }
@@ -27,7 +26,6 @@ export default function ReviewModal({
   onSubmit, 
   productName,
   isLoading = false,
-  onReset: _onReset,
   editMode = false,
   initialData
 }: ReviewModalProps) {
@@ -37,11 +35,11 @@ export default function ReviewModal({
     text: '',
     rating: 0
   })
-  const [errors, setErrors] = useState<Partial<ReviewFormData>>({})
+  const [errors, setErrors] = useState<Partial<Record<keyof ReviewFormData, string>>>({})
   const [hoveredRating, setHoveredRating] = useState(0)
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<ReviewFormData> = {}
+    const newErrors: Partial<Record<keyof ReviewFormData, string>> = {}
 
     if (!formData.clientName.trim()) {
       newErrors.clientName = t.enterNameError

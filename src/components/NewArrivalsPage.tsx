@@ -4,11 +4,12 @@ import { useLanguage } from '@/context/LanguageContext'
 import { ArrowLeft, Search, Filter, Star, ShoppingCart, Heart, Eye } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import Image from 'next/image'
 
 export default function NewArrivalsPage() {
-  const { t } = useLanguage()
+  const { language } = useLanguage()
   
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} сом`
+  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('newest')
@@ -16,7 +17,7 @@ export default function NewArrivalsPage() {
   const newProducts = [
     {
       id: 1,
-      name: t.classicTshirt,
+      name: language === 'kg' ? 'Жаңы стилдүү футболка' : 'Новая стильная футболка',
       nameKg: 'Жаңы стилдүү футболка',
       nameRu: 'Новая стильная футболка',
       price: 1500,
@@ -26,13 +27,13 @@ export default function NewArrivalsPage() {
       rating: 4.8,
       reviews: 24,
       isNew: true,
-      category: t.men,
+      category: language === 'kg' ? 'Эркектер' : 'Мужчины',
       colors: ['Кара', 'Ак', 'Кызыл'],
       sizes: ['S', 'M', 'L', 'XL']
     },
     {
       id: 2,
-      name: t.elegantDress,
+      name: language === 'kg' ? 'Элеганттуу көйнөк' : 'Элегантное платье',
       nameKg: 'Элеганттуу көйнөк',
       nameRu: 'Элегантное платье',
       price: 3500,
@@ -42,13 +43,13 @@ export default function NewArrivalsPage() {
       rating: 4.9,
       reviews: 18,
       isNew: true,
-      category: t.women,
+      category: language === 'kg' ? 'Аялдар' : 'Женщины',
       colors: ['Кара', 'Көк', 'Жашыл'],
       sizes: ['XS', 'S', 'M', 'L']
     },
     {
       id: 3,
-      name: t.sportJacket,
+      name: language === 'kg' ? 'Спорттуу куртка' : 'Спортивная куртка',
       nameKg: 'Спорттуу куртка',
       nameRu: 'Спортивная куртка',
       price: 4500,
@@ -58,13 +59,13 @@ export default function NewArrivalsPage() {
       rating: 4.7,
       reviews: 32,
       isNew: true,
-      category: t.sport,
+      category: language === 'kg' ? 'Спорт' : 'Спорт',
       colors: ['Кара', 'Ак', 'Кызыл'],
       sizes: ['S', 'M', 'L', 'XL', 'XXL']
     },
     {
       id: 4,
-      name: t.classicPants,
+      name: language === 'kg' ? 'Классикалык шым' : 'Классические джинсы',
       nameKg: 'Классикалык шым',
       nameRu: 'Классические джинсы',
       price: 2800,
@@ -74,13 +75,13 @@ export default function NewArrivalsPage() {
       rating: 4.6,
       reviews: 45,
       isNew: true,
-      category: t.men,
+      category: language === 'kg' ? 'Эркектер' : 'Мужчины',
       colors: ['Көк', 'Кара', 'Ак'],
       sizes: ['28', '30', '32', '34', '36']
     },
     {
       id: 5,
-      name: t.summerDress,
+      name: language === 'kg' ? 'Жайкы көйнөк' : 'Летнее платье',
       nameKg: 'Жайкы көйнөк',
       nameRu: 'Летнее платье',
       price: 2200,
@@ -90,13 +91,13 @@ export default function NewArrivalsPage() {
       rating: 4.8,
       reviews: 28,
       isNew: true,
-      category: t.women,
+      category: language === 'kg' ? 'Аялдар' : 'Женщины',
       colors: ['Ак', 'Кызыл', 'Сары'],
       sizes: ['XS', 'S', 'M', 'L']
     },
     {
       id: 6,
-      name: t.childrenClothing,
+      name: language === 'kg' ? 'Балалардын кийими' : 'Детская одежда',
       nameKg: 'Балалардын кийими',
       nameRu: 'Детская одежда',
       price: 1200,
@@ -106,7 +107,7 @@ export default function NewArrivalsPage() {
       rating: 4.9,
       reviews: 15,
       isNew: true,
-      category: t.children,
+      category: language === 'kg' ? 'Балдар' : 'Дети',
       colors: ['Кызыл', 'Көк', 'Жашыл'],
       sizes: ['2-3', '4-5', '6-7', '8-9']
     }
@@ -145,11 +146,11 @@ export default function NewArrivalsPage() {
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="text-xs sm:text-sm font-medium">
-                {t.language === 'kg' ? 'Артка' : 'Назад'}
+                {language === 'kg' ? 'Артка' : 'Назад'}
               </span>
             </button>
             <h1 className="text-lg sm:text-xl font-bold text-gray-900">
-              {t.language === 'kg' ? 'Жаңы келгендер' : 'Новинки'}
+              {language === 'kg' ? 'Жаңы келгендер' : 'Новинки'}
             </h1>
             <div className="w-16 sm:w-20"></div>
           </div>
@@ -160,20 +161,20 @@ export default function NewArrivalsPage() {
         {/* Hero Section */}
         <div className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg p-8 text-white mb-8">
           <h2 className="text-3xl font-bold mb-4">
-            {t.newCollectionHero}
+            {language === 'kg' ? 'Жаңы коллекция' : 'Новая коллекция'}
           </h2>
           <p className="text-orange-100 text-lg mb-6">
-            {t.latestTrends}
+            {language === 'kg' ? 'Эң соңку тенденциялар' : 'Последние тренды'}
           </p>
           <div className="flex items-center space-x-4">
             <div className="bg-white bg-opacity-20 px-4 py-2 rounded-full">
               <span className="text-sm font-medium">
-                {t.newItemsCount}
+                {language === 'kg' ? '50+ жаңы товар' : '50+ новых товаров'}
               </span>
             </div>
             <div className="bg-white bg-opacity-20 px-4 py-2 rounded-full">
               <span className="text-sm font-medium">
-                {t.discountInfo}
+                {language === 'kg' ? '30% чейин арзандатуу' : 'Скидки до 30%'}
               </span>
             </div>
           </div>
@@ -186,7 +187,7 @@ export default function NewArrivalsPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder={t.language === 'kg' ? 'Товарларды издөө...' : 'Поиск товаров...'}
+                placeholder={language === 'kg' ? 'Товарларды издөө...' : 'Поиск товаров...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
@@ -199,22 +200,22 @@ export default function NewArrivalsPage() {
                 className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               >
                 <option value="newest">
-                  {t.language === 'kg' ? 'Жаңылар' : 'Новинки'}
+                  {language === 'kg' ? 'Жаңылар' : 'Новинки'}
                 </option>
                 <option value="price-low">
-                  {t.language === 'kg' ? 'Баа: төмөн' : 'Цена: низкая'}
+                  {language === 'kg' ? 'Баа: төмөн' : 'Цена: низкая'}
                 </option>
                 <option value="price-high">
-                  {t.language === 'kg' ? 'Баа: жогору' : 'Цена: высокая'}
+                  {language === 'kg' ? 'Баа: жогору' : 'Цена: высокая'}
                 </option>
                 <option value="rating">
-                  {t.language === 'kg' ? 'Рейтинг' : 'Рейтинг'}
+                  {language === 'kg' ? 'Рейтинг' : 'Рейтинг'}
                 </option>
               </select>
               <button className="flex items-center space-x-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                 <Filter className="w-5 h-5 text-gray-600" />
                 <span className="text-sm font-medium text-gray-700">
-                  {t.language === 'kg' ? 'Фильтр' : 'Фильтр'}
+                  {language === 'kg' ? 'Фильтр' : 'Фильтр'}
                 </span>
               </button>
             </div>
@@ -229,14 +230,16 @@ export default function NewArrivalsPage() {
               className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow group"
             >
               <div className="relative overflow-hidden rounded-t-lg">
-                <img
+                <Image
                   src={product.image}
                   alt={product.name}
+                  width={300}
+                  height={320}
                   className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-4 left-4">
                     <span className="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                      {t.new}
+                      {language === 'kg' ? 'Жаңы' : 'Новинка'}
                     </span>
                 </div>
                 <div className="absolute top-4 right-4">
@@ -249,11 +252,11 @@ export default function NewArrivalsPage() {
                   <div className="flex space-x-2">
                     <button className="flex-1 bg-white text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
                       <Eye className="w-4 h-4 inline mr-1" />
-                      {t.view}
+                      {language === 'kg' ? 'Көрүү' : 'Смотреть'}
                     </button>
                     <button className="flex-1 bg-orange-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors">
                       <ShoppingCart className="w-4 h-4 inline mr-1" />
-                      {t.buy}
+                      {language === 'kg' ? 'Сатып алуу' : 'Купить'}
                     </button>
                   </div>
                 </div>
@@ -305,7 +308,7 @@ export default function NewArrivalsPage() {
                 <div className="space-y-2">
                   <div>
                     <span className="text-xs text-gray-600">
-                      {t.colors}
+                      {language === 'kg' ? 'Түстөр:' : 'Цвета:'}
                     </span>
                     <div className="flex space-x-1 mt-1">
                       {product.colors.map((color, index) => (
@@ -320,7 +323,7 @@ export default function NewArrivalsPage() {
                   
                   <div>
                     <span className="text-xs text-gray-600">
-                      {t.sizes}
+                      {language === 'kg' ? 'Өлчөмдөр:' : 'Размеры:'}
                     </span>
                     <div className="flex space-x-1 mt-1">
                       {product.sizes.map((size, index) => (
@@ -346,10 +349,10 @@ export default function NewArrivalsPage() {
               <Search className="w-12 h-12 text-gray-400" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {t.language === 'kg' ? 'Товарлар табылган жок' : 'Товары не найдены'}
+              {language === 'kg' ? 'Товарлар табылган жок' : 'Товары не найдены'}
             </h3>
             <p className="text-gray-600 mb-6">
-              {t.language === 'kg' 
+              {language === 'kg' 
                 ? 'Издеген товарыңыз табылган жок. Башка сөздөрдү колдонуп көрүңүз.'
                 : 'Искомый товар не найден. Попробуйте использовать другие слова.'
               }
@@ -358,7 +361,7 @@ export default function NewArrivalsPage() {
               onClick={() => setSearchQuery('')}
               className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors"
             >
-              {t.language === 'kg' ? 'Бардык товарларды көрсөтүү' : 'Показать все товары'}
+              {language === 'kg' ? 'Бардык товарларды көрсөтүү' : 'Показать все товары'}
             </button>
           </div>
         )}
@@ -366,7 +369,7 @@ export default function NewArrivalsPage() {
         {/* Load More Button */}
         <div className="text-center mt-12">
           <button className="bg-orange-500 text-white px-8 py-3 rounded-lg hover:bg-orange-600 transition-colors font-medium">
-            {t.language === 'kg' ? 'Көбүрөөк көрсөтүү' : 'Показать больше'}
+            {language === 'kg' ? 'Көбүрөөк көрсөтүү' : 'Показать больше'}
           </button>
         </div>
       </div>

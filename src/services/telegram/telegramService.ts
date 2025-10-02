@@ -116,10 +116,10 @@ function formatOrderMessage(orderData: OrderData): string {
     if (item.size) message += ` (Размер: ${item.size})`
     if (item.color) message += ` (Цвет: ${item.color})`
     message += `\n   Количество: ${item.quantity} шт.\n`
-    message += `   Цена: ${item.price.toLocaleString('ru-RU')} сом\n\n`
+    message += `   Цена: ${item.price.toLocaleString('ru-RU')} с.\n\n`
   })
   
-  message += `💰 <b>Общая сумма:</b> ${totalAmount.toLocaleString('ru-RU')} сом`
+  message += `💰 <b>Общая сумма:</b> ${totalAmount.toLocaleString('ru-RU')} с.`
 
   return message
 }
