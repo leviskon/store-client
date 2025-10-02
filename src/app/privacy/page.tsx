@@ -1,10 +1,29 @@
-import PrivacyPage from '@/components/PrivacyPage'
-import AppLayout from '@/components/AppLayout'
+import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
+
+// Ленивая загрузка компонента
+const PrivacyPage = dynamic(() => import('@/components/PrivacyPage'), {
+  loading: () => (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600">Загрузка...</p>
+      </div>
+    </div>
+  ),
+})
 
 export default function Privacy() {
   return (
-    <AppLayout showHeader={false} showBottomNav={true}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Загрузка...</p>
+        </div>
+      </div>
+    }>
       <PrivacyPage />
-    </AppLayout>
+    </Suspense>
   )
 }

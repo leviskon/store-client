@@ -1,115 +1,160 @@
 'use client'
 
+import { useMemo, memo } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 import { ArrowLeft, Shield, Lock, Eye, User, Database, AlertTriangle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import AppLayout from '@/components/AppLayout'
+import { Translations } from '@/lib/i18n'
+
+// Статические конфигурации
+const PRIVACY_SECTIONS_CONFIG = [
+  {
+    id: 1,
+    titleKey: 'dataCollection',
+    icon: Database,
+    content: [
+      { subtitleKey: 'personalInfo', textKey: 'personalInfoDesc' },
+      { subtitleKey: 'technicalInfo', textKey: 'technicalInfoDesc' }
+    ]
+  },
+  {
+    id: 2,
+    titleKey: 'dataUsage',
+    icon: User,
+    content: [
+      { subtitleKey: 'serviceProvision', textKey: 'serviceProvisionDesc' },
+      { subtitleKey: 'notifications', textKey: 'notificationsDesc' }
+    ]
+  },
+  {
+    id: 3,
+    titleKey: 'dataSharing',
+    icon: Eye,
+    content: [
+      { subtitleKey: 'thirdParties', textKey: 'thirdPartiesDesc' },
+      { subtitleKey: 'employees', textKey: 'employeesDesc' }
+    ]
+  },
+  {
+    id: 4,
+    titleKey: 'security',
+    icon: Lock,
+    content: [
+      { subtitleKey: 'dataProtection', textKey: 'dataProtectionDesc' },
+      { subtitleKey: 'encryption', textKey: 'encryptionDesc' }
+    ]
+  }
+]
+
+const USER_RIGHTS_CONFIG = [
+  {
+    id: 1,
+    titleKey: 'accessRight',
+    descKey: 'accessRightDesc',
+    icon: Eye,
+    color: 'bg-blue-100 text-blue-800'
+  },
+  {
+    id: 2,
+    titleKey: 'editRight',
+    descKey: 'editRightDesc',
+    icon: User,
+    color: 'bg-green-100 text-green-800'
+  },
+  {
+    id: 3,
+    titleKey: 'deleteRight',
+    descKey: 'deleteRightDesc',
+    icon: AlertTriangle,
+    color: 'bg-red-100 text-red-800'
+  }
+]
+
+// Мемоизированные компоненты
+const PrivacySection = memo(({ section, t }: { section: typeof PRIVACY_SECTIONS_CONFIG[0], t: Translations }) => (
+  <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 lg:p-8">
+    <div className="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
+      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 rounded-full flex items-center justify-center">
+        <section.icon className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />
+      </div>
+      <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{t[section.titleKey as keyof typeof t]}</h3>
+    </div>
+    
+    <div className="space-y-4 sm:space-y-6">
+      {section.content.map((item, index: number) => (
+        <div key={index} className="border-l-4 border-orange-200 pl-4 sm:pl-6">
+          <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
+            {t[item.subtitleKey as keyof typeof t]}
+          </h4>
+          <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+            {t[item.textKey as keyof typeof t]}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+))
+
+PrivacySection.displayName = 'PrivacySection'
+
+const UserRightCard = memo(({ right, t, importantLabel }: { right: typeof USER_RIGHTS_CONFIG[0], t: Translations, importantLabel: string }) => (
+  <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+    <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+      <right.icon className="w-6 h-6 text-orange-500" />
+      <h4 className="text-base sm:text-lg font-semibold text-gray-900">{t[right.titleKey as keyof typeof t]}</h4>
+    </div>
+    <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 leading-relaxed">
+      {t[right.descKey as keyof typeof t]}
+    </p>
+    <div className={`inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${right.color}`}>
+      {importantLabel}
+    </div>
+  </div>
+))
+
+UserRightCard.displayName = 'UserRightCard'
 
 export default function PrivacyPage() {
   const { t, language } = useLanguage()
   const router = useRouter()
 
-  const privacySections = [
-    {
-      id: 1,
-      title: t.dataCollection,
-      icon: Database,
-      content: [
-        {
-          subtitle: t.personalInfo,
-          text: t.personalInfoDesc
-        },
-        {
-          subtitle: t.technicalInfo,
-          text: t.technicalInfoDesc
-        }
-      ]
-    },
-    {
-      id: 2,
-      title: t.dataUsage,
-      icon: User,
-      content: [
-        {
-          subtitle: t.serviceProvision,
-          text: t.serviceProvisionDesc
-        },
-        {
-          subtitle: t.notifications,
-          text: t.notificationsDesc
-        }
-      ]
-    },
-    {
-      id: 3,
-      title: t.dataSharing,
-      icon: Eye,
-      content: [
-        {
-          subtitle: t.thirdParties,
-          text: t.thirdPartiesDesc
-        },
-        {
-          subtitle: t.employees,
-          text: t.employeesDesc
-        }
-      ]
-    },
-    {
-      id: 4,
-      title: t.security,
-      icon: Lock,
-      content: [
-        {
-          subtitle: t.dataProtection,
-          text: t.dataProtectionDesc
-        },
-        {
-          subtitle: t.encryption,
-          text: t.encryptionDesc
-        }
-      ]
-    }
-  ]
-
-  const userRights = [
-    {
-      id: 1,
-      title: t.accessRight,
-      description: t.accessRightDesc,
-      icon: Eye,
-      color: 'bg-blue-100 text-blue-800'
-    },
-    {
-      id: 2,
-      title: t.editRight,
-      description: t.editRightDesc,
-      icon: User,
-      color: 'bg-green-100 text-green-800'
-    },
-    {
-      id: 3,
-      title: t.deleteRight,
-      description: t.deleteRightDesc,
-      icon: AlertTriangle,
-      color: 'bg-red-100 text-red-800'
-    }
-  ]
+  // Мемоизируем статические переводы
+  const staticTexts = useMemo(() => ({
+    userObligationsTitle: language === 'kg' ? 'Колдонуучунун милдеттенмелери' : 'Обязанности пользователя',
+    accurateInfoTitle: language === 'kg' ? 'Туура маалымат берүү' : 'Предоставление точной информации',
+    accurateInfoDesc: language === 'kg' 
+      ? 'Сиз бардык маалыматтарды туура жана толук берүүгө милдеттүүсүз.'
+      : 'Вы обязаны предоставлять всю информацию точно и полностью.',
+    properUseTitle: language === 'kg' ? 'Кызматтарды туура колдонуу' : 'Правильное использование услуг',
+    properUseDesc: language === 'kg' 
+      ? 'Сиз биздин кызматтарды мыйзамга каршы эмес жол менен колдонууга милдеттүүсүз.'
+      : 'Вы обязаны использовать наши услуги законным способом.',
+    prohibitedActionsTitle: language === 'kg' ? 'Тыйылган иш-аракеттер' : 'Запрещенные действия',
+    acceptanceTitle: language === 'kg' ? 'Шарттарды кабыл алуу' : 'Принятие условий',
+    acceptanceDesc: language === 'kg' 
+      ? 'Биздин кызматтарды колдонуу менен сиз бул шарттарды толук кабыл аласыз. Эгерде сиз бул шарттар менен макул эмес болсоңуз, кызматтарды колдонбоңуз.'
+      : 'Используя наши услуги, вы полностью принимаете эти условия. Если вы не согласны с этими условиями, не используйте услуги.',
+    termsOfUseTitle: language === 'kg' ? 'Колдонуу шарттары' : 'Условия использования',
+    importantLabel: language === 'kg' ? 'Маанилүү' : 'Важно'
+  }), [language])
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header как на странице Возвратов */}
-      <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
-        <button
-          onClick={() => router.back()}
-          className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-700" />
-        </button>
-        
-        <h1 className="text-lg font-medium text-white text-center flex-1 px-2 truncate">{t.privacy}</h1>
-        
-        <div className="w-10 h-10"></div>
-      </div>
+    <AppLayout showHeader={false} showBottomNav={true}>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header как на странице Возвратов */}
+        <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
+          </button>
+          
+          <h1 className="text-lg font-medium text-white text-center flex-1 px-2 truncate">{t.privacy}</h1>
+          
+          <div className="w-10 h-10"></div>
+        </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Hero Section */}
@@ -127,28 +172,8 @@ export default function PrivacyPage() {
 
         {/* Privacy Sections */}
         <div className="space-y-6 sm:space-y-8 mb-12 sm:mb-16">
-          {privacySections.map((section) => (
-            <div key={section.id} className="bg-white rounded-lg shadow-sm p-4 sm:p-6 lg:p-8">
-              <div className="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                  <section.icon className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{section.title}</h3>
-              </div>
-              
-              <div className="space-y-4 sm:space-y-6">
-                {section.content.map((item, index) => (
-                  <div key={index} className="border-l-4 border-orange-200 pl-4 sm:pl-6">
-                    <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
-                      {item.subtitle}
-                    </h4>
-                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                      {item.text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {PRIVACY_SECTIONS_CONFIG.map((section) => (
+            <PrivacySection key={section.id} section={section} t={t} />
           ))}
         </div>
 
@@ -158,19 +183,8 @@ export default function PrivacyPage() {
             {t.yourRights}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            {userRights.map((right) => (
-              <div key={right.id} className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
-                <div className="flex items-center space-x-3 mb-3 sm:mb-4">
-                  <right.icon className="w-6 h-6 text-orange-500" />
-                  <h4 className="text-base sm:text-lg font-semibold text-gray-900">{right.title}</h4>
-                </div>
-                <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 leading-relaxed">
-                  {right.description}
-                </p>
-                <div className={`inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${right.color}`}>
-                  {language === 'kg' ? 'Маанилүү' : 'Важно'}
-                </div>
-              </div>
+            {USER_RIGHTS_CONFIG.map((right) => (
+              <UserRightCard key={right.id} right={right} t={t} importantLabel={staticTexts.importantLabel} />
             ))}
           </div>
         </div>
@@ -178,26 +192,23 @@ export default function PrivacyPage() {
         {/* Terms of Use Section */}
         <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 lg:p-8 mb-8 sm:mb-12">
           <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
-            {language === 'kg' ? 'Колдонуу шарттары' : 'Условия использования'}
+            {staticTexts.termsOfUseTitle}
           </h3>
           
           {/* User Obligations */}
           <div className="mb-8">
             <h4 className="text-lg font-semibold text-gray-800 mb-4">
-              {language === 'kg' ? 'Колдонуучунун милдеттенмелери' : 'Обязанности пользователя'}
+              {staticTexts.userObligationsTitle}
             </h4>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
                   <h5 className="font-medium text-gray-900 mb-1">
-                    {language === 'kg' ? 'Туура маалымат берүү' : 'Предоставление точной информации'}
+                    {staticTexts.accurateInfoTitle}
                   </h5>
                   <p className="text-sm text-gray-600">
-                    {language === 'kg' 
-                      ? 'Сиз бардык маалыматтарды туура жана толук берүүгө милдеттүүсүз.'
-                      : 'Вы обязаны предоставлять всю информацию точно и полностью.'
-                    }
+                    {staticTexts.accurateInfoDesc}
                   </p>
                 </div>
               </div>
@@ -206,13 +217,10 @@ export default function PrivacyPage() {
                 <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
                   <h5 className="font-medium text-gray-900 mb-1">
-                    {language === 'kg' ? 'Кызматтарды туура колдонуу' : 'Правильное использование услуг'}
+                    {staticTexts.properUseTitle}
                   </h5>
                   <p className="text-sm text-gray-600">
-                    {language === 'kg' 
-                      ? 'Сиз биздин кызматтарды мыйзамга каршы эмес жол менен колдонууга милдеттүүсүз.'
-                      : 'Вы обязаны использовать наши услуги законным способом.'
-                    }
+                    {staticTexts.properUseDesc}
                   </p>
                 </div>
               </div>
@@ -234,7 +242,7 @@ export default function PrivacyPage() {
           {/* Prohibited Actions */}
           <div className="mb-8">
             <h4 className="text-lg font-semibold text-gray-800 mb-4">
-              {language === 'kg' ? 'Тыйылган иш-аракеттер' : 'Запрещенные действия'}
+              {staticTexts.prohibitedActionsTitle}
             </h4>
             <div className="space-y-3">
               <div className="flex items-start space-x-3 p-3 bg-red-50 rounded-lg">
@@ -266,13 +274,10 @@ export default function PrivacyPage() {
           {/* Acceptance */}
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <h4 className="text-lg font-semibold text-green-800 mb-2">
-              {language === 'kg' ? 'Шарттарды кабыл алуу' : 'Принятие условий'}
+              {staticTexts.acceptanceTitle}
             </h4>
             <p className="text-sm text-green-700">
-              {language === 'kg' 
-                ? 'Биздин кызматтарды колдонуу менен сиз бул шарттарды толук кабыл аласыз. Эгерде сиз бул шарттар менен макул эмес болсоңуз, кызматтарды колдонбоңуз.'
-                : 'Используя наши услуги, вы полностью принимаете эти условия. Если вы не согласны с этими условиями, не используйте услуги.'
-              }
+              {staticTexts.acceptanceDesc}
             </p>
           </div>
         </div>
@@ -289,8 +294,9 @@ export default function PrivacyPage() {
 
       </div>
 
-      {/* Bottom spacing */}
-      <div className="h-20"></div>
-    </div>
+        {/* Bottom spacing */}
+        <div className="h-20"></div>
+      </div>
+    </AppLayout>
   )
 }

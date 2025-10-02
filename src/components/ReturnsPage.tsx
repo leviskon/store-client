@@ -1,9 +1,117 @@
 'use client'
 
+import { memo } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 import { ArrowLeft, Package, CheckCircle, XCircle, Phone, Mail, AlertTriangle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import AppLayout from '@/components/AppLayout'
+import { Translations } from '@/lib/i18n'
+
+// Статические конфигурации
+const RETURN_STEPS_CONFIG = [
+  {
+    id: 1,
+    titleKey: 'step1Title',
+    descKey: 'step1Desc',
+    color: 'bg-orange-500',
+    icon: '1'
+  },
+  {
+    id: 2,
+    titleKey: 'step2Title',
+    descKey: 'step2Desc',
+    color: 'bg-blue-500',
+    icon: '2'
+  },
+  {
+    id: 3,
+    titleKey: 'step3Title',
+    descKey: 'step3Desc',
+    color: 'bg-green-500',
+    icon: '3'
+  }
+]
+
+const RETURN_CONDITIONS_CONFIG = {
+  possible: {
+    titleKey: 'returnPossible',
+    items: [
+      {
+        icon: Package,
+        iconColor: 'text-orange-600',
+        bgColor: 'bg-orange-100',
+        titleKey: 'onDeliveryReturn',
+        descKey: 'onDeliveryReturnDesc'
+      },
+      {
+        icon: CheckCircle,
+        iconColor: 'text-blue-600',
+        bgColor: 'bg-blue-100',
+        titleKey: 'checkOnDelivery',
+        descKey: 'checkOnDeliveryDesc'
+      }
+    ]
+  },
+  impossible: {
+    titleKey: 'noOtherReturns',
+    descKey: 'noOtherReturnsDesc'
+  }
+}
+
+const CONTACT_INFO_CONFIG = [
+  {
+    id: 1,
+    icon: Phone,
+    title: '+996 555 123 456',
+    subtitleKey: 'alwaysAvailable'
+  },
+  {
+    id: 2,
+    icon: Mail,
+    title: 'support@storeclient.kg',
+    subtitleKey: 'responseWithin24h'
+  }
+]
+
+// Мемоизированные компоненты
+const ReturnStep = memo(({ step, t, isLast }: { step: typeof RETURN_STEPS_CONFIG[0], t: Translations, isLast: boolean }) => (
+  <>
+    <div className="flex gap-4">
+      <div className={`flex-shrink-0 w-12 h-12 ${step.color} rounded-full flex items-center justify-center text-white font-bold`}>
+        {step.icon}
+      </div>
+      <div>
+        <h4 className="font-semibold text-gray-900 mb-2">{t[step.titleKey as keyof typeof t]}</h4>
+        <p className="text-gray-600">{t[step.descKey as keyof typeof t]}</p>
+      </div>
+    </div>
+    
+    {!isLast && (
+      <div className="flex justify-center mt-6">
+        <div className="w-6 h-6 border-r-2 border-b-2 border-gray-300 transform rotate-45"></div>
+      </div>
+    )}
+  </>
+))
+
+ReturnStep.displayName = 'ReturnStep'
+
+const ContactCard = memo(({ contact, t }: { contact: typeof CONTACT_INFO_CONFIG[0], t: Translations }) => {
+  const IconComponent = contact.icon
+  return (
+    <div className="flex items-center gap-3">
+      <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+        <IconComponent className="w-6 h-6 text-white" />
+      </div>
+      <div>
+        <div className="font-semibold">{contact.title}</div>
+        <div className="text-orange-100 text-sm">{t[contact.subtitleKey as keyof typeof t]}</div>
+      </div>
+    </div>
+  )
+})
+
+ContactCard.displayName = 'ContactCard'
 
 export default function ReturnsPage() {
   const { t } = useLanguage()
@@ -49,30 +157,25 @@ export default function ReturnsPage() {
                 <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                   <CheckCircle className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-green-800">{t.returnPossible}</h3>
+                <h3 className="text-lg font-semibold text-green-800">{t[RETURN_CONDITIONS_CONFIG.possible.titleKey as keyof typeof t]}</h3>
               </div>
             </div>
             
             <div className="p-6 space-y-6">
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                  <Package className="w-6 h-6 text-orange-600" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">{t.onDeliveryReturn}</h4>
-                  <p className="text-gray-600">{t.onDeliveryReturnDesc}</p>
-                </div>
-              </div>
-              
-              <div className="flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">{t.checkOnDelivery}</h4>
-                  <p className="text-gray-600">{t.checkOnDeliveryDesc}</p>
-                </div>
-              </div>
+              {RETURN_CONDITIONS_CONFIG.possible.items.map((item, index) => {
+                const IconComponent = item.icon
+                return (
+                  <div key={index} className="flex gap-4">
+                    <div className={`flex-shrink-0 w-12 h-12 ${item.bgColor} rounded-full flex items-center justify-center`}>
+                      <IconComponent className={`w-6 h-6 ${item.iconColor}`} />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">{t[item.titleKey as keyof typeof t]}</h4>
+                      <p className="text-gray-600">{t[item.descKey as keyof typeof t]}</p>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
 
@@ -83,7 +186,7 @@ export default function ReturnsPage() {
                 <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
                   <XCircle className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-red-800">{t.noOtherReturns}</h3>
+                <h3 className="text-lg font-semibold text-red-800">{t[RETURN_CONDITIONS_CONFIG.impossible.titleKey as keyof typeof t]}</h3>
               </div>
             </div>
             
@@ -93,7 +196,7 @@ export default function ReturnsPage() {
                   <XCircle className="w-6 h-6 text-red-600" />
                 </div>
                 <div>
-                  <p className="text-gray-600">{t.noOtherReturnsDesc}</p>
+                  <p className="text-gray-600">{t[RETURN_CONDITIONS_CONFIG.impossible.descKey as keyof typeof t]}</p>
                 </div>
               </div>
             </div>
@@ -107,48 +210,11 @@ export default function ReturnsPage() {
           </h3>
           
           <div className="space-y-6">
-            {/* Step 1 */}
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                1
+            {RETURN_STEPS_CONFIG.map((step, index) => (
+              <div key={step.id}>
+                <ReturnStep step={step} t={t} isLast={index === RETURN_STEPS_CONFIG.length - 1} />
               </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-2">{t.step1Title}</h4>
-                <p className="text-gray-600">{t.step1Desc}</p>
-              </div>
-            </div>
-            
-            {/* Arrow */}
-            <div className="flex justify-center">
-              <div className="w-6 h-6 border-r-2 border-b-2 border-gray-300 transform rotate-45"></div>
-            </div>
-            
-            {/* Step 2 */}
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                2
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-2">{t.step2Title}</h4>
-                <p className="text-gray-600">{t.step2Desc}</p>
-              </div>
-            </div>
-            
-            {/* Arrow */}
-            <div className="flex justify-center">
-              <div className="w-6 h-6 border-r-2 border-b-2 border-gray-300 transform rotate-45"></div>
-            </div>
-            
-            {/* Step 3 */}
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
-                3
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-2">{t.step3Title}</h4>
-                <p className="text-gray-600">{t.step3Desc}</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -160,25 +226,9 @@ export default function ReturnsPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                <Phone className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="font-semibold">+996 555 123 456</div>
-                <div className="text-orange-100 text-sm">{t.alwaysAvailable}</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                <Mail className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="font-semibold">support@storeclient.kg</div>
-                <div className="text-orange-100 text-sm">{t.responseWithin24h}</div>
-              </div>
-            </div>
+            {CONTACT_INFO_CONFIG.map((contact) => (
+              <ContactCard key={contact.id} contact={contact} t={t} />
+            ))}
           </div>
         </div>
 
