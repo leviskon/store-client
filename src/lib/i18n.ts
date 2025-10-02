@@ -108,7 +108,6 @@ export interface Translations {
   orderNumber: string
   customerPhone: string
   customerComment: string
-  cancelComment: string
   courierInfo: string
   orderCreated: string
   orderInProgress: string
@@ -440,7 +439,6 @@ export interface Translations {
   deliveryStatus: string
   pieces: string
   currentStatus: string
-  cancelReason: string
   orderComment: string
   
   // Order tracking statuses
@@ -571,7 +569,6 @@ export const translations: Record<Language, Translations> = {
     orderStatus: 'Заказдын статусу',
     orderDate: 'Заказдын датасы',
     orderNumber: 'Заказдын номуру',
-    cancelComment: 'Жокко чыгаруу себеби',
     courierInfo: 'Курьер тууралуу маалымат',
     orderCreated: 'Түзүлгөн',
     orderInProgress: 'Ишке ашырылууда',
@@ -905,7 +902,6 @@ export const translations: Record<Language, Translations> = {
     deliveryStatus: 'Жеткирүү статусу',
     pieces: 'дана',
     currentStatus: 'Учурдагы статус',
-    cancelReason: 'Жокко чыгаруу себеби',
     orderComment: 'Заказга комментарий',
     
     // Additional order tracking statuses
@@ -1035,7 +1031,6 @@ export const translations: Record<Language, Translations> = {
     orderStatus: 'Статус заказа',
     orderDate: 'Дата заказа',
     orderNumber: 'Номер заказа',
-    cancelComment: 'Причина отмены',
     courierInfo: 'Информация о курьере',
     orderCreated: 'Создан',
     orderInProgress: 'В обработке',
@@ -1369,7 +1364,6 @@ export const translations: Record<Language, Translations> = {
     deliveryStatus: 'Статус доставки',
     pieces: 'шт',
     currentStatus: 'Текущий статус',
-    cancelReason: 'Причина отмены',
     orderComment: 'Комментарий к заказу',
     
     // Additional order tracking statuses

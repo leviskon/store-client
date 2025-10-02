@@ -352,17 +352,6 @@ export default function TrackOrderPage() {
           </div>
         </div>
 
-        {/* Cancel Information */}
-        {order.status === 'CANCELED' && order.cancelComment && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <h4 className="text-sm font-medium text-red-800 mb-2">
-              {t.cancelReason}
-            </h4>
-            <p className="text-sm text-red-700">
-              {order.cancelComment}
-            </p>
-          </div>
-        )}
 
         {/* Customer Comment */}
         {order.customerComment && (
