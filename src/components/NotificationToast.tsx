@@ -68,31 +68,12 @@ export default function NotificationToast({
   }
 
   const getStyles = () => {
-    switch (type) {
-      case 'cart':
-        return {
-          background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.85) 0%, rgba(234, 88, 12, 0.85) 100%)',
-          iconBg: 'bg-orange-400/30',
-          progressBg: 'bg-orange-300/40'
-        }
-      case 'favorites':
-        return {
-          background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.85) 0%, rgba(234, 88, 12, 0.85) 100%)',
-          iconBg: 'bg-orange-400/30',
-          progressBg: 'bg-orange-300/40'
-        }
-      case 'error':
-        return {
-          background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.85) 0%, rgba(234, 88, 12, 0.85) 100%)',
-          iconBg: 'bg-orange-400/30',
-          progressBg: 'bg-orange-300/40'
-        }
-      default:
-        return {
-          background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.85) 0%, rgba(234, 88, 12, 0.85) 100%)',
-          iconBg: 'bg-orange-400/30',
-          progressBg: 'bg-orange-300/40'
-        }
+    // Единый стиль прозрачного стекла с оранжевым оттенком для всех типов уведомлений
+    return {
+      background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(234, 88, 12, 0.25) 50%, rgba(251, 146, 60, 0.15) 100%)',
+      iconBg: 'bg-orange-500/20',
+      progressBg: 'bg-orange-400/30',
+      borderColor: 'border-orange-300/30'
     }
   }
 
@@ -103,14 +84,14 @@ export default function NotificationToast({
       className={`
         relative
         text-white 
-        p-2 sm:p-3 md:p-4
-        rounded-lg sm:rounded-xl md:rounded-2xl 
+        p-3 sm:p-3 md:p-4
+        rounded-xl sm:rounded-xl md:rounded-2xl 
         shadow-2xl
         flex items-center 
-        gap-2 sm:gap-3 md:gap-4
-        w-full max-w-xs sm:max-w-sm md:max-w-sm 
-        backdrop-blur-xl
-        border border-white/20
+        gap-3 sm:gap-3 md:gap-4
+        w-full max-w-[280px] sm:max-w-sm md:max-w-sm 
+        backdrop-blur-2xl
+        border ${styles.borderColor}
         transition-all duration-500 ease-out
         transform-gpu
         ${isAnimatingOut 
@@ -122,26 +103,27 @@ export default function NotificationToast({
       `}
       style={{
         background: styles.background,
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+        boxShadow: '0 20px 40px -12px rgba(251, 146, 60, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(251, 146, 60, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4)'
       }}
     >
       {/* Иконка */}
       <div className={`
         flex-shrink-0 
-        w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 
+        w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 
         rounded-full 
         ${styles.iconBg}
         flex items-center justify-center
         backdrop-blur-sm
-        border border-white/30
+        border border-orange-400/40
         animate-bounce-in
+        shadow-lg
       `}>
         {getIcon()}
       </div>
       
       {/* Контент */}
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-xs sm:text-sm md:text-base leading-tight mb-1">
+        <p className="font-semibold text-sm sm:text-sm md:text-base leading-tight mb-1 text-white">
           {message}
         </p>
         {productName && (
@@ -156,7 +138,7 @@ export default function NotificationToast({
         onClick={handleClose}
         className="
           flex-shrink-0
-          w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8
+          w-7 h-7 sm:w-7 sm:h-7 md:w-8 md:h-8
           flex items-center justify-center
           hover:bg-white/20 
           rounded-full 
@@ -164,9 +146,10 @@ export default function NotificationToast({
           hover:scale-110
           active:scale-95
           group
+          border border-white/30
         "
       >
-        <X className="w-3 h-3 md:w-4 md:h-4 group-hover:rotate-90 transition-transform duration-200" />
+        <X className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:rotate-90 transition-transform duration-200 text-white" />
       </button>
 
       {/* Прогресс-бар */}
@@ -178,17 +161,20 @@ export default function NotificationToast({
         overflow-hidden
       `}>
         <div 
-          className="h-full bg-white/60 transition-all duration-75 ease-linear rounded-b-xl md:rounded-b-2xl"
+          className="h-full bg-orange-300/80 transition-all duration-75 ease-linear rounded-b-xl md:rounded-b-2xl shadow-sm"
           style={{ width: `${progress}%` }}
         />
       </div>
 
       {/* Декоративные элементы */}
-      <div className="absolute top-2 right-2 w-1.5 h-1.5 md:w-2 md:h-2 bg-white/30 rounded-full animate-pulse" />
-      <div className="absolute top-3 md:top-4 right-5 md:right-6 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-300" />
+      <div className="absolute top-2 right-8 w-1.5 h-1.5 md:w-2 md:h-2 bg-orange-200/40 rounded-full animate-pulse" />
+      <div className="absolute top-4 md:top-5 right-12 md:right-14 w-1 h-1 bg-orange-300/50 rounded-full animate-pulse delay-300" />
       
-      {/* Дополнительный блик */}
-      <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent rounded-t-xl md:rounded-t-2xl pointer-events-none" />
+      {/* Дополнительный блик стеклянного эффекта */}
+      <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-orange-100/30 via-orange-200/20 to-transparent rounded-t-xl md:rounded-t-2xl pointer-events-none" />
+      
+      {/* Дополнительный эффект стекла */}
+      <div className="absolute inset-0 rounded-xl md:rounded-2xl bg-gradient-to-br from-orange-200/10 via-transparent to-orange-400/10 pointer-events-none" />
     </div>
   )
 }

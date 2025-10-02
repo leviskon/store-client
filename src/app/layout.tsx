@@ -7,6 +7,7 @@ import { CartProvider } from "@/context/CartContext";
 import { OrdersProvider } from "@/context/OrdersContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import NotificationContainer from "@/components/NotificationContainer";
+import DesktopLayout from "@/components/DesktopLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,9 @@ export default function RootLayout({
             <FavoritesProvider>
               <CartProvider>
                 <OrdersProvider>
-                  {children}
+                  <DesktopLayout>
+                    {children}
+                  </DesktopLayout>
                   <NotificationContainer />
                 </OrdersProvider>
               </CartProvider>

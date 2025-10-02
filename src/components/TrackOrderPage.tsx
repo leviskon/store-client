@@ -167,14 +167,16 @@ export default function TrackOrderPage() {
   if (error || !order) {
     return (
       <div className="min-h-screen bg-white">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 z-10">
-          <div className="flex items-center justify-between">
-            <Link href="/orders" className="p-2 -ml-2">
-              <ArrowLeft className="w-6 h-6 text-gray-600" />
-            </Link>
-            <h1 className="text-lg font-semibold text-gray-900">{t.order}</h1>
-            <div className="w-10" />
-          </div>
+        <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <Link href="/orders">
+            <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors">
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
+          </Link>
+          
+          <h1 className="text-lg font-medium text-white">{t.order}</h1>
+          
+          <div className="w-10 h-10"></div>
         </div>
         <div className="flex flex-col items-center justify-center py-16 px-4">
           <Package className="w-16 h-16 text-gray-300 mb-4" />
@@ -191,14 +193,16 @@ export default function TrackOrderPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 z-10">
-        <div className="flex items-center justify-between">
-          <Link href="/orders" className="p-2 -ml-2">
-            <ArrowLeft className="w-6 h-6 text-gray-600" />
-          </Link>
-          <h1 className="text-lg font-semibold text-gray-900">{t.orderDetails}</h1>
-          <div className="w-10" />
-        </div>
+      <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <Link href="/orders">
+          <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors">
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
+          </button>
+        </Link>
+        
+        <h1 className="text-lg font-medium text-white">{t.orderDetails}</h1>
+        
+        <div className="w-10 h-10"></div>
       </div>
 
       <div className="px-4 py-6">

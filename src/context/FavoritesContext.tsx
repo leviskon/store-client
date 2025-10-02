@@ -15,6 +15,15 @@ interface FavoriteItem {
   seller: {
     fullname: string
   }
+  sizes: Array<{
+    id: string
+    name: string
+  }>
+  colors: Array<{
+    id: string
+    name: string
+    colorCode?: string
+  }>
   reviews: {
     rating: number
   }[]
@@ -29,7 +38,7 @@ interface FavoritesContextType {
   addToFavorites: (product: FavoriteItem) => Promise<void>
   removeFromFavorites: (productId: string, _productName?: string) => void
   isFavorite: (productId: string) => boolean
-  toggleFavorite: (product: FavoriteItem) => Promise<void>
+  toggleFavorite: (product: FavoriteItem) => void
   clearFavorites: () => void
   isLoading: boolean
 }
@@ -67,9 +76,13 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
           imageUrl: product.imageUrl,
           category: product.category,
           seller: product.seller,
+          sizes: product.sizes || [],
+          colors: product.colors || [],
           reviews: product.reviews,
           _count: product._count,
-          averageRating: product.averageRating
+          averageRating: product.reviews.length > 0 
+            ? product.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / product.reviews.length
+            : 0
         }))
 
         setFavorites(fullFavorites)
@@ -163,7 +176,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     // Добавляем ID в куки
     addFavoriteToCookie(product.id)
 
-    // Затем асинхронно проверяем активность товара
+    // Затем асинхронно загружаем полные данные товара и проверяем активность
     try {
       const response = await fetch(`/api/products/${product.id}`)
       if (!response.ok) {
@@ -182,6 +195,28 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         removeFavoriteFromCookie(product.id)
         return
       }
+
+      // Обновляем товар в состоянии с полными данными из API
+      const fullProductData: FavoriteItem = {
+        id: productData.id,
+        name: productData.name,
+        price: productData.price,
+        imageUrl: productData.imageUrl,
+        category: productData.category,
+        seller: productData.seller,
+        sizes: productData.sizes || [],
+        colors: productData.colors || [],
+        reviews: productData.reviews,
+        _count: productData._count,
+        averageRating: productData.averageRating || (productData.reviews.length > 0 
+          ? productData.reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / productData.reviews.length
+          : 0)
+      }
+
+      // Обновляем товар в состоянии с полными данными
+      setFavorites(prev => prev.map(item => 
+        item.id === product.id ? fullProductData : item
+      ))
     } catch {
       // Ошибка проверки статуса товара
       // В случае ошибки сети оставляем товар в избранном
@@ -211,11 +246,12 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     return favorites.some(item => item.id === productId)
   }
 
-  const toggleFavorite = async (product: FavoriteItem) => {
+  const toggleFavorite = (product: FavoriteItem) => {
     if (isFavorite(product.id)) {
       removeFromFavorites(product.id)
     } else {
-      await addToFavorites(product)
+      // Вызываем addToFavorites без await для мгновенного отклика UI
+      addToFavorites(product)
     }
   }
 

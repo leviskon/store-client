@@ -407,19 +407,19 @@ export default function ProductPage() {
   return (
     <AppLayout showHeader={false} showBottomNav={true}>
       {/* Header */}
-      <div className="sticky top-0 bg-white z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between border-b border-gray-100">
+      <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
         <button
           onClick={() => router.back()}
-          className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+          className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors"
         >
           <ArrowLeft className="w-5 h-5 text-gray-700" />
         </button>
         
-        <h1 className="text-lg font-medium text-gray-900">{t.productDetails}</h1>
+        <h1 className="text-lg font-medium text-white">{t.productDetails}</h1>
         
         <button
           onClick={handleToggleFavorite}
-          className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+          className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors"
         >
           <Heart className={`w-5 h-5 ${product && isFavorite(product.id) ? 'fill-orange-500 text-orange-500' : 'text-orange-500'}`} />
         </button>

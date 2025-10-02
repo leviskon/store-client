@@ -7,16 +7,16 @@ export default function NotificationContainer() {
   const { notifications, removeNotification } = useNotification()
 
   return (
-    <div className="fixed top-4 right-4 left-4 md:left-auto z-[9999] pointer-events-none">
+    <div className="fixed top-4 right-4 z-[9999] pointer-events-none">
       <div className="flex flex-col gap-3 items-end">
         {notifications.map((notification, index) => (
           <div
             key={notification.id}
-            className="pointer-events-auto transform-gpu w-full md:w-auto notification-stack"
+            className="pointer-events-auto transform-gpu w-auto notification-stack"
             style={{
               animationDelay: `${index * 100}ms`,
               zIndex: 9999 - index,
-              transform: `translateY(${index * 8}px)`
+              transform: `translateY(${index * 8}px) translateX(${index * 4}px)`
             }}
           >
             <NotificationToast

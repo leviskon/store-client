@@ -65,7 +65,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
   const [processingItems, setProcessingItems] = useState<Set<string>>(new Set())
   const { toggleFavorite, isFavorite } = useFavorites()
   const { showNotification } = useNotification()
-  const { addToCart, removeFromCart, updateQuantity, cartItems } = useCart()
+  const { addToCart, removeFromCart, updateQuantity, cartItems, isLoading: cartLoading } = useCart()
   const { t } = useLanguage()
   
   // Используем ref для стабилизации callback
@@ -184,7 +184,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
     }
   }, [products, cartItems])
 
-  const handleToggleFavorite = async (product: ProductWithLike) => {
+  const handleToggleFavorite = (product: ProductWithLike) => {
     try {
       // Валидируем структуру товара перед добавлением в избранное
       if (!product || !product.id || !product.category?.id || !product.category?.name) {
@@ -204,6 +204,8 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
         imageUrl: product.imageUrl,
         category: product.category,
         seller: product.seller,
+        sizes: product.sizes || [],
+        colors: product.colors || [],
         reviews: product.reviews,
         _count: product._count,
         averageRating: product.averageRating
@@ -211,10 +213,10 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
       
       const wasInFavorites = isFavorite(product.id)
       
-      // Вызываем toggleFavorite без await для мгновенного отклика
+      // Вызываем toggleFavorite для мгновенного отклика
       toggleFavorite(favoriteItem)
       
-      // Показываем уведомление только при добавлении
+      // Показываем уведомление сразу после переключения
       if (!wasInFavorites) {
         showNotification({
           type: 'favorites',
@@ -475,7 +477,13 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
 
             {/* Add to Cart Button */}
             <div className="pt-1">
-              {quantities[product.id] === 0 ? (
+              {cartLoading ? (
+                // Loading state
+                <div className="w-full bg-orange-400 text-white px-3 py-2 rounded-lg flex items-center justify-center space-x-2 font-medium text-sm">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Загрузка...</span>
+                </div>
+              ) : (quantities[product.id] || 0) === 0 ? (
                 <button
                   onClick={(e) => {
                     e.preventDefault()
@@ -507,7 +515,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
                   </button>
                   
                   <span className="text-sm font-bold min-w-[1.5rem] text-center">
-                    {quantities[product.id]}
+                    {quantities[product.id] || 0}
                   </span>
                   
                   <button
