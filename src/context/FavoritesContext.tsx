@@ -121,7 +121,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
           _count: product._count,
           averageRating: product.reviews.length > 0 
             ? product.reviews.reduce((sum: number, review: ProductReview) => sum + review.rating, 0) / product.reviews.length
-            : 0
+            : 5.0 // Показываем 5 звёзд по умолчанию, если нет отзывов
         }))
 
         setFavorites(fullFavorites)
@@ -249,7 +249,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         _count: productData._count,
         averageRating: productData.averageRating || (productData.reviews.length > 0 
           ? productData.reviews.reduce((sum: number, review: ProductReview) => sum + review.rating, 0) / productData.reviews.length
-          : 0)
+          : 5.0) // Показываем 5 звёзд по умолчанию, если нет отзывов
       }
 
       // Обновляем товар в состоянии с полными данными

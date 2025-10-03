@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Store Client - Интернет-магазин одежды',
     short_name: 'Store Client',
-    description: 'Интернет-магазин качественной одежды в Кыргызстане',
+    description: ' ',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
@@ -24,7 +24,7 @@ export default function manifest(): MetadataRoute.Manifest {
         type: 'image/x-icon',
       },
       {
-        src: '/client-store-logo.svg',
+        src: '/logo-for-pwa.svg',
         sizes: 'any',
         type: 'image/svg+xml',
       },

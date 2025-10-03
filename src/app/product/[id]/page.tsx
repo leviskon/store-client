@@ -512,7 +512,7 @@ export default function ProductPage() {
               <span className="text-orange-500 text-sm font-medium">{product.category.name}</span>
               <div className="flex items-center space-x-1">
                 <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                <span className="text-gray-900 font-medium">{product.averageRating.toFixed(1)}</span>
+                <span className="text-gray-900 font-medium">{(product.averageRating > 0 ? product.averageRating : 5.0).toFixed(1)}</span>
                 <span className="text-gray-500 text-sm">({product._count.reviews})</span>
               </div>
             </div>
@@ -717,14 +717,12 @@ export default function ProductPage() {
             <h2 className="text-xl font-semibold text-gray-900">
               {t.reviews} {product.reviews.length > 0 && `(${product.reviews.length})`}
             </h2>
-            {product.averageRating > 0 && (
-              <div className="flex items-center space-x-2">
-                {renderStars(product.averageRating)}
-                <span className="text-sm font-medium text-gray-600">
-                  {product.averageRating.toFixed(1)} {t.outOf5}
-                </span>
-              </div>
-            )}
+            <div className="flex items-center space-x-2">
+              {renderStars(product.averageRating > 0 ? product.averageRating : 5.0)}
+              <span className="text-sm font-medium text-gray-600">
+                {(product.averageRating > 0 ? product.averageRating : 5.0).toFixed(1)} {t.outOf5}
+              </span>
+            </div>
           </div>
 
           {product.reviews.length === 0 ? (

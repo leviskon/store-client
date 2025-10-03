@@ -48,10 +48,23 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, categorie
   })
 
   const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }))
+    setExpandedSections(prev => {
+      // Если секция уже открыта, закрываем её
+      if (prev[section]) {
+        return {
+          ...prev,
+          [section]: false
+        }
+      }
+      // Если секция закрыта, открываем её и закрываем все остальные
+      return {
+        categories: false,
+        price: false,
+        rating: false,
+        sort: false,
+        [section]: true
+      }
+    })
   }
 
   const sortOptions = [

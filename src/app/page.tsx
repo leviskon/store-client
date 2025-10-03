@@ -170,7 +170,9 @@ function HomeContent() {
       <Footer />
       
       {/* Bottom Navigation - только для мобильных */}
-      <BottomNavigation />
+      <div className="pb-20 md:pb-0">
+        <BottomNavigation />
+      </div>
     </>
   )
 }

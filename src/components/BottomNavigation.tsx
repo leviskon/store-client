@@ -72,8 +72,8 @@ export default function BottomNavigation() {
             return (
               <Link key={item.id} href={item.href} className="flex-1">
                 <button
-                  className={`w-full flex flex-col items-center justify-center p-2 min-w-0 transition-colors ${
-                    active ? 'text-orange-500' : 'text-white'
+                   className={`w-full flex flex-col items-center justify-center p-1 min-w-0 transition-colors ${
+                    active ? 'text-orange-500' : 'text-gray-400'
                   }`}
                 >
                   <div className={`p-4 rounded-full ${active ? 'bg-orange-500' : 'bg-orange-500'} shadow-lg -mt-4 flex items-center justify-center`}>
@@ -86,6 +86,7 @@ export default function BottomNavigation() {
                       )}
                     </div>
                   </div>
+                   <span className="text-xs font-medium mt-0.5">{item.label}</span>
                 </button>
               </Link>
             )
@@ -95,7 +96,7 @@ export default function BottomNavigation() {
             return (
               <Link key={item.id} href={item.href} className="flex-1">
                 <button
-                  className={`w-full flex flex-col items-center justify-center p-2 min-w-0 transition-colors ${
+                   className={`w-full flex flex-col items-center justify-center p-1 min-w-0 transition-colors ${
                     active ? 'text-orange-500' : 'text-gray-400'
                   }`}
                 >
@@ -109,6 +110,7 @@ export default function BottomNavigation() {
                       )}
                     </div>
                   </div>
+                   <span className="text-xs font-medium mt-0.5">{item.label}</span>
                 </button>
               </Link>
             )
@@ -118,7 +120,7 @@ export default function BottomNavigation() {
             return (
               <Link key={item.id} href={item.href} className="flex-1">
                 <button
-                  className={`w-full flex flex-col items-center justify-center p-2 min-w-0 transition-colors ${
+                   className={`w-full flex flex-col items-center justify-center p-1 min-w-0 transition-colors ${
                     active ? 'text-orange-500' : 'text-gray-400'
                   }`}
                 >
@@ -132,6 +134,7 @@ export default function BottomNavigation() {
                       )}
                     </div>
                   </div>
+                   <span className="text-xs font-medium mt-0.5">{item.label}</span>
                 </button>
               </Link>
             )
@@ -140,13 +143,14 @@ export default function BottomNavigation() {
           return (
             <Link key={item.id} href={item.href} className="flex-1">
               <button
-                className={`w-full flex flex-col items-center justify-center p-2 min-w-0 transition-colors ${
+                   className={`w-full flex flex-col items-center justify-center p-1 min-w-0 transition-colors ${
                   active ? 'text-orange-500' : 'text-gray-400'
                 }`}
               >
                 <div className={`p-2 rounded-full ${active ? 'bg-orange-500/10' : ''}`}>
                   <IconComponent className="w-6 h-6" />
                 </div>
+                   <span className="text-xs font-medium mt-0.5">{item.label}</span>
               </button>
             </Link>
           )

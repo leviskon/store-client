@@ -78,8 +78,8 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/client-store-logo.ico",
-    shortcut: "/client-store-logo.ico",
-    apple: "/client-store-logo.ico",
+    shortcut: "/logo-for-pwa.svg",
+    apple: "/logo-for-pwa.svg",
   },
   verification: {
     google: 'google-site-verification-code',

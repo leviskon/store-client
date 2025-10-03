@@ -118,9 +118,21 @@ export default function HeroSection() {
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6">
-        <div className="relative rounded-2xl overflow-hidden bg-gray-200 animate-pulse">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-gray-500 text-sm sm:text-base">Загрузка баннеров...</div>
+        {/* Мобильная версия скелетона */}
+        <div className="block lg:hidden">
+          <div className="relative rounded-2xl overflow-hidden bg-orange-100 animate-pulse">
+            <div className="aspect-[4/1] bg-gradient-to-r from-orange-100 via-orange-50 to-orange-100"></div>
+          </div>
+        </div>
+
+        {/* Десктопная версия скелетона */}
+        <div className="hidden lg:block">
+          <div className="grid grid-cols-3 gap-4">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="relative rounded-2xl overflow-hidden bg-orange-100 animate-pulse">
+                <div className="aspect-[4/3] bg-gradient-to-br from-orange-100 via-orange-50 to-orange-100"></div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

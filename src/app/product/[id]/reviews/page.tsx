@@ -324,14 +324,12 @@ export default function ProductReviewsPage() {
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h2>
           <div className="flex items-center space-x-4">
-            {product.averageRating > 0 && (
-              <div className="flex items-center space-x-2">
-                {renderStars(product.averageRating)}
-                <span className="text-sm font-medium text-gray-600">
-                  {product.averageRating.toFixed(1)} из 5
-                </span>
-              </div>
-            )}
+            <div className="flex items-center space-x-2">
+              {renderStars(product.averageRating > 0 ? product.averageRating : 5.0)}
+              <span className="text-sm font-medium text-gray-600">
+                {(product.averageRating > 0 ? product.averageRating : 5.0).toFixed(1)} из 5
+              </span>
+            </div>
             <span className="text-sm text-gray-500">
               {product._count.reviews} отзывов
             </span>

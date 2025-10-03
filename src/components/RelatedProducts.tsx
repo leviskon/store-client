@@ -74,7 +74,13 @@ export default function RelatedProducts({
             product.id !== currentProductId
           ).slice(0, limit)
           
-          setProducts(filteredProducts)
+          // Обрабатываем рейтинги - показываем 5.0 по умолчанию, если нет отзывов
+          const processedProducts = filteredProducts.map((product: RelatedProduct) => ({
+            ...product,
+            averageRating: product._count.reviews > 0 ? product.averageRating : 5.0
+          }))
+          
+          setProducts(processedProducts)
           
           // Инициализируем выбранные размеры и цвета по умолчанию
           const initialSizes: {[productId: string]: string} = {}

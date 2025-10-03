@@ -130,7 +130,7 @@ export default function ProductGrid({ selectedCategory, includeSubcategories, se
             ...product,
             averageRating: product.reviews.length > 0 
               ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
-              : 0
+              : 5.0 // Показываем 5 звёзд по умолчанию, если нет отзывов
           }))
           setProducts(productsWithLikes)
           

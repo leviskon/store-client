@@ -203,6 +203,29 @@ export default function ReturnsPage() {
           </div>
         </div>
 
+        {/* Return Delivery Cost */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+          <div className="bg-blue-50 border-b border-blue-100 px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-blue-800">{t.returnDeliveryCost}</h3>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-gray-600">{t.returnDeliveryCostDesc}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Return Steps */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
           <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">

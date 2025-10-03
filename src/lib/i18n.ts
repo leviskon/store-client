@@ -245,6 +245,8 @@ export interface Translations {
   otherReason: string
   importantNotice: string
   returnProcessInfo: string
+  returnDeliveryCost: string
+  returnDeliveryCostDesc: string
   
   // Returns page - new policy
   returns: string
@@ -710,6 +712,8 @@ export const translations: Record<Language, Translations> = {
     otherReason: 'Башка себеп',
     importantNotice: 'Маанилүү эскертүү',
     returnProcessInfo: 'Товарды кайтаруу курьердан алуу учурунда гана мүмкүн. Товарды алгандан кийин кайтаруу мүмкүн эмес. Бардык текшерүүлөрдү жеткирүү учурунда жасаңыз.',
+    returnDeliveryCost: 'Кайтаруу жеткирүүсүнүн баасы',
+    returnDeliveryCostDesc: 'Алгачкы жеткирүү акысыз болгондуктан, товарды кайтаруу үчүн кардар 100 сом төлөшү керек.',
     
     // Returns page - new policy
     returns: 'Кайтаруу',
@@ -1172,6 +1176,8 @@ export const translations: Record<Language, Translations> = {
     otherReason: 'Другая причина',
     importantNotice: 'Важное уведомление',
     returnProcessInfo: 'Возврат товара возможен только при получении от курьера. После получения товара возврат невозможен. Проводите все проверки при получении.',
+    returnDeliveryCost: 'Стоимость доставки при возврате',
+    returnDeliveryCostDesc: 'Поскольку первоначальная доставка была бесплатной, клиент должен оплатить 100 сом за доставку при возврате товара.',
     
     // Returns page - new policy
     returns: 'Возвраты',
