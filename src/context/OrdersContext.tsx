@@ -35,6 +35,7 @@ interface OrdersContextType {
   orders: Order[]
   getTotalOrders: () => number
   refreshOrders: () => void
+  addOrder: (order: Partial<Order>) => void
 }
 
 const OrdersContext = createContext<OrdersContextType | undefined>(undefined)
@@ -93,11 +94,19 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     return orders.length
   }
 
+  const addOrder = (order: Partial<Order>) => {
+    // Временная реализация - просто добавляем в локальный стейт
+    // В реальном приложении здесь должен быть API вызов
+    const newOrder = order as Order
+    setOrders(prev => [newOrder, ...prev])
+  }
+
   return (
     <OrdersContext.Provider value={{
       orders,
       getTotalOrders,
-      refreshOrders
+      refreshOrders,
+      addOrder
     }}>
       {children}
     </OrdersContext.Provider>
