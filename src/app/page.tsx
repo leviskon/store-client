@@ -10,6 +10,7 @@ import BottomNavigation from '@/components/BottomNavigation'
 import FilterModal from '@/components/FilterModal'
 import Footer from '@/components/Footer'
 import { useLanguage } from '@/context/LanguageContext'
+import SkeletonLoader from '../components/SkeletonLoader'
 
 interface FilterState {
   categories: string[]
@@ -179,9 +180,7 @@ function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="text-gray-600">Загрузка...</div>
-    </div>}>
+    <Suspense fallback={<SkeletonLoader type="page" />}>
       <HomeContent />
     </Suspense>
   )

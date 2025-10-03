@@ -6,6 +6,7 @@ import { ArrowLeft, Package, Clock, User, Truck, CheckCircle, XCircle, AlertCirc
 import { useLanguage } from '@/context/LanguageContext'
 import { validateOrdersCookie } from '@/lib/cookies'
 import Link from 'next/link'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 // Типы для заказов (обновленные для соответствия БД)
 interface OrderItem {
@@ -236,10 +237,7 @@ export default function OrdersPage() {
       {/* Orders List */}
       <div className="px-4 md:px-6 lg:px-8 pt-6 pb-6">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4"></div>
-            <p className="text-gray-500">{t.loadingOrders}</p>
-          </div>
+          <SkeletonLoader type="order" />
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-16">
             <div className="w-32 h-32 md:w-40 md:h-40 bg-orange-100 rounded-full flex items-center justify-center mb-6">

@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import SkeletonLoader from './SkeletonLoader'
 
 interface Category {
   id: string
@@ -66,17 +67,7 @@ export default function CategoriesPage() {
 
         {/* Loading skeleton */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-            {[...Array(10)].map((_, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-sm animate-pulse">
-                <div className="aspect-square bg-gray-200 rounded-t-xl"></div>
-                <div className="p-4 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <SkeletonLoader type="product" count={10} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6" />
         </div>
       </div>
     )

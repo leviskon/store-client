@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 export const metadata: Metadata = {
   title: "Возвраты и обмен товаров - Store Client",
@@ -24,26 +25,12 @@ export const metadata: Metadata = {
 
 // Ленивая загрузка компонента
 const ReturnsPage = dynamic(() => import('@/components/ReturnsPage'), {
-  loading: () => (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-gray-600">Загрузка...</p>
-      </div>
-    </div>
-  ),
+  loading: () => <SkeletonLoader type="page" />,
 })
 
 export default function Returns() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Загрузка...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<SkeletonLoader type="page" />}>
       <ReturnsPage />
     </Suspense>
   )

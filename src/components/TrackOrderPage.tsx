@@ -7,6 +7,7 @@ import { ArrowLeft, Package, ClipboardList, Truck, CheckCircle, Clock, User } fr
 import { getOrdersCookie } from '@/lib/cookies'
 import { useLanguage } from '@/context/LanguageContext'
 import Link from 'next/link'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 // Типы для отслеживания заказа
 interface OrderItem {
@@ -155,14 +156,7 @@ export default function TrackOrderPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4 mx-auto"></div>
-          <p className="text-gray-500">{t.loadingOrder}</p>
-        </div>
-      </div>
-    )
+    return <SkeletonLoader type="page" />
   }
 
   if (error || !order) {

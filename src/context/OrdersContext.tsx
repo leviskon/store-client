@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { validateOrdersCookie } from '@/lib/cookies'
+import { validateOrdersCookie, setOrdersCookie } from '@/lib/cookies'
 
 // Типы для элементов заказа
 interface OrderItem {
@@ -35,7 +35,7 @@ interface OrdersContextType {
   orders: Order[]
   getTotalOrders: () => number
   refreshOrders: () => void
-  addOrder: (order: Partial<Order>) => void
+  addOrder: (order: Order) => void
 }
 
 const OrdersContext = createContext<OrdersContextType | undefined>(undefined)
@@ -94,11 +94,14 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     return orders.length
   }
 
-  const addOrder = (order: Partial<Order>) => {
-    // Временная реализация - просто добавляем в локальный стейт
-    // В реальном приложении здесь должен быть API вызов
-    const newOrder = order as Order
-    setOrders(prev => [newOrder, ...prev])
+  const addOrder = (order: Order) => {
+    // Добавляем заказ в локальный стейт
+    setOrders(prev => [order, ...prev])
+    
+    // Сохраняем ID заказа в куки
+    const currentOrderIds = validateOrdersCookie()
+    const newOrderIds = [order.id, ...currentOrderIds.filter(id => id !== order.id)]
+    setOrdersCookie(newOrderIds)
   }
 
   return (

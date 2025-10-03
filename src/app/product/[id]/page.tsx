@@ -12,6 +12,7 @@ import AppLayout from '@/components/AppLayout'
 import ReviewModal, { ReviewFormData } from '@/components/ReviewModal'
 import RelatedProducts from '@/components/RelatedProducts'
 import { canUserReviewProduct, saveUserReviewId, getUserReviewIdForProduct } from '@/lib/reviewStorage'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 interface Product {
   id: string
@@ -387,35 +388,7 @@ export default function ProductPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white">
-        {/* Loading skeleton for desktop and mobile */}
-        <div className="animate-pulse">
-          {/* Header */}
-          <div className="sticky top-0 bg-white z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between border-b border-gray-100">
-            <div className="w-8 h-8 bg-orange-100 rounded-full"></div>
-            <div className="w-32 h-6 bg-orange-100 rounded"></div>
-            <div className="w-8 h-8 bg-orange-100 rounded-full"></div>
-          </div>
-          
-          {/* Content skeleton */}
-          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Image skeleton */}
-              <div className="aspect-square bg-orange-100 rounded-2xl"></div>
-              
-              {/* Content skeleton */}
-              <div className="space-y-6">
-                <div className="h-4 bg-orange-100 rounded w-1/3"></div>
-                <div className="h-8 bg-orange-100 rounded"></div>
-                <div className="h-6 bg-orange-100 rounded w-1/2"></div>
-                <div className="h-20 bg-orange-100 rounded"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+    return <SkeletonLoader type="page" />
   }
 
   if (!product) {

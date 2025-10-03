@@ -8,6 +8,7 @@ import { useLanguage } from '@/context/LanguageContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useNotification } from '@/context/NotificationContext'
 import { useCart } from '@/context/CartContext'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 // Импортируем тип из контекста
 interface FavoriteItem {
@@ -238,25 +239,7 @@ export default function FavoritesPage() {
   if (isLoading) {
     return (
       <AppLayout showHeader={false} showBottomNav={true}>
-        {/* Header */}
-        <div className="sticky top-0 bg-orange-500 z-50 px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <button
-            onClick={() => router.push('/')}
-            className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-gray-100 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-700" />
-          </button>
-          
-          <h1 className="text-lg font-medium text-white">{t.myWishlist}</h1>
-          
-          <div className="w-10 h-10"></div>
-        </div>
-
-        {/* Loading State */}
-        <div className="flex flex-col items-center justify-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4"></div>
-          <p className="text-gray-500">Загрузка избранных...</p>
-        </div>
+        <SkeletonLoader type="page" />
       </AppLayout>
     )
   }

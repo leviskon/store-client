@@ -165,7 +165,9 @@ export async function POST(request: NextRequest) {
               orderId: order.id,
               productId: item.id,
               amount: item.quantity,
-              price: product.price
+              price: product.price,
+              sizeId: item.selectedSizeId || null,
+              colorId: item.selectedColorId || null
             }
           })
         })

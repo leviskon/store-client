@@ -60,7 +60,7 @@ export default function DesktopNavigation() {
                         <div className="relative">
                           <IconComponent className="w-4 h-4" />
                           {getTotalItems() > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                            <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold leading-none">
                               {getTotalItems() > 9 ? '9+' : getTotalItems()}
                             </span>
                           )}
@@ -78,7 +78,7 @@ export default function DesktopNavigation() {
                         <div className="relative">
                           <IconComponent className="w-4 h-4" />
                           {favorites.length > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                            <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold leading-none">
                               {favorites.length > 9 ? '9+' : favorites.length}
                             </span>
                           )}
@@ -107,7 +107,7 @@ export default function DesktopNavigation() {
                         <div className="relative">
                           <IconComponent className="w-4 h-4" />
                           {getTotalOrders() > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                            <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] rounded-full w-3.5 h-3.5 flex items-center justify-center font-bold leading-none">
                               {getTotalOrders() > 9 ? '9+' : getTotalOrders()}
                             </span>
                           )}

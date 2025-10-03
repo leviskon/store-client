@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, memo, useCallback } from 'react'
 import Image from 'next/image'
 import { Minus, Plus, Trash2, Palette, Ruler } from 'lucide-react'
 import { useLanguage } from '@/context/LanguageContext'
@@ -14,7 +14,7 @@ interface SwipeableCartItemProps {
   onOptionsChange?: (itemId: string, currentSizeId?: string, currentColorId?: string, newSizeId?: string, newColorId?: string, newSize?: string, newColor?: string) => void
 }
 
-export default function SwipeableCartItem({ item, onQuantityChange, onRemove, onOptionsChange }: SwipeableCartItemProps) {
+const SwipeableCartItem = memo(function SwipeableCartItem({ item, onQuantityChange, onRemove, onOptionsChange }: SwipeableCartItemProps) {
   const { t } = useLanguage()
   const [isSwipeActive, setIsSwipeActive] = useState(false)
   const [translateX, setTranslateX] = useState(0)
@@ -24,7 +24,7 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false)
   const itemRef = useRef<HTMLDivElement>(null)
 
-  const formatPrice = (price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`
+  const formatPrice = useCallback((price: number) => `${price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} с.`, [])
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartX(e.touches[0].clientX)
@@ -58,39 +58,18 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
     }
   }
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setStartX(e.clientX)
-    setIsDragging(true)
-  }
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return
-
-    const currentX = e.clientX
-    const diffX = startX - currentX
-
-    if (diffX > 0 && diffX <= 80) {
-      setTranslateX(-diffX)
-    } else if (diffX <= 0) {
-      setTranslateX(0)
-    }
-  }
-
-  const handleMouseUp = () => {
-    setIsDragging(false)
-    
-    if (Math.abs(translateX) > 40) {
-      setTranslateX(-80)
-      setIsSwipeActive(true)
-    } else {
-      setTranslateX(0)
-      setIsSwipeActive(false)
-    }
-  }
-
-  const handleRemoveClick = () => {
+  const handleRemoveClick = useCallback(() => {
     onRemove(item.id)
-  }
+  }, [onRemove, item.id])
+
+  const handleQuantityDecrease = useCallback(() => {
+    onQuantityChange(item.id, item.quantity - 1, item.selectedSizeId, item.selectedColorId)
+  }, [onQuantityChange, item.id, item.quantity, item.selectedSizeId, item.selectedColorId])
+
+  const handleQuantityIncrease = useCallback(() => {
+    onQuantityChange(item.id, item.quantity + 1, item.selectedSizeId, item.selectedColorId)
+  }, [onQuantityChange, item.id, item.quantity, item.selectedSizeId, item.selectedColorId])
 
   // Закрываем свайп при клике вне элемента
   useEffect(() => {
@@ -109,8 +88,8 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
 
   return (
     <div ref={itemRef} className="relative bg-white rounded-2xl border border-gray-100 hover:border-orange-200 hover:shadow-xl transition-all duration-300 overflow-hidden">
-      {/* Delete Button (показывается при свайпе) */}
-      <div className="absolute right-0 top-0 h-full w-20 bg-red-500 flex items-center justify-center">
+      {/* Delete Button (показывается при свайпе на мобильных) */}
+      <div className="absolute right-0 top-0 h-full w-20 bg-red-500 flex items-center justify-center md:hidden">
         <button
           onClick={handleRemoveClick}
           className="w-full h-full flex items-center justify-center text-white"
@@ -126,10 +105,6 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onMouseMove={isDragging ? handleMouseMove : undefined}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
       >
         <div className="flex gap-4">
           {/* Product Image */}
@@ -181,11 +156,20 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
             </div>
           </div>
 
-          {/* Quantity Controls - Moved to right */}
+          {/* Quantity Controls and Desktop Delete Button */}
           <div className="flex flex-col items-end justify-center gap-2">
+            {/* Desktop Delete Button */}
+            <button
+              onClick={handleRemoveClick}
+              className="hidden md:block p-2 hover:bg-red-50 rounded-lg transition-colors group"
+              title={t.removeFromCart}
+            >
+              <Trash2 className="w-4 h-4 text-gray-400 group-hover:text-red-500" />
+            </button>
+            
             <div className="flex items-center border border-gray-200 rounded-lg">
               <button
-                onClick={() => onQuantityChange(item.id, item.quantity - 1, item.selectedSizeId, item.selectedColorId)}
+                onClick={handleQuantityDecrease}
                 className="p-1.5 hover:bg-gray-50 transition-colors disabled:opacity-30"
                 disabled={item.quantity <= 1}
               >
@@ -195,16 +179,16 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
                 {item.quantity}
               </div>
               <button
-                onClick={() => onQuantityChange(item.id, item.quantity + 1, item.selectedSizeId, item.selectedColorId)}
+                onClick={handleQuantityIncrease}
                 className="p-1.5 hover:bg-gray-50 transition-colors"
               >
                 <Plus className="w-3 h-3 text-gray-600" />
               </button>
             </div>
             
-            {/* Hint text when swiped */}
+            {/* Hint text when swiped (mobile only) */}
             {isSwipeActive && (
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 md:hidden">
                 ← {t.removeFromCart}
               </div>
             )}
@@ -246,4 +230,6 @@ export default function SwipeableCartItem({ item, onQuantityChange, onRemove, on
       />
     </div>
   )
-}
+})
+
+export default SwipeableCartItem

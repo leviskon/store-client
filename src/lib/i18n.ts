@@ -17,7 +17,6 @@ export interface Translations {
   // Product related
   featuredProducts: string
   newCollection: string
-  discount50: string
   shopNow: string
   summerSale: string
   upTo70Off: string
@@ -85,7 +84,6 @@ export interface Translations {
   emptyCartSubtitle: string
   subtotal: string
   deliveryFee: string
-  discount: string
   totalCost: string
   proceedToCheckout: string
   removeFromCart: string
@@ -193,12 +191,6 @@ export interface Translations {
   new: string
   sale: string
   
-  // Discount page
-  bigDiscounts: string
-  maxDiscountInfo: string
-  temporaryPromotions: string
-  discountsCount: string
-  maxDiscount: string
   
   // Product labels
   men: string
@@ -234,7 +226,6 @@ export interface Translations {
   newCollectionHero: string
   latestTrends: string
   newItemsCount: string
-  discountInfo: string
   
   // Returns page
   wrongSize: string
@@ -274,7 +265,6 @@ export interface Translations {
   
   // Page titles
   aboutUs: string
-  discounts: string
   privacy: string
   
   // About page
@@ -482,7 +472,6 @@ export const translations: Record<Language, Translations> = {
     // Product related
     featuredProducts: 'Сунушталган товарлар',
     newCollection: 'Жаңы коллекция',
-    discount50: 'Биринчи сатып алууда\n50% арзандатуу',
     shopNow: 'Азыр сатып алуу',
     summerSale: 'Жайкы арзандатуу',
     upTo70Off: 'Тандалган товарларга\n70% чейин арзандатуу',
@@ -550,7 +539,6 @@ export const translations: Record<Language, Translations> = {
     emptyCartSubtitle: 'Жакшы көргөн товарларыңызды кошуп баштаңыз',
     subtotal: 'Жыйынтык',
     deliveryFee: 'Жеткирүү акысы',
-    discount: 'Арзандатуу',
     totalCost: 'Жалпы наркы',
     proceedToCheckout: 'Төлөмгө өтүү',
     removeFromCart: 'Себеттен чыгаруу',
@@ -660,12 +648,6 @@ export const translations: Record<Language, Translations> = {
     new: 'Жаңы',
     sale: 'Арзандатуу',
     
-    // Discount page
-    bigDiscounts: 'Улуу арзандатуулар!',
-    maxDiscountInfo: 'Эң жогору арзандатуулар менен сатып алыңыз. Убактылуу акциялар!',
-    temporaryPromotions: 'Убактылуу акциялар!',
-    discountsCount: 'Арзандатуулар: 50+',
-    maxDiscount: 'Эң жогору: 50%',
     
     // Product labels
     men: 'Эркектер',
@@ -701,7 +683,6 @@ export const translations: Record<Language, Translations> = {
     newCollectionHero: 'Жаңы коллекция!',
     latestTrends: 'Эң акыркы мода тенденциялары менен таанышыңыз. Жаңы товарлар ар дайым эң жакшы баада!',
     newItemsCount: 'Жаңы товарлар: 50+',
-    discountInfo: 'Арзандатуулар: 20%',
     
     // Returns page
     wrongSize: 'Өлчөм туура эмес',
@@ -741,7 +722,6 @@ export const translations: Record<Language, Translations> = {
     
     // Page titles
     aboutUs: 'Биз жөнүндө',
-    discounts: 'Арзандатуулар',
     privacy: 'Колдонуу шарттары жана жеке маалыматтын коопсуздугу',
     
     // About page
@@ -946,7 +926,6 @@ export const translations: Record<Language, Translations> = {
     // Product related
     featuredProducts: 'Рекомендуемые товары',
     newCollection: 'Новая коллекция',
-    discount50: 'Скидка 50% на\nпервую покупку',
     shopNow: 'Купить сейчас',
     summerSale: 'Летняя распродажа',
     upTo70Off: 'Скидки до 70%\nна выбранные товары',
@@ -1014,7 +993,6 @@ export const translations: Record<Language, Translations> = {
     emptyCartSubtitle: 'Начните добавлять понравившиеся товары',
     subtotal: 'Промежуточный итог',
     deliveryFee: 'Стоимость доставки',
-    discount: 'Скидка',
     totalCost: 'Общая стоимость',
     proceedToCheckout: 'Перейти к оформлению',
     removeFromCart: 'Удалить из корзины',
@@ -1124,12 +1102,6 @@ export const translations: Record<Language, Translations> = {
     new: 'НОВИНКА',
     sale: 'РАСПРОДАЖА',
     
-    // Discount page
-    bigDiscounts: 'Большие скидки!',
-    maxDiscountInfo: 'Покупайте со скидками до 50%. Временные акции!',
-    temporaryPromotions: 'Временные акции!',
-    discountsCount: 'Скидки: 50+',
-    maxDiscount: 'Максимум: 50%',
     
     // Product labels
     men: 'Мужчины',
@@ -1165,7 +1137,6 @@ export const translations: Record<Language, Translations> = {
     newCollectionHero: 'Новая коллекция!',
     latestTrends: 'Ознакомьтесь с последними модными тенденциями. Новые товары всегда по лучшим ценам!',
     newItemsCount: 'Новых товаров: 50+',
-    discountInfo: 'Скидки: 20%',
     
     // Returns page
     wrongSize: 'Неподходящий размер',
@@ -1205,7 +1176,6 @@ export const translations: Record<Language, Translations> = {
     
     // Page titles
     aboutUs: 'О нас',
-    discounts: 'Скидки',
     privacy: 'Условия использования и конфиденциальность',
     
     // About page

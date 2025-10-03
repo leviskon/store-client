@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo, useCallback } from 'react'
 import { X, Check } from 'lucide-react'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 interface Size {
   id: string
@@ -25,7 +26,7 @@ interface CartItemOptionsModalProps {
   optionType: 'color' | 'size'
 }
 
-export default function CartItemOptionsModal({
+const CartItemOptionsModal = memo(function CartItemOptionsModal({
   isOpen,
   onClose,
   onSave,
@@ -42,6 +43,18 @@ export default function CartItemOptionsModal({
   const [availableSizes, setAvailableSizes] = useState<Size[]>([])
   const [availableColors, setAvailableColors] = useState<Color[]>([])
   const [isLoading, setIsLoading] = useState(false)
+
+  // Все хуки должны быть вызваны до любого условного возврата
+  const handleSave = useCallback(() => {
+    onSave(selectedSizeId, selectedColorId, selectedSize, selectedColor)
+    onClose()
+  }, [onSave, onClose, selectedSizeId, selectedColorId, selectedSize, selectedColor])
+
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }, [onClose])
 
   // Загрузка данных товара
   useEffect(() => {
@@ -89,17 +102,6 @@ export default function CartItemOptionsModal({
 
   if (!isOpen) return null
 
-  const handleSave = () => {
-    onSave(selectedSizeId, selectedColorId, selectedSize, selectedColor)
-    onClose()
-  }
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose()
-    }
-  }
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -132,8 +134,8 @@ export default function CartItemOptionsModal({
 
           {/* Loading State */}
           {isLoading && (
-            <div className="p-6 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+            <div className="p-6">
+              <SkeletonLoader type="product" count={1} />
             </div>
           )}
 
@@ -227,4 +229,6 @@ export default function CartItemOptionsModal({
       </div>
     </div>
   )
-}
+})
+
+export default CartItemOptionsModal
